@@ -1,0 +1,14 @@
+This is the ultimate template for omegle_text 
+In this template the connection and diconnection have been handled very efficiently 
+and beside that nothing else has been updated so that from here any changes can be made into it , to make it fit according to one's own needs.
+
+so when we added the skip system here , we got some inconsistencies while connecting the two strangers and later we found out that this can be because of the channel layers , that we have to user seperate channel layers for the users.
+
+This code contains that bug discussed above.
+and with cleaned code.
+
+here we are using channels==4.0.0 instead of channels==3.0.5
+
+the skip bug has been resolved but here stil are issues with the skip , we have to fix that shit as soon as possible.
+
+In short this is the perfect text code. The code that works and hence someone said , if it works then don't touch it

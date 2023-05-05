@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<div class='home_container'>
+    <div class='d-flex justify-content-center flex-column'>
+        
+            <div class="p-5 mb-4 bg-light rounded-3">
+                <div class="container-fluid py-5">
+                    <h1 class="display-5 fw-bold">MyStranger.In</h1>
+                    <p class="col-md-8 fs-4">A place where you can connect with the strangers of your own university and if you want so, than you can also connect with the strangers of other nearby universities as well. It's totally up to you with which strangers you want to connect and can be friends with.
+                        Remember we all meet thousands of strangers in our life but there are only few of them which we can call mine.
+                    </p>
+                    
+                    <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-primary btn-lg">New Chat</button></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

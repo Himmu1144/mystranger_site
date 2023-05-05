@@ -1,0 +1,267 @@
+<script type="text/javascript">
+
+
+
+    // Here we are handling the socket connection and also what happens when socket disconnects.
+    // -----------------------------------------------------------------------------------------
+
+    console.log("Setting up the WebSocket - ")
+
+    // Correctly decide between ws:// and wss://
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    var ws_path = ws_scheme + '://' + window.location.host + "/chat/"; // development
+
+    // console.log("Connecting to " + ws_path);
+    chatSocket = new WebSocket(ws_path);
+
+    // Handle incoming messages
+    chatSocket.onmessage = function (message) {
+
+        // Decode the JSON
+        console.log("Got websocket message.");
+        var data = JSON.parse(message.data);
+
+
+        if (data.my_id) {
+            // Settting up the self_id so that it can be used further on.
+            window.self_id = data.my_id
+            console.log('My_Id : ' + window.self_id)
+        }
+
+        if (data.grouped) {
+
+            statusUpdate(data.response)
+            console.log(data.response)
+            console.log('group_name : ' + data.grouped)
+            window.group_name = data.grouped
+
+           
+
+            chatSocket.send(JSON.stringify({
+                "command": 'grouped',
+                "group_name": data.grouped,
+            }));
+
+            // Enabling the textarea and the send_btn
+            document.getElementById('id_chat_message_input').disabled = false;
+            document.getElementById('send_button').disabled = false;
+
+        }
+
+        if (data.leave) {
+
+            
+            if (window.self_id == data.disconnector) {
+                response = 'You have disconnected.'
+            }
+            else {
+                response = 'Stranger have disconnected.'
+            }
+
+            // if(data.by_skip == 'skip'){
+            //     window.by_skip = true
+            //     statusUpdate(response)
+            // }
+            // else {
+            //     window.by_skip = false
+            // }
+
+            // if (window.by_skip && data.by_skip == 'normal'){
+            //     // we don't have to update the satatus
+            // }
+            // else {
+            //     statusUpdate(response)
+            // }
+
+            console.log(data.leave)
+            statusUpdate(response)
+            
+
+            
+            // again disabling the textarea and the send_btn
+            document.getElementById('id_chat_message_input').disabled = true;
+            document.getElementById('send_button').disabled = true;
+
+            // hiding the skip button and showing new_chat button instead of that.
+            really_btn = document.getElementById('skip_button')
+            really_btn.style.display = 'none';
+            new_btn = document.getElementById('new_button')
+            new_btn.classList.remove("d-none");
+
+        }
+
+        // Handle getting a message
+        if (data.msg_type == 0) {
+            console.log(data);
+            appendChatMessage(data, true)
+        }
+
+        if(data.test){
+            console.log(data.test)
+        }
+    }
+
+    // basic event listeners for our websocket
+    // ------------------------------------------------------------------------
+
+    chatSocket.addEventListener("open", function (e) {
+        console.log("ChatSocket OPEN")
+
+    })
+
+
+    chatSocket.onclose = function (e) {
+        console.log('Chat socket closed.');
+
+    };
+
+    chatSocket.onOpen = function (e) {
+        console.log("ChatSocket onOpen", e)
+    }
+
+    chatSocket.onerror = function (e) {
+        console.log('ChatSocket error', e)
+    }
+
+    if (chatSocket.readyState == WebSocket.OPEN) {
+        console.log("ChatSocket OPENN")
+
+    } else if (chatSocket.readyState == WebSocket.CONNECTING) {
+        console.log("ChatSocket connecting..")
+    }
+
+
+    // Here we are dealing with submitting our message
+    // -----------------------------------------------------------------------------------
+
+    document.getElementById('id_chat_message_input').focus();
+    document.getElementById('id_chat_message_input').onkeyup = function (e) {
+        if (e.keyCode === 13 && e.shiftKey) {  // enter + return
+            // Handled automatically by textarea
+        }
+        else if (e.keyCode === 13 && !e.shiftKey) { // enter + !return
+            document.getElementById('id_chat_message_submit').click();
+        }
+    };
+
+
+    document.getElementById('id_chat_message_submit').onclick = function (e) {
+        const messageInputDom = document.getElementById('id_chat_message_input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            "command": "send",
+            "message": message,
+            "user_id": window.self_id,
+            "group_name": window.group_name,
+        }));
+
+        messageInputDom.value = '';
+    };
+
+    // Here we are writing the code for skip button so that we can skip the chat using the skip button.
+    // ------------------------------------------------------------------------------------------------
+
+    document.getElementById('skip_button').onclick = function (e) {
+        const skip = document.getElementById('skip').innerHTML;
+
+        if (skip == 'Skip') {
+            console.log('skip button is clicked!')
+            document.getElementById('skip').innerHTML = 'really?'
+        }
+        else if (skip == 'really?') {
+            console.log('really button is clicked!')
+            if(window.group_name){
+                group_name = window.group_name
+            } 
+            else {
+                group_name = null
+            }
+            chatSocket.send(JSON.stringify({
+                'command': 'skip',
+                'group_name': group_name,
+            }));
+
+        }
+        else {
+            console.log(skip);
+            console.log('check it again')
+        }
+    };
+
+
+    // Here when the new button is clicked than simply refresh the page
+    // document.getElementById('new_button').onclick = function (e) {
+    //     location.reload(true);
+    // };
+    // Idk why but this is causing trouble
+
+
+
+    // Some Functions to make our program effiecient 
+    // ------------------------------------------------------------------------
+
+    // status bar to inform the user about it's status 
+
+    function statusUpdate(message) {
+        var spinner = document.getElementById("bar")
+        spinner.innerHTML = message
+    }
+
+    // here we are going to write two lengthy functions which are going to add messages to our htnl template
+
+    function appendChatMessage(data, isNewMessage) {
+        message = data['message']
+        uName = data['id']
+        if (uName == window.self_id) {
+            var username = 'You :'
+        }
+        else {
+            var username = 'Stranger :'
+        }
+        var msg = message + '\n';
+        createChatMessageElement(msg, username, isNewMessage)
+    }
+
+    function createChatMessageElement(msg, username, isNewMessage) {
+        var chatLog = document.getElementById("id_chat_log")
+
+        var newMessageDiv = document.createElement("div")
+        newMessageDiv.classList.add("d-flex")
+        newMessageDiv.classList.add("flex-row")
+        newMessageDiv.classList.add("message-container")
+
+
+        var div1 = document.createElement("div")
+        div1.classList.add("d-flex")
+        div1.classList.add("flex-column")
+
+        var div2 = document.createElement("div")
+        div2.classList.add("d-flex")
+        div2.classList.add("flex-row")
+
+        var usernameSpan = document.createElement("span")
+        usernameSpan.addEventListener("click", function (e) {
+            //selectUser(user_id)
+        })
+        usernameSpan.classList.add("username-span")
+        usernameSpan.innerHTML = username
+        div2.appendChild(usernameSpan)
+
+
+        div1.appendChild(div2)
+
+        var msgP = document.createElement("p")
+        msgP.innerHTML = msg
+        msgP.classList.add("msg-p")
+        div1.appendChild(msgP)
+
+        newMessageDiv.appendChild(div1)
+
+        if (isNewMessage) {
+            chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
+        }
+
+    }
+
+
+</script>
