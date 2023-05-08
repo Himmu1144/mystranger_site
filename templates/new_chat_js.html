@@ -1,5 +1,29 @@
 <script type="text/javascript">
 
+    const our_video = document.getElementById("ours");
+    const remote_video = document.getElementById("remote");
+    let stream;
+    let rtcpeerconnection;
+    const constraints = {
+        'video': true,
+        'audio': false
+    }
+
+    // Contains the stun server URL we will be using.
+    let iceServers = {
+        iceServers: [
+            { urls: "stun:stun.services.mozilla.com" },
+            { urls: "stun:stun.l.google.com:19302" },
+        ],
+    };
+
+    navigator.mediaDevices.getUserMedia(constraints).then(s => {
+        stream = s;
+        our_video.srcObject = s;
+        our_video.onloadedmetadata = () => {
+            our_video.play()
+        }
+    })
 
 
     // Here we are handling the socket connection and also what happens when socket disconnects.
@@ -20,12 +44,23 @@
         // Decode the JSON
         console.log("Got websocket message.");
         var data = JSON.parse(message.data);
-
+        console.log(data)
 
         if (data.my_id) {
             // Settting up the self_id so that it can be used further on.
             window.self_id = data.my_id
             console.log('My_Id : ' + window.self_id)
+        }
+
+        // seprating code for user1 and user2
+
+        if (data.status_user2) {
+            window.user = 'user2'
+            console.log(window.user)
+        }
+        if (data.status_user1) {
+            window.user = 'user1'
+            console.log(window.user)
         }
 
         if (data.grouped) {
@@ -35,7 +70,7 @@
             console.log('group_name : ' + data.grouped)
             window.group_name = data.grouped
 
-           
+
 
             chatSocket.send(JSON.stringify({
                 "command": 'grouped',
@@ -46,11 +81,41 @@
             document.getElementById('id_chat_message_input').disabled = false;
             document.getElementById('send_button').disabled = false;
 
+
+            // here user1 is creating the offer
+
+            if (window.user == 'user1') {
+
+                createOffer()
+                console.log('offer created')
+            }
+
+        }
+
+        if (data["command"] == "offer") {
+            console.log('offer recieved by ', window.user)
+            if (window.user == 'user2') {
+                console.log('user2 ----------')
+                createanswer(data["offer"]);
+                console.log('answer created')
+            }
+        } else if (data["command"] == "answer") {
+            if (window.user == 'user1') {
+                rtcpeerconnection.setRemoteDescription(data["answer"]);
+                console.log("answer set as remote");
+            }
+        } else if (data["command"] == "candidate") {
+            if (data["iscreated"] != window.user) {
+                const IceCandidate = new RTCIceCandidate(data["candidate"]);
+                rtcpeerconnection.addIceCandidate(IceCandidate);
+            }
         }
 
         if (data.leave) {
 
-            
+            remote_video.srcObject = undefined;
+            remote_video.style.backgroundColor = 'rgba(64, 64, 64, 0.5)';
+
             if (window.self_id == data.disconnector) {
                 response = 'You have disconnected.'
             }
@@ -75,9 +140,9 @@
 
             console.log(data.leave)
             statusUpdate(response)
-            
 
-            
+
+
             // again disabling the textarea and the send_btn
             document.getElementById('id_chat_message_input').disabled = true;
             document.getElementById('send_button').disabled = true;
@@ -96,7 +161,7 @@
             appendChatMessage(data, true)
         }
 
-        if(data.test){
+        if (data.test) {
             console.log(data.test)
         }
     }
@@ -170,9 +235,9 @@
         }
         else if (skip == 'really?') {
             console.log('really button is clicked!')
-            if(window.group_name){
+            if (window.group_name) {
                 group_name = window.group_name
-            } 
+            }
             else {
                 group_name = null
             }
@@ -261,6 +326,69 @@
             chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
         }
 
+    }
+
+    // RTCPR Functions
+
+    function createOffer() {
+        rtcpeerconnection = new RTCPeerConnection(iceServers)
+        rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+        rtcpeerconnection.ontrack = OnTrackFunc;
+        stream.getTracks().forEach((track) => {
+            rtcpeerconnection.addTrack(track, stream);
+        });
+        rtcpeerconnection.createOffer().then((offer) => {
+            rtcpeerconnection.setLocalDescription(offer);
+            chatSocket.send(
+                JSON.stringify({
+                    command: "offer",
+                    offer: offer,
+                    group: window.group_name,
+                })
+            );
+        });
+
+    }
+
+    function OnIceCandidateFunc(e) {
+        if (e.candidate) {
+            chatSocket.send(
+                JSON.stringify({
+                    command: "candidate",
+                    candidate: e.candidate,
+                    iscreated: window.user,
+                    group: window.group_name,
+                })
+            );
+        }
+    }
+
+    function OnTrackFunc(e) {
+        remote_video.srcObject = e.streams[0];
+        remote_video.onloadedmetadata = () => {
+            remote_video.play();
+        };
+    }
+
+    function createanswer(offer) {
+        console.log("answer started");
+        rtcpeerconnection = new RTCPeerConnection(iceServers);
+        rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+        rtcpeerconnection.ontrack = OnTrackFunc;
+        stream.getTracks().forEach((track) => {
+            rtcpeerconnection.addTrack(track, stream);
+        });
+        rtcpeerconnection.setRemoteDescription(offer);
+        rtcpeerconnection.createAnswer().then((answer) => {
+            rtcpeerconnection.setLocalDescription(answer);
+            chatSocket.send(
+                JSON.stringify({
+                    command: "answer",
+                    answer: answer,
+                    group: window.group_name,
+                })
+            );
+        });
     }
 
 

@@ -12,3 +12,8 @@ here we are using channels==4.0.0 instead of channels==3.0.5
 the skip bug has been resolved but here stil are issues with the skip , we have to fix that shit as soon as possible.
 
 In short this is the perfect text code. The code that works and hence someone said , if it works then don't touch it
+
+-----------------------------------------------------------------------------------------------------------------
+
+video feature is now working fine , though whether it is scalable or not , that is still a question 
+but as of now the video feature is working smoothly.

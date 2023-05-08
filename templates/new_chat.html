@@ -104,7 +104,18 @@
 
     <!-- Here we have just defined a template of message sending -->
 
-    <div class="card mt-3">
+    <div class="box d-flex">
+
+        <div class="mt-2 video col-4">
+            <div class="col-sm video">
+                <video height="300"  width="421" id="remote"></video>
+            </div>
+            <div class="col-sm video">
+                <video height="300" width="421" id="ours"></video>
+            </div>
+        </div>
+
+    <div class="card mt-2 col-8">
         <div class="card-header">
             <div class="d-flex flex-row justify-content-between">
                 <h3 class="">MyStranger</h3>
@@ -146,7 +157,7 @@
             </div>
         </div>
     </div>
-
+</div>
 </div>
 
 {% include 'new_chat_js.html' %}

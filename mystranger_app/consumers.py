@@ -80,6 +80,14 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 group_name = await create_group(user1, random_user)
 
                 if group_name:
+
+                    await self.send_json(
+                        {
+                            "status_user1": 'user1',
+                            'user_id': self.id,
+                        },
+                    )
+
                     print(f'model group is created! {group_name}')
 
                     # Adding user1 to a group named group_name
@@ -151,6 +159,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 print('adding user to the waiting area by fetching the waiting area.')
                 waiting_list = await create_waiting_list_and_add_user(user1)
                 print(f'random_user_channel - {user1_channel}')
+                await self.send_json(
+                {
+                    "status_user2": 'random_user',
+                    'user_id': self.id,
+                },
+            )
 
             else:
                 print('There is some problem with the waiting list users count.')
@@ -162,6 +176,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             print('adding user to the waiting area by creating a waiting area.')
             waiting_list = await create_waiting_list_and_add_user(user1)
             print(f'random_user_channel - {user1_channel}')
+            await self.send_json(
+                {
+                    "status_user2": 'random_user',
+                    'user_id': self.id,
+                },
+            )
 
 
     # --------------------------------------------------------------------------------
@@ -208,6 +228,24 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                             'response' : 'You are no longer connected with the stranger.',
                         },
                     )  
+            elif command == 'offer':
+                await self.channel_layer.group_send(content['group'],{
+                'type':'offer.message',
+                'offer':content['offer']
+            })
+            elif command == 'answer':
+                await self.channel_layer.group_send(content['group'],{
+                'type':'answer.message',
+                'answer':content['answer']
+            })
+            elif(content['command'] == 'candidate'):
+                await self.channel_layer.group_send(content['group'],{
+                    'type':'candidate.message',
+                    'candidate':content['candidate'],
+                    'iscreated':content['iscreated']
+                })
+        
+                
         except Exception as e:
             print(e)
 
@@ -376,6 +414,25 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     
     # --------------------------------------------------------------------------------
 
+    async def offer_message(self,event):
+        await self.send_json({
+            'command':'offer',
+            'offer':event['offer']
+        })
+
+    async def answer_message(self,event):
+        await self.send_json({
+            'command':'answer',
+            'answer':event['answer']
+        })
+
+    async def candidate_message(self,event):
+        await self.send_json({
+            'command':'candidate',
+            'candidate':event['candidate'],
+            'iscreated':event['iscreated']
+        })
+    
 
 # Writing functions to fetch data from database through database_sync_to_async context
 # ------------------------------------------------------------------------------------
