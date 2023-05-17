@@ -28,6 +28,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+AUTH_USER_MODEL = 'account.Account' 
+AUTHENTICATION_BACKENDS = ( 
+    'django.contrib.auth.backends.AllowAllUsersModelBackend', 
+    'account.backends.CaseInsensitiveModelBackend',
+    )
+
 
 # Application definition
 
@@ -35,6 +41,7 @@ INSTALLED_APPS = [
     'daphne',
     # my apps
     'mystranger_app',
+    'account',
     # Third party apps 
 
     'django.contrib.admin',
@@ -150,4 +157,4 @@ CHANNEL_LAYERS = {
     },
 }
 
-
+TIME_ZONE = 'Asia/Kolkata'

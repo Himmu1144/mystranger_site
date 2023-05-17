@@ -18,10 +18,23 @@
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex">
         <div class="container-fluid">
           <a class="navbar-brand" href="/">MyStranger</a>
+      </div>
+        
+        {% if request.user.is_authenticated %}
+        <div class='d-flex'>
+        <a class="text-light p-2" style='text-decoration:none;' href="{% url 'account:view' user_id=request.user.id %}">Account</a>
+        <a class="p-2 text-light dropleft" style='text-decoration:none;' href="{% url 'logout' %}">Logout</a>
+      </div> 
+      
+				{% else %}
+        <div class='d-flex'>
+					<a class="p-2 text-light dropleft" href="{% url 'login' %}">Login</a>
+					<a class="btn btn-outline-primary text-light dropleft" href="{% url 'register' %}">Register</a>
         </div>
+				{% endif %}	
       </nav>
 
     {% block body %}{% endblock body %}

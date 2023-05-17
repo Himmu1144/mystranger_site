@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+
+<style type="text/css">
+	.image-container{
+		max-width: 250px;
+		height: auto;
+		position: relative;
+	}
+	.field-heading{
+		color: #737373;
+	}
+	#id_confirm{
+		color: green;
+	}
+	#id_confirm:hover {
+		opacity: 0.3;
+	}
+	#id_cancel:hover {
+		opacity: 0.3;
+	}
+	#id_cancel{
+		color: red;
+	}
+	.material-icons{
+		font-size: 30px;
+	}
+	.material-icons:hover{
+		cursor: pointer;
+	}
+</style>
+
+<div class="container-fluid">
+	<div class="row justify-content-center">
+		<div class="card profile-card">
+		  <div class="card-body">
+		  	<div class="d-flex flex-column justify-content-center p-4">
+		  		
+		  		<form class="form-signin" method="post">{% csrf_token %}
+		  			<!-- <input class="d-none" type="file" id="id_profile_image_file_selector" name="profile_image_file_selector" onchange="readURL(this)"> -->
+			  		<h6 class="mt-4 field-heading">Email</h6>
+                    <h6>{{form.email}}</h6>
+
+			  		<!-- <input type="email" name="email" id="id_input_email" class="form-control" placeholder="Email address" required autofocus value={{form.initial.email}}> -->
+			  		<h6 class="mt-4 field-heading">Name</h6>
+			  		<input type="text" name="name" id="id_input_name" class="form-control" placeholder="name" required
+					value="{{form.name}}">
+
+					<div class="d-flex flex-column mt-4">
+						<button class="mt-4 btn btn-primary flex-grow-1" type="submit">Save</button>
+					</div>
+					
+				</form>
+
+		  	</div>
+		  </div>
+		</div>
+	</div>
+</div>
+
+
+
+{% endblock body %}

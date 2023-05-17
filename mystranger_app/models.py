@@ -1,10 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 # Create your models here.
 class WaitingArea(models.Model):
 
-    users = models.ManyToManyField(User, verbose_name=("waiting-users"), blank=True)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("waiting-users"), blank=True)
 
     def add_user(self, user):
         """
@@ -35,8 +35,8 @@ class WaitingArea(models.Model):
         return 'waiting list'
     
 class GroupConnect(models.Model):
-    user1 = models.ForeignKey(User, verbose_name="User_1", related_name='user_1' , on_delete=models.CASCADE)
-    user2 = models.ForeignKey(User, verbose_name="User_2", related_name='user_2' , on_delete=models.CASCADE)
+    user1 = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="User_1", related_name='user_1' , on_delete=models.CASCADE)
+    user2 = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="User_2", related_name='user_2' , on_delete=models.CASCADE)
 
     def group_name(self,user1,user2):
         return f'{self.user1.id}{self.user2.id}'
