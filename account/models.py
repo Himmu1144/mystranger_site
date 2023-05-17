@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, email, name, password=None):
+    def create_user(self, email, name,university_name, password=None):
         if not email:
             raise ValueError('Users must have an email address')
         else:
@@ -17,17 +17,19 @@ class MyAccountManager(BaseUserManager):
         user = self.model(
             email=self.normalize_email(email),
             name=name,
+            university_name=university_name,
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name, password):
+    def create_superuser(self, email, name,university_name, password):
         user = self.create_user(
             email=self.normalize_email(email),
             password=password,
             name=name,
+            university_name=university_name,
         )
         user.is_admin = True
         user.is_staff = True
@@ -40,6 +42,7 @@ class Account(AbstractBaseUser):
     email = models.EmailField(verbose_name="email",
                               max_length=60, unique=True, null=False)
     name = models.CharField(max_length=20, default='Stranger')
+    university_name = models.CharField(max_length=100, default='Unknown')
     date_joined = models.DateTimeField(
         verbose_name='date joined', auto_now_add=True)
     last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
@@ -49,7 +52,7 @@ class Account(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = ['name','university_name']
 
     objects = MyAccountManager()
 

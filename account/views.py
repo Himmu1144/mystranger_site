@@ -3,6 +3,7 @@ from account.forms import RegistrationForm, AccountAuthenticationForm
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from account.models import Account
+from mystranger_app.models import University
 
 
 def register_view(request, *args, **kwargs):
@@ -20,6 +21,12 @@ def register_view(request, *args, **kwargs):
             email = form.cleaned_data['email'].lower()
             raw_password = form.cleaned_data['password1']
             account = authenticate(email=email, password=raw_password)
+
+            # add the university if not already added than add the user to that university
+            name = email.split('@')[-1:][0]
+            university = fetch_or_create_uni(name)
+            university.add_user(account)
+
             login(request, account)
             destination = kwargs.get('next')
             if destination:
@@ -126,3 +133,16 @@ def edit_account_view(request, *args, **kwargs):
         context['form'] = initial
     
     return render(request, "account/edit_account.html", context)
+
+
+'''
+Some Functions to make our life easier.
+'''
+
+def fetch_or_create_uni(name):
+    try:
+        university = University.objects.get(name=name)
+    except University.DoesNotExist:
+        university = University(name=name)
+        university.save()
+    return university

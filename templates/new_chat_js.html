@@ -71,7 +71,6 @@
             window.group_name = data.grouped
 
 
-
             chatSocket.send(JSON.stringify({
                 "command": 'grouped',
                 "group_name": data.grouped,
@@ -85,9 +84,14 @@
             // here user1 is creating the offer
 
             if (window.user == 'user1') {
-
+                window.self_name = data.user1_self_name
+                window.stranger = data.random_user_name
                 createOffer()
                 console.log('offer created')
+            }
+            else {
+                window.self_name = data.random_user_name
+                window.stranger = data.user1_self_name
             }
 
         }
@@ -120,7 +124,7 @@
                 response = 'You have disconnected.'
             }
             else {
-                response = 'Stranger have disconnected.'
+                response = window.stranger + ' have disconnected.'
             }
 
             // if(data.by_skip == 'skip'){
@@ -281,7 +285,7 @@
             var username = 'You :'
         }
         else {
-            var username = 'Stranger :'
+            var username = window.stranger + ' :'
         }
         var msg = message + '\n';
         createChatMessageElement(msg, username, isNewMessage)

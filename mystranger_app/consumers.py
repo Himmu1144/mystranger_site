@@ -3,7 +3,7 @@ from mystranger_app.utils import generateOTP
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from django.contrib.auth.models import User
-from mystranger_app.models import WaitingArea, GroupConnect
+from mystranger_app.models import WaitingArea, GroupConnect, Profile
 from django.db.models import Q
 import random
 import json
@@ -27,8 +27,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # creating a user_profile for this user
 
         
-
-        user1 = await create_user(self.channel_name)
+        user = self.scope['user']
+        university = user.university_name
+        user1 = await create_user(self.channel_name,user)
         # ***************************************************************************************
         
         '''
@@ -45,7 +46,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         )
 
         # ***************************************************************************************
-        user1_channel = user1.username
+        user1_channel = user1.channel_name
         print(f'user with id - {user1.id} is created! ')
 
         '''
@@ -65,11 +66,11 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             if count != 0:
 
                 print('yes another request is availlable')
-                random_user = await user_random()
+                random_user = await user_random(university)
                 is_removed = await removing_user_from_waiting_list(random_user)
                 if is_removed:
                     print(f'random user has been selected (random_user_id : {random_user.id}) and thus also removed from the waiting list.')
-                random_user_channel = random_user.username
+                random_user_channel = random_user.channel_name
 
                 '''
                 now we have two users availlable , user1_self who is seeking to connect with a stranger, user2_random who was patiently waiting in the waiting list to get connected with a stranger.
@@ -78,6 +79,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 '''
 
                 group_name = await create_group(user1, random_user)
+                random_user_name = await fetch_name(random_user)
+                user1_self_name = await fetch_name(user1)
 
                 if group_name:
 
@@ -85,6 +88,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                         {
                             "status_user1": 'user1',
                             'user_id': self.id,
+                            'stranger' : random_user_name,
                         },
                     )
 
@@ -133,6 +137,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                                 "grouped": group_name,
                                 "user1_self" : user1.id,
                                 'random_user' : random_user.id,
+                                'user1_self_name' : user1_self_name,
+                                'random_user_name' : random_user_name,
                                 'response' : 'You are now connected with a stranger.',
                             }
                         )
@@ -360,6 +366,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             {
                 "grouped": event['grouped'],
                 "user1": event["user1_self"],
+                "user1_self_name": event["user1_self_name"],
+                "random_user_name": event["random_user_name"],
                 "random_user": event["random_user"],
                 "response": event["response"],
             },
@@ -443,21 +451,20 @@ Right now we are using default User Model therefore we have to store the channel
 '''
 
 @database_sync_to_async
-def create_user(channel_name):
+def create_user(channel_name,user):
     id = generateOTP()
-    username = str(channel_name)
-    password = id
-    user = User.objects.create_user(
-        pk=id, username=username, password=password)
-    user.save()
-    return user
+    channel = str(channel_name)
+    user = user
+    profile = Profile(id=id,channel_name=channel,user=user)
+    profile.save()
+    return profile
 
 
 @database_sync_to_async
 def delete_user(id):
     try:
-        user = User.objects.get(id=id)
-        user.delete()
+        profile = Profile.objects.get(id=id)
+        profile.delete()
         deleted = True
     except:
         deleted = False
@@ -504,10 +511,10 @@ here assuming that we have fetched the waiting list and the list isn't empty, th
 '''
 
 @database_sync_to_async
-def user_random():
+def user_random(university_name):
     try:
         waiting_list = WaitingArea.objects.get(pk=1)
-        users = waiting_list.users.all()
+        users = waiting_list.users.filter(user__university_name=university_name)
         if users:
             random_user = random.choice(users)
         else:
@@ -587,7 +594,7 @@ Here we are fetching a user by using it's id
 @database_sync_to_async
 def fetch_user(id):
     try:
-        user = User.objects.get(pk=id)
+        user = Profile.objects.get(pk=id)
     except:
         user = None
     return user
@@ -604,9 +611,9 @@ def group_info(group):
 
     group_obj = group
 
-    user1_channel = group_obj.user1.username
+    user1_channel = group_obj.user1.channel_name
     user1_id = group_obj.user1.id
-    random_user_channel = group_obj.user2.username
+    random_user_channel = group_obj.user2.channel_name
     random_user_id = group_obj.user2.id
 
     group_dict = {
@@ -618,6 +625,11 @@ def group_info(group):
     }
 
     return group_dict
+
+@database_sync_to_async
+def fetch_name(profile):
+    name = profile.user.name
+    return str(name)
 
 
                 
