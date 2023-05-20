@@ -53,8 +53,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         fetching the waiting area to check whether there is another request availlable or not
         '''
 
-        waiting_list = await fetching_waiting_list()
-        count = await fetching_waiting_list_count()
+        waiting_list = await fetching_waiting_list(university)
+        count = await fetching_waiting_list_count(university)
         print(f'the count is - {count}')
 
         '''
@@ -477,10 +477,13 @@ Here we are fetching the waiting list, assuming that it has already been created
 '''
 
 @database_sync_to_async
-def fetching_waiting_list():
+def fetching_waiting_list(university_name):
 
     try:
         waiting_list = WaitingArea.objects.get(pk=1)
+        users = waiting_list.users.filter(user__university_name=university_name)
+        if users:
+            return waiting_list
     except:
         waiting_list = None
 
@@ -493,14 +496,18 @@ after that we are returning the count of all the users present in the waiting li
 '''
 
 @database_sync_to_async
-def fetching_waiting_list_count():
+def fetching_waiting_list_count(university_name):
 
     try:
         waiting_list = WaitingArea.objects.get(pk=1)
-        if waiting_list:
-            count = waiting_list.users.through.objects.count()
+        users = waiting_list.users.filter(user__university_name=university_name)
+
+        if waiting_list and users:
+            count = users.count()
+        else:
+            count = 0
     except:
-        count = None
+        count = 0
 
     return count
     
