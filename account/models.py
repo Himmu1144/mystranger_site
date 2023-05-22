@@ -40,8 +40,8 @@ class MyAccountManager(BaseUserManager):
 
 class Account(AbstractBaseUser):
     email = models.EmailField(verbose_name="email",
-                              max_length=60, unique=True, null=False)
-    name = models.CharField(max_length=20, default='Stranger')
+                              max_length=100, unique=True, null=False)
+    name = models.CharField(max_length=100, default='Stranger')
     university_name = models.CharField(max_length=100, default='Unknown')
     date_joined = models.DateTimeField(
         verbose_name='date joined', auto_now_add=True)

@@ -5,6 +5,7 @@ from django.urls import path, re_path
 from mystranger.asgi import get_asgi_application
 django_asgi_app = get_asgi_application()
 from mystranger_app.consumers import ChatConsumer
+from account.consumers import RegisterConsumer
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
@@ -13,6 +14,7 @@ application = ProtocolTypeRouter({
 			URLRouter([
 				
 				path('chat/', ChatConsumer.as_asgi()),
+				path('register/', RegisterConsumer.as_asgi()),
 				
 				]
 				

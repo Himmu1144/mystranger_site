@@ -9,6 +9,10 @@ universities model which contain all the universities inside it and each univers
 class University(models.Model):
 
     name = models.CharField(max_length=100, unique=True, blank=False)
+    universityName = models.CharField(max_length=150, blank=False)
+    universityAddress = models.CharField(max_length=1000, blank=True)
+    lat = models.FloatField(blank=False)
+    lon = models.FloatField(blank=False)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("users"), blank=True)
 
     def add_user(self, account):
