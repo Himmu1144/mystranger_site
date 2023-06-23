@@ -26,7 +26,10 @@ class RegistrationForm(UserCreationForm):
     def save(self, commit=True):
         account = super(RegistrationForm, self).save(commit=False)
         email = self.cleaned_data['email'].lower()
-        account.name = email.split('.')[0].capitalize()
+        name = email.split('@')[0].capitalize()
+        if '.' in name:
+            name = name.split('.')[0].capitalize()
+        account.name = name
         account.email = self.cleaned_data['email'].lower()
         account.university_name = email.split('@')[-1:][0]
         if commit:

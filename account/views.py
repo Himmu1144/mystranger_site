@@ -3,7 +3,8 @@ from account.forms import RegistrationForm, AccountAuthenticationForm
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from account.models import Account
-from mystranger_app.models import University
+from mystranger_app.models import University , UniversityProfile
+from django.db.models import Q
 
 
 def register_view(request, *args, **kwargs):
@@ -25,8 +26,20 @@ def register_view(request, *args, **kwargs):
 
             # add the university if not already added than add the user to that university
             name = email.split('@')[-1:][0]
-            university = fetch_or_create_uni(name)
-            university.add_user(account)
+            lat = request.POST.get('lat')
+            lon = request.POST.get('lon')
+
+            # we are creating or fetching the university model but if the info came from user input then we are going to create a university profile, the university model is only going to be created when either it came from the database or it is manually verified from the backend.
+
+            notrust = request.POST.get('notrust')
+            if notrust:
+                # This means that location is obtained from the user input and can't be trusted therefore we are gonna create a university profile
+                uniName = request.POST.get('universityName')
+                university_profile = fetch_or_create_uniprofile(name,lat,lon,uniName)
+                university_profile.add_user(account)
+            else:
+                university = fetch_or_create_uni(name,lat,lon)
+                university.add_user(account)
 
             login(request, account)
             destination = kwargs.get('next')
@@ -140,10 +153,19 @@ def edit_account_view(request, *args, **kwargs):
 Some Functions to make our life easier.
 '''
 
-def fetch_or_create_uni(name):
+def fetch_or_create_uni(name,Lat,Lon):
     try:
         university = University.objects.get(name=name)
     except University.DoesNotExist:
-        university = University(name=name)
+        university = University(name=name,lat=Lat,lon=Lon)
+        university.save()
+    return university
+
+
+def fetch_or_create_uniprofile(name,Lat,Lon,uniName):
+    try:
+        university = UniversityProfile.objects.get(Q(name=name) & Q(lat=Lat) & Q(lon=Lon))
+    except UniversityProfile.DoesNotExist:
+        university = UniversityProfile(name=name,lat=Lat,lon=Lon,universityName=uniName)
         university.save()
     return university

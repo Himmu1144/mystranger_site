@@ -86,3 +86,30 @@ class GroupConnect(models.Model):
 
     def __str__(self):
         return f'{self.user1.id}{self.user2.id}'
+    
+'''
+Creating University profile, these profiles are going to be used as a temporary university untill someone verifies and created the actual university from the backend.
+'''
+
+class UniversityProfile(models.Model):
+
+    name = models.CharField(max_length=100, blank=False)
+    universityName = models.CharField(max_length=150, blank=False)
+    universityAddress = models.CharField(max_length=1000, blank=True)
+    lat = models.FloatField(blank=False)
+    lon = models.FloatField(blank=False)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("users"), blank=True)
+
+    def add_user(self, account):
+        """
+        Add a new friend.
+        """
+        if not account in self.users.all():
+            self.users.add(account)
+            self.save()
+    
+    def users_count(self):
+        return self.users.count()
+
+    def __str__(self):
+        return self.name

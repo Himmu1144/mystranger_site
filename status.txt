@@ -17,3 +17,7 @@ In short this is the perfect text code. The code that works and hence someone sa
 
 video feature is now working fine , though whether it is scalable or not , that is still a question 
 but as of now the video feature is working smoothly.
+-----------------------------------------------------------------------------------------------------------------
+
+The first part of nearby feature which is gathering the exact location at the time of registration is now approximately complete and from now on 
+the focus has to be on the second part.

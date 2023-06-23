@@ -1,6 +1,6 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
-from mystranger_app.models import University
+from mystranger_app.models import University , UniversityProfile
 
 
 class RegisterConsumer(AsyncJsonWebsocketConsumer):
@@ -50,6 +50,8 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
         university = None
         lat = None 
         lon = None
+        uniprofile = False
+        fetched_from = None
 
         try:
             name = email.split('@')[-1:][0]
@@ -58,6 +60,7 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
                 lat = university.lat
                 lon = university.lon
                 university = university.universityName
+                fetched_from = 0
             else:
                 '''
                 This means that we don't have any university associated with the given email, therefore we are now going to look into our database to check whether we have any university in our database that is associated with this email.
@@ -77,6 +80,30 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
                         university = info[0]
                         lat = info[1]
                         lon = info[2]
+                        fetched_from = 1
+
+                    else: 
+                        '''
+                        This means that the given university doesn't exist in our database therefore we need to take this university as an input from the user.
+                        
+                        - but first we are gonna check whether there is a profile for that university or not , and if there are many profiles then the profile with the maximum user is going to get selected.
+
+                        - though we still don't know for sure that whether this profile is true or not. therefore we are going to give user an option saying not my university and by clicking on that user can input their university through search Map.
+                        '''
+
+                        university = await fetch_university_profile(name=name)
+
+                        if university:
+                            lat = university.lat
+                            lon = university.lon
+                            university = university.universityName
+                            uniprofile = True
+                            fetched_from = 1
+
+                        else:
+                            fetched_from = 'nope'
+                            university = 'nope'
+                        
                 except Exception as e:
                     print(e)
         except Exception as e:
@@ -84,9 +111,17 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
 
         await self.send_json(
             {
+                'fetched_from' : fetched_from,
                 'universityName': str(university),
                 'lat': lat,
                 'lon': lon,
+            },
+        )
+
+        if uniprofile:
+            await self.send_json(
+            {
+                'trust_button' : 'Not My University'
             },
         )
 
@@ -101,5 +136,25 @@ def fetch_university(name):
     try:
         university = University.objects.get(name=name)
     except University.DoesNotExist:
+        university = None
+    return university
+
+'''
+This function has to return all the uniprofiles and return the profile which has the maximum users in it.
+'''
+
+@database_sync_to_async
+def fetch_university_profile(name):
+    try:
+        university_queryset = UniversityProfile.objects.filter(name=name)
+        university_count_dict = {}
+        for university in university_queryset:
+            # Access and process each university object
+            university_count_dict[university] = university.users_count()
+        
+        max_users_uni = max(university_count_dict, key=university_count_dict.get)
+        university = max_users_uni
+
+    except UniversityProfile.DoesNotExist:
         university = None
     return university
