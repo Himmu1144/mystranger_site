@@ -14,6 +14,7 @@ class University(models.Model):
     lat = models.FloatField(blank=False)
     lon = models.FloatField(blank=False)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("users"), blank=True)
+    nearbyList = models.ManyToManyField('self', verbose_name=("nearby_universities"), blank=True) 
 
     def add_user(self, account):
         """
@@ -99,6 +100,9 @@ class UniversityProfile(models.Model):
     lat = models.FloatField(blank=False)
     lon = models.FloatField(blank=False)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("users"), blank=True)
+    nearbyList = models.ManyToManyField(University, verbose_name=("nearby_universities"), blank=True) 
+
+
 
     def add_user(self, account):
         """

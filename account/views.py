@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from account.models import Account
 from mystranger_app.models import University , UniversityProfile
 from django.db.models import Q
+from mystranger_app.utils import calculate_distance
 
 
 def register_view(request, *args, **kwargs):
@@ -159,6 +160,34 @@ def fetch_or_create_uni(name,Lat,Lon):
     except University.DoesNotExist:
         university = University(name=name,lat=Lat,lon=Lon)
         university.save()
+        
+        '''
+        This is a very important part of registration, here when we are creating a new university instance for the first time therefore we are also going to calculate all the universities that exist in the 60 km range of this university and add them into the nearby list -
+
+        but the catch here is that - 
+
+        we are all going to add this university to all the NL of universities that lies in the NL of this university
+        '''
+        nearby_list = []
+        universities = University.objects.all()
+        for uni in universities:
+            Lat1 = uni.lat
+            Lon1 = uni.lon
+
+            distance = calculate_distance(Lat,Lon,Lat1,Lon1)
+            if distance <= 60:
+                '''
+                This means that yes this uni lies with in 60 km of registration uni
+                '''
+                nearby_list.append(uni)
+        
+        university.nearbyList.add(*nearby_list)
+        university.save()
+
+        for uni in nearby_list:
+            uni.nearbyList.add(university)
+            uni.save()
+            
     return university
 
 
@@ -167,5 +196,20 @@ def fetch_or_create_uniprofile(name,Lat,Lon,uniName):
         university = UniversityProfile.objects.get(Q(name=name) & Q(lat=Lat) & Q(lon=Lon))
     except UniversityProfile.DoesNotExist:
         university = UniversityProfile(name=name,lat=Lat,lon=Lon,universityName=uniName)
+        university.save()
+        nearby_list = []
+        universities = University.objects.all()
+        for uni in universities:
+            Lat1 = uni.lat
+            Lon1 = uni.lon
+
+            distance = calculate_distance(Lat,Lon,Lat1,Lon1)
+            if distance <= 60:
+                '''
+                This means that yes this uni lies with in 60 km of registration uni
+                '''
+                nearby_list.append(uni)
+        
+        university.nearbyList.add(*nearby_list)
         university.save()
     return university
