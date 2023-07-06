@@ -49,6 +49,19 @@
 			  		<input type="text" name="name" id="id_input_name" class="form-control" placeholder="name" required
 					value="{{form.name}}">
 
+					<p class="mt-4 mb-1 field-heading">Distance</p>
+					{% if form.origin %}
+					<div>
+					<input type="radio" name="my_dist" value="True" checked> Origin
+					<input type="radio" name="my_dist" value="False"> Nearby
+				</div>
+					{% else %}
+					<div>
+					<input type="radio" name="my_dist" value="True"> Origin
+					<input type="radio" name="my_dist" value="False" checked> Nearby
+				</div>
+					{% endif %}
+
 					<div class="d-flex flex-column mt-4">
 						<button class="mt-4 btn btn-primary flex-grow-1" type="submit">Save</button>
 					</div>

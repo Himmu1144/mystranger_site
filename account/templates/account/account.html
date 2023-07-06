@@ -80,6 +80,19 @@
 
 		  		<p class="mt-4 mb-1 field-heading">Email</p>
                 <h6>{{email}}</h6>
+
+		  		<p class="mt-4 mb-1 field-heading">Distance</p>
+				{% if origin %}
+				<div>
+				<input type="radio" name="my_dist" checked> Origin
+				<input type="radio" name="my_dist" disabled> Nearby
+			</div>
+				{% else %}
+				<div>
+				<input type="radio" name="my_dist" disabled> Origin
+				<input type="radio" name="my_dist" checked> Nearby
+			</div>
+				{% endif %}
 			  		
 			  
 

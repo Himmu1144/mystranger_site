@@ -3,7 +3,7 @@ from mystranger_app.utils import generateOTP
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from django.contrib.auth.models import User
-from mystranger_app.models import WaitingArea, GroupConnect, Profile
+from mystranger_app.models import WaitingArea, GroupConnect, Profile, University
 from django.db.models import Q
 import random
 import json
@@ -29,6 +29,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         
         user = self.scope['user']
         university = user.university_name
+        self.origin = user.origin
+        print(self.origin)
         user1 = await create_user(self.channel_name,user)
         # ***************************************************************************************
         
@@ -53,8 +55,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         fetching the waiting area to check whether there is another request availlable or not
         '''
 
-        waiting_list = await fetching_waiting_list(university)
-        count = await fetching_waiting_list_count(university)
+        waiting_list = await fetching_waiting_list(university,self.origin)
+        count = await fetching_waiting_list_count(university,self.origin)
         print(f'the count is - {count}')
 
         '''
@@ -64,13 +66,20 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         if waiting_list:
             if count != 0:
+                
+                # try:
 
                 print('yes another request is availlable')
-                random_user = await user_random(university)
+                random_user = await user_random(university,self.origin)
+                print(random_user,'^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 is_removed = await removing_user_from_waiting_list(random_user)
                 if is_removed:
-                    print(f'random user has been selected (random_user_id : {random_user.id}) and thus also removed from the waiting list.')
+                    print('wassup -----------------------------------------')
+                    print(f'random user has been selected (random_user_id : {random_user}) and thus also removed from the waiting list.')
                 random_user_channel = random_user.channel_name
+
+                # except Exception as e:
+                #     print('This is my exception',e)
 
                 '''
                 now we have two users availlable , user1_self who is seeking to connect with a stranger, user2_random who was patiently waiting in the waiting list to get connected with a stranger.
@@ -81,6 +90,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 group_name = await create_group(user1, random_user)
                 random_user_name = await fetch_name(random_user)
                 user1_self_name = await fetch_name(user1)
+
+                
 
                 if group_name:
 
@@ -477,13 +488,14 @@ Here we are fetching the waiting list, assuming that it has already been created
 '''
 
 @database_sync_to_async
-def fetching_waiting_list(university_name):
+def fetching_waiting_list(university_name,origin):
 
     try:
         waiting_list = WaitingArea.objects.get(pk=1)
-        users = waiting_list.users.filter(user__university_name=university_name)
-        if users:
-            return waiting_list
+        if origin:
+            users = waiting_list.users.filter(user__university_name=university_name)
+            if users:
+                return waiting_list
     except:
         waiting_list = None
 
@@ -496,12 +508,13 @@ after that we are returning the count of all the users present in the waiting li
 '''
 
 @database_sync_to_async
-def fetching_waiting_list_count(university_name):
+def fetching_waiting_list_count(university_name,origin):
 
     try:
         waiting_list = WaitingArea.objects.get(pk=1)
-        users = waiting_list.users.filter(user__university_name=university_name)
-
+        # need some work
+        # users = waiting_list.users.filter(user__university_name=university_name)
+        users = waiting_list.users.all()
         if waiting_list and users:
             count = users.count()
         else:
@@ -517,17 +530,62 @@ def fetching_waiting_list_count(university_name):
 here assuming that we have fetched the waiting list and the list isn't empty, therefore we are fetching a random user from the waiting list.
 '''
 
+def get_random_user(users):
+    random_user = random.choice(list(users))
+    return random_user
+
+
 @database_sync_to_async
-def user_random(university_name):
+def user_random(university_name, origin):
     try:
         waiting_list = WaitingArea.objects.get(pk=1)
-        users = waiting_list.users.filter(user__university_name=university_name)
-        if users:
-            random_user = random.choice(users)
+        if origin:
+            users = waiting_list.users.filter(user__university_name=university_name)
+            if users.exists():
+                users = set(users)
+                print(users,'chupa :::::::::::::::::::::::::::::::')
+                random_user = random.choice(list(users))
+                print(random_user)
+
+            else:
+                random_user = 'Mai Chutiya hoon'
         else:
-            random_user = None
-    except WaitingArea.DoesNotExist:
-        return None
+            '''
+            This means that the user is using the nearby option thus we have to select a random user from the list of all the users that belongs to the Nearby list of user1 + users of its own university and have also the same nearby setting
+            '''
+
+            users = waiting_list.users.filter(Q(user__university_name=university_name))
+            if users.exists():
+                users = set(users)
+            else:
+                users = set()
+
+            print(users,'llllllllllllllllllllllll')
+            all_waiting_users = waiting_list.users.all()
+            print(all_waiting_users,'3333333333333333333333333333333333333')
+            all_nearby_users = University.objects.none()
+            university = University.objects.get(name=university_name)
+            nearby_universities = university.nearbyList.all()
+            for university in nearby_universities:
+                all_nearby_users |= university.users.all()
+
+            print(all_nearby_users, '**********************************')
+
+            # Thus the users is gonna contain a query set which has all the users from the current university and all the nearby universities of that current university
+
+            for user in all_waiting_users:
+                if user.user in all_nearby_users and user.user.origin == False:
+                    users.add(user)
+
+            print(users,'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu')
+            if users:
+                random_user = random.choice(list(users))
+            else:
+                random_user = 'Maybe'
+
+    except Exception as e:
+        print('exception - ', e)
+        return 'Jaadu'
     return random_user
 
 # ----------------------------------------------------------------------------------------
@@ -637,7 +695,4 @@ def group_info(group):
 def fetch_name(profile):
     name = profile.user.name
     return str(name)
-
-
-                
 

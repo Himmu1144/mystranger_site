@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, email, name,university_name, origin, password=None):
+    def create_user(self, email, name,university_name, password=None):
         if not email:
             raise ValueError('Users must have an email address')
         else:
@@ -18,20 +18,20 @@ class MyAccountManager(BaseUserManager):
             email=self.normalize_email(email),
             name=name,
             university_name=university_name,
-            origin = origin,
+            
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, name,university_name, origin, password):
+    def create_superuser(self, email, name,university_name, password):
         user = self.create_user(
             email=self.normalize_email(email),
             password=password,
             name=name,
             university_name=university_name,
-            origin = origin
+           
         )
         user.is_admin = True
         user.is_staff = True
@@ -45,7 +45,7 @@ class Account(AbstractBaseUser):
                               max_length=100, unique=True, null=False)
     name = models.CharField(max_length=100, default='Stranger')
     university_name = models.CharField(max_length=100, default='Unknown')
-    origin = models.BooleanField(default=True)
+    origin = models.BooleanField(default=False)
     date_joined = models.DateTimeField(
         verbose_name='date joined', auto_now_add=True)
     last_login = models.DateTimeField(verbose_name='last login', auto_now=True)

@@ -21,3 +21,11 @@ but as of now the video feature is working smoothly.
 
 The first part of nearby feature which is gathering the exact location at the time of registration is now approximately complete and from now on 
 the focus has to be on the second part.
+
+The Second Part of connecting users on the basis of nearby and origin has also been done 
+Though there are some defects left like - 
+.edu.in - only works for .edu.in universitites while registration
+count is generic not specific
+The final update from the backend for patient zero is not present
+
+beside these defects everything is working fine, the only thing left is the friend system

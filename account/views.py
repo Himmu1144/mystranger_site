@@ -108,6 +108,7 @@ def account_view(request, *args, **kwargs):
         context['id'] = account.id
         context['name'] = account.name
         context['email'] = account.email
+        context['origin'] = account.origin
 
         # Define template variables
         is_self = True
@@ -134,7 +135,9 @@ def edit_account_view(request, *args, **kwargs):
     context = {}
     if request.POST:
         name = request.POST.get('name')
+        origin = request.POST.get('my_dist')
         account.name = name
+        account.origin = origin
         account.save()
         return redirect("account:view", user_id=account.pk)
     else:
@@ -143,6 +146,7 @@ def edit_account_view(request, *args, **kwargs):
             "id": account.pk,
             "email": account.email,
             "name": account.name,
+            "origin" : account.origin
             }
         
         context['form'] = initial
