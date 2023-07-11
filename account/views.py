@@ -3,9 +3,12 @@ from account.forms import RegistrationForm, AccountAuthenticationForm
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from account.models import Account
-from mystranger_app.models import University , UniversityProfile
+from mystranger_app.models import University, UniversityProfile
+from friend.models import FriendList, FriendRequest
 from django.db.models import Q
 from mystranger_app.utils import calculate_distance
+from friend.utils import get_friend_request_or_false
+from friend.friend_request_status import FriendRequestStatus
 
 
 def register_view(request, *args, **kwargs):
@@ -14,7 +17,6 @@ def register_view(request, *args, **kwargs):
     context = {}
     if user.is_authenticated:
         return HttpResponse(f'You are already authenticated as {user.name} with email - {user.email}')
-    
 
     if request.method == "POST":
         form = RegistrationForm(request.POST)
@@ -36,10 +38,11 @@ def register_view(request, *args, **kwargs):
             if notrust:
                 # This means that location is obtained from the user input and can't be trusted therefore we are gonna create a university profile
                 uniName = request.POST.get('universityName')
-                university_profile = fetch_or_create_uniprofile(name,lat,lon,uniName)
+                university_profile = fetch_or_create_uniprofile(
+                    name, lat, lon, uniName)
                 university_profile.add_user(account)
             else:
-                university = fetch_or_create_uni(name,lat,lon)
+                university = fetch_or_create_uni(name, lat, lon)
                 university.add_user(account)
 
             login(request, account)
@@ -110,17 +113,54 @@ def account_view(request, *args, **kwargs):
         context['email'] = account.email
         context['origin'] = account.origin
 
+        try:
+            friend_list = FriendList.objects.get(user=account)
+        except FriendList.DoesNotExist:
+            friend_list = FriendList(user=account)
+            friend_list.save()
+
+        friends = friend_list.friends.all()
+        context['friends'] = friends
+
         # Define template variables
         is_self = True
-
+        is_friend = False
+        # range: ENUM -> friend/friend_request_status.FriendRequestStatus
+        request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+        friend_requests = None
         user = request.user
+
         if user.is_authenticated and user != account:
             is_self = False
+            if friends.filter(pk=user.id):
+                is_friend = True
+            else:
+                is_friend = False
+                # CASE1: Request has been sent from THEM to YOU: FriendRequestStatus.THEM_SENT_TO_YOU
+                if get_friend_request_or_false(sender=account, receiver=user) != False:
+                    request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
+                    context['pending_friend_request_id'] = get_friend_request_or_false(
+                        sender=account, receiver=user).id
+                # CASE2: Request has been sent from YOU to THEM: FriendRequestStatus.YOU_SENT_TO_THEM
+                elif get_friend_request_or_false(sender=user, receiver=account) != False:
+                    request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
+                # CASE3: No request sent from YOU or THEM: FriendRequestStatus.NO_REQUEST_SENT
+                else:
+                    request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
         elif not user.is_authenticated:
             is_self = False
+        else:
+            try:
+                friend_requests = FriendRequest.objects.filter(
+                    receiver=user, is_active=True)
+            except:
+                pass
 
         # Set the template variables to the values
         context['is_self'] = is_self
+        context['is_friend'] = is_friend
+        context['request_sent'] = request_sent
+        context['friend_requests'] = friend_requests
 
         return render(request, "account/account.html", context)
 
@@ -141,30 +181,56 @@ def edit_account_view(request, *args, **kwargs):
         account.save()
         return redirect("account:view", user_id=account.pk)
     else:
-        
-        initial={
+
+        initial = {
             "id": account.pk,
             "email": account.email,
             "name": account.name,
-            "origin" : account.origin
-            }
-        
+            "origin": account.origin
+        }
+
         context['form'] = initial
-    
+
     return render(request, "account/edit_account.html", context)
+
+
+# This is basically almost exactly the same as friends/friend_list_view
+def account_search_view(request, *args, **kwargs):
+    context = {}
+    if request.method == "GET":
+        search_query = request.GET.get("q")
+        if len(search_query) > 0:
+            search_results = Account.objects.filter(email__icontains=search_query).filter(
+                name__icontains=search_query).distinct()
+            user = request.user
+            accounts = []  # [(account1, True), (account2, False), ...]
+            if user.is_authenticated:
+                # get the authenticated users friend list
+                auth_user_friend_list = FriendList.objects.get(user=user)
+                for account in search_results:
+                    accounts.append(
+                        (account, auth_user_friend_list.is_mutual_friend(account)))
+                context['accounts'] = accounts
+            else:
+                for account in search_results:
+                    accounts.append((account, False))
+                context['accounts'] = accounts
+
+    return render(request, "account/search_results.html", context)
 
 
 '''
 Some Functions to make our life easier.
 '''
 
-def fetch_or_create_uni(name,Lat,Lon):
+
+def fetch_or_create_uni(name, Lat, Lon):
     try:
         university = University.objects.get(name=name)
     except University.DoesNotExist:
-        university = University(name=name,lat=Lat,lon=Lon)
+        university = University(name=name, lat=Lat, lon=Lon)
         university.save()
-        
+
         '''
         This is a very important part of registration, here when we are creating a new university instance for the first time therefore we are also going to calculate all the universities that exist in the 60 km range of this university and add them into the nearby list -
 
@@ -178,28 +244,30 @@ def fetch_or_create_uni(name,Lat,Lon):
             Lat1 = uni.lat
             Lon1 = uni.lon
 
-            distance = calculate_distance(Lat,Lon,Lat1,Lon1)
+            distance = calculate_distance(Lat, Lon, Lat1, Lon1)
             if distance <= 60:
                 '''
                 This means that yes this uni lies with in 60 km of registration uni
                 '''
                 nearby_list.append(uni)
-        
+
         university.nearbyList.add(*nearby_list)
         university.save()
 
         for uni in nearby_list:
             uni.nearbyList.add(university)
             uni.save()
-            
+
     return university
 
 
-def fetch_or_create_uniprofile(name,Lat,Lon,uniName):
+def fetch_or_create_uniprofile(name, Lat, Lon, uniName):
     try:
-        university = UniversityProfile.objects.get(Q(name=name) & Q(lat=Lat) & Q(lon=Lon))
+        university = UniversityProfile.objects.get(
+            Q(name=name) & Q(lat=Lat) & Q(lon=Lon))
     except UniversityProfile.DoesNotExist:
-        university = UniversityProfile(name=name,lat=Lat,lon=Lon,universityName=uniName)
+        university = UniversityProfile(
+            name=name, lat=Lat, lon=Lon, universityName=uniName)
         university.save()
         nearby_list = []
         universities = University.objects.all()
@@ -207,13 +275,13 @@ def fetch_or_create_uniprofile(name,Lat,Lon,uniName):
             Lat1 = uni.lat
             Lon1 = uni.lon
 
-            distance = calculate_distance(Lat,Lon,Lat1,Lon1)
+            distance = calculate_distance(Lat, Lon, Lat1, Lon1)
             if distance <= 60:
                 '''
                 This means that yes this uni lies with in 60 km of registration uni
                 '''
                 nearby_list.append(uni)
-        
+
         university.nearbyList.add(*nearby_list)
         university.save()
     return university

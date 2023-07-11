@@ -39,11 +39,13 @@ AUTHENTICATION_BACKENDS = (
 
 INSTALLED_APPS = [
     'daphne',
+
     # my apps
     'mystranger_app',
     'account',
-    # Third party apps 
+    'friend',
 
+    # Third party apps 
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

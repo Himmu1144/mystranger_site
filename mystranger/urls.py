@@ -21,17 +21,22 @@ from account.views import (
     register_view,
     login_view,
     logout_view,
+    account_search_view,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view, name='home' ),
     path('new_chat/', new_chat_view , name='new-chat' ),
+    path('search/', account_search_view, name="search"),
     
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('register/', register_view, name='register'),
 
     path('account/', include('account.urls', namespace='account')),
+
+    # Friend System
+    path('friend/', include('friend.urls', namespace='friend')),
 
 ]

@@ -3,44 +3,69 @@
 <html lang=en>
 
 <head>
-	<!-- Required meta tags -->
-    <meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<!-- <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"> -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Material+Icons"
-      rel="stylesheet">    
-    <!-- <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"> -->
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <!-- <script src="{% static 'bootstrap/js/jquery.min.js' %}"></script> -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+  <!-- <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"> -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <!-- <script src="{% static 'bootstrap/js/jquery.min.js' %}"></script> -->
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/">MyStranger</a>
-      </div>
-        
-        {% if request.user.is_authenticated %}
-        <div class='d-flex'>
-        <a class="text-light p-2" style='text-decoration:none;' href="{% url 'account:view' user_id=request.user.id %}">Account</a>
-        <a class="p-2 text-light dropleft" style='text-decoration:none;' href="{% url 'logout' %}">Logout</a>
-      </div> 
-      
-				{% else %}
-        <div class='d-flex'>
-					<a class="p-2 text-light dropleft" href="{% url 'login' %}">Login</a>
-					<a class="btn btn-outline-primary text-light dropleft" href="{% url 'register' %}">Register</a>
-        </div>
-				{% endif %}	
-      </nav>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">MyStranger</a>
+      <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
+        <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search using email...">
+      </form>
+    </div>
 
-    {% block body %}{% endblock body %}
 
-    <!-- <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-    
+
+
+    {% if request.user.is_authenticated %}
+    <div class='d-flex'>
+      <a class="text-light p-2" style='text-decoration:none;'
+        href="{% url 'account:view' user_id=request.user.id %}">Account</a>
+      <a class="p-2 text-light dropleft" style='text-decoration:none;' href="{% url 'logout' %}">Logout</a>
+    </div>
+
+    {% else %}
+    <div class='d-flex'>
+      <a class="p-2 text-light dropleft" href="{% url 'login' %}">Login</a>
+      <a class="btn btn-outline-primary text-light dropleft" href="{% url 'register' %}">Register</a>
+    </div>
+    {% endif %}
+  </nav>
+
+  {% block body %}{% endblock body %}
+
+  <!-- <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+
+  <script type="text/javascript">
+    function executeQuery() {
+      // var query = ""
+      // query = document.getElementById('id_q_small').value;
+      // if (query == "") {
+        query = document.getElementById('id_q_large').value;
+      // }
+      console.log(query,'fsrefsdrf')
+      window.location.replace("{% url 'search' %}?q=" + query)
+
+      return false
+    }
+
+  </script>
+
 </body>
+
 </html>
