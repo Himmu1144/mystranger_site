@@ -320,7 +320,8 @@
         div1.appendChild(div2)
 
         var msgP = document.createElement("p")
-        msgP.innerHTML = msg
+		msgP.innerHTML = validateText(msg)
+        // msgP.innerHTML = msg
         msgP.classList.add("msg-p")
         div1.appendChild(msgP)
 

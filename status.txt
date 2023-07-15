@@ -29,3 +29,4 @@ count is generic not specific
 The final update from the backend for patient zero is not present
 
 beside these defects everything is working fine, the only thing left is the friend system
+The Friend System is now complete, therefore now only the notification system is what's left and then the site is complete.

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'mystranger_app',
     'account',
     'friend',
+    'chat',
 
     # Third party apps 
     'django.contrib.admin',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     
 ]
 

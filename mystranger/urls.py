@@ -39,4 +39,7 @@ urlpatterns = [
     # Friend System
     path('friend/', include('friend.urls', namespace='friend')),
 
+    # Public Chat App
+    path('chat/', include('chat.urls', namespace='chat')),
+
 ]

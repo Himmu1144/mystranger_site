@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from chat.utils import find_or_create_private_chat
 
 
 
@@ -20,6 +21,12 @@ class FriendList(models.Model):
 			self.friends.add(account)
 			self.save()
 
+		# Create a private chat (or activate an old one)
+			chat = find_or_create_private_chat(self.user, account)
+			if not chat.is_active:
+				chat.is_active = True
+				chat.save()
+
 	def remove_friend(self, account):
 		"""
 		Remove a friend.
@@ -27,6 +34,12 @@ class FriendList(models.Model):
 		if account in self.friends.all():
 			self.friends.remove(account)
 			self.save()
+		
+		# Deactivate the private chat between these two users
+			chat = find_or_create_private_chat(self.user, account)
+			if chat.is_active:
+				chat.is_active = False
+				chat.save()
         
 	def unfriend(self, removee):
 		"""
