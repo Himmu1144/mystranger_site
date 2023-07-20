@@ -10,19 +10,25 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = Account
-        fields = ('email','password1','password2')
+        fields = ('email', 'password1','password2')
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
-        college_email = email.split('.')[-2:]
-        if not (college_email == ['edu', 'in']):
-            raise forms.ValidationError(f'Email must ends with .edu.in')
+        college_email = email.split('.')[-1:]
+        if not (college_email == ['edu']):
+            college_email = email.split('.')[-2:]
+            if not (college_email == ['edu', 'in'] or college_email == ['ac', 'in']):
+                raise forms.ValidationError(f'Email must ends with either .edu or .edu.in or .ac.in')
+        # college_email = email.split('.')[-2:]
+        # if not (college_email == ['edu', 'in']):
+        #     raise forms.ValidationError(f'Email must ends with .edu.in')
         try:
             account = Account.objects.get(email=email)
         except Account.DoesNotExist:
             return email
         raise forms.ValidationError(f'Email - {email} is already in use.')
 
+       
     def save(self, commit=True):
         account = super(RegistrationForm, self).save(commit=False)
         email = self.cleaned_data['email'].lower()
@@ -47,9 +53,15 @@ class AccountAuthenticationForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
-        college_email = email.split('.')[-2:]
-        if not (college_email == ['edu', 'in']):
-            raise forms.ValidationError(f'Email must ends with .edu.in')
+        college_email = email.split('.')[-1:]
+        if not (college_email == ['edu']):
+            college_email = email.split('.')[-2:]
+            if not (college_email == ['edu', 'in'] or college_email == ['ac', 'in']):
+                raise forms.ValidationError(f'Email must ends with either .edu or .edu.in or .ac.in')
+        # email = self.cleaned_data['email'].lower()
+        # college_email = email.split('.')[-2:]
+        # if not (college_email == ['edu', 'in']):
+        #     raise forms.ValidationError(f'Email must ends with .edu.in')
         try:
             account = Account.objects.get(email=email)
             return email

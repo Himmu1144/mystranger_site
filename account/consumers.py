@@ -58,6 +58,7 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
         try:
             name = email.split('@')[-1:][0]
             university = await fetch_university(name)
+            # fetching university from university models
             if university:
                 lat = university.lat
                 lon = university.lon

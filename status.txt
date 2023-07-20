@@ -24,9 +24,12 @@ the focus has to be on the second part.
 
 The Second Part of connecting users on the basis of nearby and origin has also been done 
 Though there are some defects left like - 
-.edu.in - only works for .edu.in universitites while registration
+
+.edu.in - only works for .edu.in universitites while registration | Done - Now you can register with either .edu or .edu.in or .ac.in
+
 count is generic not specific
 The final update from the backend for patient zero is not present
+origin and nearby does not work entirely , they are specific not generic
 
 beside these defects everything is working fine, the only thing left is the friend system
 The Friend System is now complete, therefore now only the notification system is what's left and then the site is complete.

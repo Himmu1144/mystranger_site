@@ -13,9 +13,17 @@ class MyAccountManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have an email address')
         else:
-            college_email = email.split('.')[-2:]
-            if not (college_email == ['edu', 'in']):
-                raise ValueError('Email must ends with .edu.in')
+            college_email = email.split('.')[-1:]
+            if not (college_email == ['edu']):
+                college_email = email.split('.')[-2:]
+                if not (college_email == ['edu', 'in'] or college_email == ['ac', 'in']):
+                    raise ValueError(f'Email must ends with either .edu or .edu.in or .ac.in')
+        if not university_name:
+            raise ValueError('Users must have a University')
+
+            # college_email = email.split('.')[-2:]
+            # if not (college_email == ['edu', 'in']):
+            #     raise ValueError('Email must ends with .edu.in')
 
         user = self.model(
             email=self.normalize_email(email),
@@ -47,7 +55,7 @@ class Account(AbstractBaseUser):
     email = models.EmailField(verbose_name="email",
                               max_length=100, unique=True, null=False)
     name = models.CharField(max_length=100, default='Stranger')
-    university_name = models.CharField(max_length=100, default='Unknown')
+    university_name = models.CharField(max_length=100, default='Unknown',blank=False)
     origin = models.BooleanField(default=False)
     date_joined = models.DateTimeField(
         verbose_name='date joined', auto_now_add=True)

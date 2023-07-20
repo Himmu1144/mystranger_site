@@ -257,6 +257,11 @@ def fetch_or_create_uni(name, Lat, Lon):
         for uni in nearby_list:
             uni.nearbyList.add(university)
             uni.save()
+        
+        all_uni_profs = UniversityProfile.objects.filter(name=university.name)
+        if all_uni_profs.exists():
+            for prof in all_uni_profs:
+                prof.delete()
 
     return university
 

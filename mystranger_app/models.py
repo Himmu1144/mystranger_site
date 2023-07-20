@@ -1,5 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from mystranger_app.utils import calculate_distance
 
 
 '''
@@ -101,6 +104,7 @@ class UniversityProfile(models.Model):
     lon = models.FloatField(blank=False)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("users"), blank=True)
     nearbyList = models.ManyToManyField(University, verbose_name=("nearby_universities"), blank=True) 
+    verified = models.BooleanField(default=False)
 
 
 
@@ -117,3 +121,56 @@ class UniversityProfile(models.Model):
 
     def __str__(self):
         return self.name
+    
+@receiver(post_save, sender=UniversityProfile)
+def _post_save_receiver_for_profile(sender, instance, **kwargs):
+    verified = instance.verified
+    if verified:
+        uni_email = instance.name
+        all_uni_prof = UniversityProfile.objects.filter(name=uni_email)
+        
+        university = University(name=instance.name,lat=instance.lat,lon=instance.lon)
+        university.universityName = instance.universityName
+        university.save()
+        nearby_list = []
+        universities = University.objects.all()
+        
+        # nearby_list = instance.nearbyList.all()
+        # university.nearbyList.add(*nearby_list)
+        # university.save()
+
+        nearby_list = []
+        universities = University.objects.all()
+        for uni in universities:
+            Lat1 = uni.lat
+            Lon1 = uni.lon
+
+            distance = calculate_distance(instance.lat, instance.lon, Lat1, Lon1)
+            if distance <= 60:
+                '''
+                This means that yes this uni lies with in 60 km of registration uni
+                '''
+                nearby_list.append(uni)
+
+        university.nearbyList.add(*nearby_list)
+        university.save()
+
+        for uni in nearby_list:
+            uni.nearbyList.add(university)
+            uni.save()
+        
+        for prof in all_uni_prof:
+            prof_uesrs = prof.users.all() 
+            university.users.add(*prof_uesrs)
+
+        '''
+        This below code gives an error becuase we can't delete all the profs in a profs post save therefore we have to find some another way to delete all profs when one prof is verified and converted into university model
+        '''
+        # all_uni_profs = UniversityProfile.objects.filter(name=university.name)
+        # if all_uni_profs.exists():
+        #     for prof in all_uni_profs:
+        #         prof.delete()
+
+        university.save()
+
+
