@@ -33,3 +33,8 @@ origin and nearby does not work entirely , they are specific not generic
 
 beside these defects everything is working fine, the only thing left is the friend system
 The Friend System is now complete, therefore now only the notification system is what's left and then the site is complete.
+
+
+_________________________________________________________________________________________________________
+
+Now the site can handle both origin and nearby functions at will but still smooth connect and disconnect remains same as before therefore we have to figure out a way of finding out that what is it that is causing the trouble.

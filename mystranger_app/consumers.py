@@ -55,8 +55,24 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         fetching the waiting area to check whether there is another request availlable or not
         '''
 
-        waiting_list = await fetching_waiting_list(university,self.origin)
-        count = await fetching_waiting_list_count(university,self.origin)
+        # waiting_list = await fetching_waiting_list(university,self.origin)
+        count, users = await fetching_waiting_list_count(university,self.origin)
+        # payload = json.loads(count)
+
+        print("----------------------------------")
+        print(count)
+        print(users)
+
+        # if self.origin:
+        #     count = payload['origin_count']
+        #     users = payload['origin_users']
+        # else:
+        #     count = payload['nearby_count']
+        #     users = payload['nearby_users']
+
+        # count = payload['count']
+        # users = payload['users']
+
         print(f'the count is - {count}')
 
         '''
@@ -64,15 +80,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         '''
        
 
-        if waiting_list:
+        if count != None:
             if count != 0:
                 
                 # try:
 
                 print('yes another request is availlable')
-                random_user = await user_random(university,self.origin)
+                random_user = user_random(users)
                 print(random_user,'^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-                is_removed = await removing_user_from_waiting_list(random_user)
+                is_removed = await removing_user_from_waiting_list(random_user,self.origin)
                 if is_removed:
                     print('wassup -----------------------------------------')
                     print(f'random user has been selected (random_user_id : {random_user}) and thus also removed from the waiting list.')
@@ -160,7 +176,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                     #     {
                             
                     #         "test": 'yup got the test message.' ,
-                           
+                            
                     #     },
                     # )
 
@@ -174,7 +190,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 here this means that though the waiting area exists but there is no user waiting in the waiting area thus therefore we are going to add this user to the waiting list so that it can get connected with others.
                 '''
                 print('adding user to the waiting area by fetching the waiting area.')
-                waiting_list = await create_waiting_list_and_add_user(user1)
+                waiting_list = await create_waiting_list_and_add_user(user1,self.origin)
                 print(f'random_user_channel - {user1_channel}')
                 await self.send_json(
                 {
@@ -191,7 +207,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             this means that waiting list doesn't exist thus we can't connect user1 with any random user and hence we have to add user1 into the waiting list so that it can be added by others.
             '''
             print('adding user to the waiting area by creating a waiting area.')
-            waiting_list = await create_waiting_list_and_add_user(user1)
+            waiting_list = await create_waiting_list_and_add_user(user1,self.origin)
             print(f'random_user_channel - {user1_channel}')
             await self.send_json(
                 {
@@ -236,7 +252,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 else :
                     print('command : skip | the group does not exist!')
                     user = await fetch_user(self.id)
-                    is_removed = await removing_user_from_waiting_list(user)
+                    is_removed = await removing_user_from_waiting_list(user, self.origin)
                     print(f'user - {self.id} is removed from wl - {is_removed}')
                     await self.send_json(
                         {
@@ -490,13 +506,31 @@ Here we are fetching the waiting list, assuming that it has already been created
 @database_sync_to_async
 def fetching_waiting_list(university_name,origin):
 
+    # try:
+    #     waiting_list = WaitingArea.objects.get(pk=1)
+    #     if origin:
+    #         users = waiting_list.users.filter(user__university_name=university_name)
+    #         if users:
+    #             return waiting_list
+    # except:
+    #     waiting_list = None
+
+    # This means we are dealing with users of nearby
+
+#----------------------------------------------------------------------------------
+
     try:
-        waiting_list = WaitingArea.objects.get(pk=1)
+        waiting_list = None
         if origin:
-            users = waiting_list.users.filter(user__university_name=university_name)
-            if users:
+            # This means we are dealing with users of origin
+            waiting_list = WaitingArea.objects.get(pk=1)
+            if waiting_list:
                 return waiting_list
-    except:
+        else:
+            waiting_list = WaitingArea.objects.get(pk=2)
+            if waiting_list:
+                return waiting_list
+    except WaitingArea.DoesNotExist:
         waiting_list = None
 
     return waiting_list
@@ -510,19 +544,87 @@ after that we are returning the count of all the users present in the waiting li
 @database_sync_to_async
 def fetching_waiting_list_count(university_name,origin):
 
-    try:
-        waiting_list = WaitingArea.objects.get(pk=1)
-        # need some work
-        # users = waiting_list.users.filter(user__university_name=university_name)
-        users = waiting_list.users.all()
-        if waiting_list and users:
-            count = users.count()
-        else:
-            count = 0
-    except:
-        count = 0
+    # try:
+    #     waiting_list = WaitingArea.objects.get(pk=1)
+    #     # need some work
+    #     # users = waiting_list.users.filter(user__university_name=university_name)
+    #     users = waiting_list.users.all()
+    #     if waiting_list and users:
+    #         count = users.count()
+    #     else:
+    #         count = 0
+    # except:
+    #     count = 0
 
-    return count
+    try:
+        count = None
+        if origin:
+            # This means we are dealing with users of origin
+            waiting_list = WaitingArea.objects.get(pk=1)
+            waiting_list_nearby = WaitingArea.objects.get(pk=2)
+            users_nearby = waiting_list_nearby.users.filter(user__university_name=university_name)
+            set1 = set(users_nearby)
+
+            # we need the count of all the users from origin that are from his university
+            users = waiting_list.users.filter(user__university_name=university_name)
+            set2 = set(users)
+            if waiting_list and users.exists() or users_nearby.exists():
+                count1 = users.count()
+                count2 = users_nearby.count()
+                count = count1 + count2
+            set3 = set1.union(set2)
+            # payload = {'count' : count, 'users' : list(users)}
+            # return json.dumps(payload)
+            print("The Origin count ------",count)
+            print("The set ------",set3)
+            return count , set3
+        else:
+            
+            waiting_list = WaitingArea.objects.get(pk=2)
+            
+            # we need the count of all the users from origin that are from his university plus all the users from wl that are in his nearby_list
+            waiting_list_origin = WaitingArea.objects.get(pk=1)
+            users = waiting_list_origin.users.filter(user__university_name=university_name)
+            print(users)
+            users_nearby = waiting_list.users.filter(user__university_name=university_name)
+            print(users_nearby)
+            set1_1 = set(users)
+            print("set 1_1 -------", set1_1)
+            set1_2 = set(users_nearby)
+            print("set 1_2 -------", set1_2)
+            set1 = set1_1.union(set1_2)
+            print("set 1 -------", set1)
+            all_nearby_users = University.objects.none()
+            university = University.objects.get(name=university_name)
+            nearby_universities = university.nearbyList.all()
+            for university in nearby_universities:
+                all_nearby_users |= university.users.all()
+
+            nearby_waiting_list_users = waiting_list.users.all()
+            set2 = set()
+            for user in nearby_waiting_list_users:
+                if user.user in all_nearby_users:
+                    set2.add(user)
+            print("Set2 ------------",set2)
+            set3 = set1.union(set2)
+            print("Set3 ------------",set3)
+            if waiting_list and (len(set3)!=0):
+                count = len(set3)
+            # payload = {'count':count,'users' : list(set3)}
+            # return json.dumps(payload)
+            print("The Nearby count ------",count)
+            print("The set ------",set3)
+            return count , set3
+           
+    # except WaitingArea.DoesNotExist:
+    except Exception as e:
+        print("The fucking exception in count - ",str(e))
+        # payload = {'count' : None,'users':None}
+        count = None
+        set3 = None
+    print("The default count ----",count)
+    print("The set ------",set3)
+    return count , set3 
     
 # ----------------------------------------------------------------------------------------
 
@@ -530,62 +632,67 @@ def fetching_waiting_list_count(university_name,origin):
 here assuming that we have fetched the waiting list and the list isn't empty, therefore we are fetching a random user from the waiting list.
 '''
 
-def get_random_user(users):
-    random_user = random.choice(list(users))
-    return random_user
+# def get_random_user(users):
+#     random_user = random.choice(list(users))
+#     return random_user
 
 
-@database_sync_to_async
-def user_random(university_name, origin):
-    try:
-        waiting_list = WaitingArea.objects.get(pk=1)
-        if origin:
-            users = waiting_list.users.filter(user__university_name=university_name)
-            if users.exists():
-                users = set(users)
-                print(users,'chupa :::::::::::::::::::::::::::::::')
-                random_user = random.choice(list(users))
-                print(random_user)
+# @database_sync_to_async
+# def user_random(university_name, origin):
+#     try:
+#         waiting_list = WaitingArea.objects.get(pk=1)
+#         if origin:
+#             users = waiting_list.users.filter(user__university_name=university_name)
+#             if users.exists():
+#                 users = set(users)
+#                 print(users,'chupa :::::::::::::::::::::::::::::::')
+#                 random_user = random.choice(list(users))
+#                 print(random_user)
 
-            else:
-                random_user = 'Mai Chutiya hoon'
-        else:
-            '''
-            This means that the user is using the nearby option thus we have to select a random user from the list of all the users that belongs to the Nearby list of user1 + users of its own university and have also the same nearby setting
-            '''
+#             else:
+#                 random_user = 'Mai Chutiya hoon'
+#         else:
+#             '''
+#             This means that the user is using the nearby option thus we have to select a random user from the list of all the users that belongs to the Nearby list of user1 + users of its own university and have also the same nearby setting
+#             '''
 
-            users = waiting_list.users.filter(Q(user__university_name=university_name))
-            if users.exists():
-                users = set(users)
-            else:
-                users = set()
+#             users = waiting_list.users.filter(Q(user__university_name=university_name))
+#             if users.exists():
+#                 users = set(users)
+#             else:
+#                 users = set()
 
-            print(users,'llllllllllllllllllllllll')
-            all_waiting_users = waiting_list.users.all()
-            print(all_waiting_users,'3333333333333333333333333333333333333')
-            all_nearby_users = University.objects.none()
-            university = University.objects.get(name=university_name)
-            nearby_universities = university.nearbyList.all()
-            for university in nearby_universities:
-                all_nearby_users |= university.users.all()
+#             print(users,'llllllllllllllllllllllll')
+#             all_waiting_users = waiting_list.users.all()
+#             print(all_waiting_users,'3333333333333333333333333333333333333')
+#             all_nearby_users = University.objects.none()
+#             university = University.objects.get(name=university_name)
+#             nearby_universities = university.nearbyList.all()
+#             for university in nearby_universities:
+#                 all_nearby_users |= university.users.all()
 
-            print(all_nearby_users, '**********************************')
+#             print(all_nearby_users, '**********************************')
 
-            # Thus the users is gonna contain a query set which has all the users from the current university and all the nearby universities of that current university
+#             # Thus the users is gonna contain a query set which has all the users from the current university and all the nearby universities of that current university
 
-            for user in all_waiting_users:
-                if user.user in all_nearby_users and user.user.origin == False:
-                    users.add(user)
+#             for user in all_waiting_users:
+#                 if user.user in all_nearby_users and user.user.origin == False:
+#                     users.add(user)
 
-            print(users,'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu')
-            if users:
-                random_user = random.choice(list(users))
-            else:
-                random_user = 'Maybe'
+#             print(users,'uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu')
+#             if users:
+#                 random_user = random.choice(list(users))
+#             else:
+#                 random_user = 'Maybe'
 
-    except Exception as e:
-        print('exception - ', e)
-        return 'Jaadu'
+#     except Exception as e:
+#         print('exception - ', e)
+#         return 'Jaadu'
+#     return random_user
+
+
+def user_random(setva):
+    random_user = random.choice(list(setva))
     return random_user
 
 # ----------------------------------------------------------------------------------------
@@ -595,15 +702,27 @@ simple function to remove a user from the waiting list.
 '''
 
 @database_sync_to_async
-def removing_user_from_waiting_list(user):
+def removing_user_from_waiting_list(user,origin):
+
+    # try:
+    #     waiting_list = WaitingArea.objects.get(pk=1)
+    #     if waiting_list:
+    #         is_removed = waiting_list.remove_user(user)
+    # except:
+    #     is_removed = False
 
     try:
-        waiting_list = WaitingArea.objects.get(pk=1)
-        if waiting_list:
-            is_removed = waiting_list.remove_user(user)
-    except:
-        is_removed = False
-
+        if origin:
+            # This means we are dealing with users of origin
+            waiting_list = WaitingArea.objects.get(pk=1)
+            if waiting_list:
+                is_removed = waiting_list.remove_user(user)
+        else:
+            waiting_list = WaitingArea.objects.get(pk=2)
+            if waiting_list:
+                is_removed = waiting_list.remove_user(user)
+    except WaitingArea.DoesNotExist:
+        waiting_list = None
     return is_removed
 
 # ----------------------------------------------------------------------------------------
@@ -624,16 +743,32 @@ Here we are adding the user to the waiting list by either creating the waiting l
 '''
 
 @database_sync_to_async
-def create_waiting_list_and_add_user(user):
+def create_waiting_list_and_add_user(user,origin):
 
-    try:
-        waiting_list = WaitingArea.objects.get(pk=1)
-        if waiting_list:
+    # try:
+    #     waiting_list = WaitingArea.objects.get(pk=1)
+    #     if waiting_list:
+    #         is_added = waiting_list.add_user(user)
+    # except:
+    #     waiting_list = WaitingArea.objects.create(pk=1)
+    #     is_added = waiting_list.add_user(user)
+
+    if origin:
+        try:
+            waiting_list = WaitingArea.objects.get(pk=1)
+            if waiting_list:
+                is_added = waiting_list.add_user(user)
+        except:
+            waiting_list = WaitingArea.objects.create(pk=1)
             is_added = waiting_list.add_user(user)
-    except:
-        waiting_list = WaitingArea.objects.create(pk=1)
-        is_added = waiting_list.add_user(user)
-
+    else:
+        try:
+            waiting_list = WaitingArea.objects.get(pk=2)
+            if waiting_list:
+                is_added = waiting_list.add_user(user)
+        except:
+            waiting_list = WaitingArea.objects.create(pk=2)
+            is_added = waiting_list.add_user(user)
     return is_added
 
 # ----------------------------------------------------------------------------------------
