@@ -3,7 +3,7 @@ from mystranger_app.utils import generateOTP
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from django.contrib.auth.models import User
-from mystranger_app.models import WaitingArea, GroupConnect, Profile, University
+from mystranger_app.models import WaitingArea, GroupConnect, Profile, University, UniversityProfile
 from django.db.models import Q
 import random
 import json
@@ -31,7 +31,10 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         university = user.university_name
         self.origin = user.origin
         print(self.origin)
+
+        # Here we are creating a temporary profile of the user
         user1 = await create_user(self.channel_name,user)
+
         # ***************************************************************************************
         
         '''
@@ -56,11 +59,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         '''
 
         # waiting_list = await fetching_waiting_list(university,self.origin)
-        count, users = await fetching_waiting_list_count(university,self.origin)
+
+        # Here we are fetching the count of either origin waiting List or the Nearby waiting list to check whether someone is waiting in the waiting list or not , so that if the count is zero we can add this user into the respective waiting list but of the count is not zero that means stranger is availlable therefore we are gonna connect this user with the stranger ,The count here gives the count for both origin wl and nearby wl
+
+        count, users = await fetching_waiting_list_count(university,self.origin,user)
         # payload = json.loads(count)
 
         print("----------------------------------")
         print(count)
+        # users is the set of all the availlable strangers waiting in the wl
         print(users)
 
         # if self.origin:
@@ -86,6 +93,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 # try:
 
                 print('yes another request is availlable')
+                # fetching random user from the set of availlable strangers and then removing that lucky stranger from the waiting list
                 random_user = user_random(users)
                 print(random_user,'^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
                 is_removed = await removing_user_from_waiting_list(random_user,self.origin)
@@ -542,7 +550,7 @@ after that we are returning the count of all the users present in the waiting li
 '''
 
 @database_sync_to_async
-def fetching_waiting_list_count(university_name,origin):
+def fetching_waiting_list_count(university_name,origin,auth_user):
 
     # try:
     #     waiting_list = WaitingArea.objects.get(pk=1)
@@ -568,7 +576,7 @@ def fetching_waiting_list_count(university_name,origin):
             # we need the count of all the users from origin that are from his university
             users = waiting_list.users.filter(user__university_name=university_name)
             set2 = set(users)
-            if waiting_list and users.exists() or users_nearby.exists():
+            if waiting_list and (users.exists() or users_nearby.exists()):
                 count1 = users.count()
                 count2 = users_nearby.count()
                 count = count1 + count2
@@ -595,16 +603,68 @@ def fetching_waiting_list_count(university_name,origin):
             set1 = set1_1.union(set1_2)
             print("set 1 -------", set1)
             all_nearby_users = University.objects.none()
-            university = University.objects.get(name=university_name)
-            nearby_universities = university.nearbyList.all()
-            for university in nearby_universities:
-                all_nearby_users |= university.users.all()
+            try:    
+                university = University.objects.get(name=university_name)
+                print('Uni exists so no profile dwelling')
+                nearby_universities = university.nearbyList.all()
+                print("These are the nearby universities list - ",nearby_universities)
 
-            nearby_waiting_list_users = waiting_list.users.all()
-            set2 = set()
-            for user in nearby_waiting_list_users:
-                if user.user in all_nearby_users:
-                    set2.add(user)
+                # --------------------------------------------------------------------------------------------
+                # right now if a user with uni_prof is here then it can only connect with others by fetching the other user but other users can't fetch him so if he is in the waiting list then he is not going to get connected with anyone and that's how it is , although we can fix that by adding all_nearby_users_from_profiles but we are not going to do that.
+
+                for universiti in nearby_universities:
+                    all_nearby_users |= universiti.users.all()
+                
+                # all_nearby_users = list(all_nearby_users)
+                all_nearby_users_list = []
+                for obj in all_nearby_users:
+                    all_nearby_users_list.append(obj.email) 
+
+                # for obj in all_nearby_users_list:
+                #     print(obj)
+                #     if 'himanshu.20scse1010435@galgotiasuniversity.edu.in' == obj.email:
+                #         print('Yup true')
+                #     else:
+                #         print('Sup false')
+                # if 'himanshu.20scse1010435@galgotiasuniversity.edu.in' in all_nearby_users_list:
+                #     print('yes you fuckin hell')
+                print("All nearby users -----", all_nearby_users_list)
+
+                nearby_waiting_list_users = waiting_list.users.all()
+                print('These are all the nearby waiting list users - ', nearby_waiting_list_users)
+                set2 = set()
+                for user in nearby_waiting_list_users:
+                    print("user from nwlu - ", user.user.email, type(user.user.email))
+                    if user.user.email in all_nearby_users_list:
+                        print("Yes this brat is in the all_nearby_users",user.user)
+                        set2.add(user)
+            except University.DoesNotExist:
+                print('Uni does not exist so profile dwelling')
+
+                university_prof = UniversityProfile.objects.filter(Q(name=university_name) & Q(users=auth_user)).first()
+                print('The university profile is ---------', university_prof)
+
+                nearby_universities = university_prof.nearbyList.all()
+                print("These are the nearby universities list - ",nearby_universities)
+
+                for universiti in nearby_universities:
+                    all_nearby_users |= universiti.users.all()
+                
+                all_nearby_users_list = []
+                for obj in all_nearby_users:
+                    all_nearby_users_list.append(obj.email) 
+
+                print("All nearby users -----", all_nearby_users_list)
+
+                nearby_waiting_list_users = waiting_list.users.all()
+                print('These are all the nearby waiting list users - ', nearby_waiting_list_users)
+                set2 = set()
+                
+                for user in nearby_waiting_list_users:
+                    if user.user.email in all_nearby_users_list:
+                        print("Yes this brat is in the all_nearby_users",user.user)
+                        set2.add(user)
+
             print("Set2 ------------",set2)
             set3 = set1.union(set2)
             print("Set3 ------------",set3)

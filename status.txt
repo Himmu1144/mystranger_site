@@ -36,5 +36,12 @@ The Friend System is now complete, therefore now only the notification system is
 
 
 _________________________________________________________________________________________________________
+4/8/2023
+The above four defects are fixed.
 
 Now the site can handle both origin and nearby functions at will but still smooth connect and disconnect remains same as before therefore we have to figure out a way of finding out that what is it that is causing the trouble.
+
+Now i just have to create the notification system and then have to update the front-end after that the site is going to be technically completed after that i just have to optimize it for production and that's it. we are going to talk about optimization after building the notification system and the front-end.
+___________________________________________________________________________________________________________
+24/8/2023
+well notifications updates in realtime but still new notifs don't come in realtime not till this commit
