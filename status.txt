@@ -45,3 +45,5 @@ Now i just have to create the notification system and then have to update the fr
 ___________________________________________________________________________________________________________
 24/8/2023
 well notifications updates in realtime but still new notifs don't come in realtime not till this commit
+
+well now general notifications are working perfectly fine in realtime now we just have to focus on the private chat notifications and also have to focus on improving the chat section.

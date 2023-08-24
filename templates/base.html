@@ -35,20 +35,103 @@
   <script>hljs.initHighlightingOnLoad();</script>
 
   <style type="text/css">
-    .chat-dropdown-header:hover{
-      cursor: pointer;
-      background: var(--main-background-color);
-    }
-    .chat-dropdown-header{
-      color: var(--light-primary-text-color);
-    }
-    .scrollable-menu {
-      height: auto;
-      max-height: 90vh;
-      width: 500px;
-      overflow-x: hidden;
-    }
-  </style>
+	.chat-dropdown-header:hover{
+		cursor: pointer;
+		background: var(--main-background-color);
+	}
+	.chat-dropdown-header{
+		color: var(--light-primary-text-color);
+	}
+	.scrollable-menu {
+		height: auto;
+		max-height: 90vh;
+		width: 500px;
+		overflow-x: hidden;
+	}
+
+	.notifications-material-icon {
+		font-size: 28px;
+
+	}
+	.notifications-icon-container{
+		width: 40px;
+		height: 40px;
+		background-color: var(--main-background-color);
+	}
+	.notifications-icon-container:hover {
+		cursor: pointer;
+		background-color: var(--secondary-text-color)
+	}
+	.notify-badge{
+		position: absolute;
+		background: transparent;
+		height:1.2rem;
+		width:1.2rem;
+		line-height: 1.2rem;
+		top:1rem;
+		right:2rem;
+		text-align: center;
+		font-size: 1rem;
+		border-radius: 50%;
+		color:white;
+		font-weight: 630;
+		margin-top:-15px;
+		margin-right: -25px;
+	}
+	#id_notifications_spinner{
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+  
+  .chat-dropdown-header:hover{
+		cursor: pointer;
+		background: var(--main-background-color);
+	}
+	.chat-dropdown-header{
+		color: var(--light-primary-text-color);
+	}
+	.scrollable-menu {
+		height: auto;
+		max-height: 90vh;
+		width: 500px;
+		overflow-x: hidden;
+	}
+
+	.notifications-material-icon {
+		font-size: 28px;
+
+	}
+	.notifications-icon-container{
+		width: 40px;
+		height: 40px;
+		background-color: var(--main-background-color);
+	}
+	.notifications-icon-container:hover {
+		cursor: pointer;
+		background-color: var(--secondary-text-color)
+	}
+	.notify-badge{
+		position: absolute;
+		background: transparent;
+		height:1.2rem;
+		width:1.2rem;
+		line-height: 1.2rem;
+		top:1rem;
+		right:2rem;
+		text-align: center;
+		font-size: 1rem;
+		border-radius: 50%;
+		color:white;
+		font-weight: 630;
+		margin-top:-15px;
+		margin-right: -25px;
+	}
+	#id_notifications_spinner{
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+  
+</style>
 
 </head>
 
@@ -68,9 +151,9 @@
 
       <div class="btn-group dropleft">
         <div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3"
-          id="id_notification_dropdown_toggle" data-bs-toggle="dropdown" onclick="">
+          id="id_notification_dropdown_toggle" data-bs-toggle="dropdown" onclick="setGeneralNotificationsAsRead()">
           <span id="id_general_notifications_count" class="notify-badge"></span>
-          <span class="d-flex material-icons notifications-material-icon m-auto align-items-center">notifications</span>
+          <span style='color:white;' class="d-flex material-icons notifications-material-icon m-auto align-items-center">notifications</span>
           <div class="dropdown-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle"
             id="id_general_notifications_container">
           </div>
@@ -135,6 +218,18 @@
 			refreshGeneralNotificationsData(data['notifications'])
 		}
 
+		if(data.general_msg_type == 3){
+      console.log('Got the new notification')
+			handleNewGeneralNotificationsData(data['notifications'])
+		}
+
+		if(data.general_msg_type == 4){
+      console.log('Got the unread notifications count')
+			setUnreadGeneralNotificationsCount(data['count'])
+		}
+
+    
+
 		if(data.general_msg_type == 5){
 			updateGeneralNotificationDiv(data['notification'])
 		}
@@ -149,6 +244,7 @@
       console.log("Notification Socket on open: " + e)
       setupGeneralNotificationsMenu()
       getFirstGeneralNotificationsPage()
+      getUnreadGeneralNotificationsCount()
     }
 
     notificationSocket.onerror = function (e) {
