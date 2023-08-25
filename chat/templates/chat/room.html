@@ -106,6 +106,14 @@
 		max-height: 500px;
 		overflow-y: scroll;
 	}
+
+	.no-friend{
+		height: 80vh;
+		display: flex;
+		align-items: center;
+		align-content: center;
+		margin: auto;
+	}
 </style>
 
 
@@ -119,6 +127,7 @@
 				</div>
 				<div class="card-body p-1">	
 					<div class="d-flex flex-column friends-list-container ">
+						{% if m_and_f %}
 						{% for x in m_and_f %}
 						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
 							{% comment %} <img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}" src="{% static 'codingwithmitch/dummy_image.png' %}" > {% endcomment %}
@@ -128,6 +137,9 @@
 							</div>
 						</div>
 						{% endfor %}
+						{% else %}
+							<span class="username-span">You don't Have any friends </span>
+						{% endif %}
 					</div>
 				</div>
 			</div>
@@ -135,6 +147,7 @@
 
 		<div class="col-sm-9 m-0 p-2">
 			<div class="card" id="id_chatroom_card">
+				{% if m_and_f %}
 				<div class="d-flex flex-row align-items-center card-header" id="id_room_title">
 				<a class="d-flex flex-row" target="_blank" id="id_user_info_container">
 					{% comment %} <img class="profile-image rounded-circle img-fluid" id="id_other_user_profile_image" src="{% static 'codingwithmitch/dummy_image.png' %}"> {% endcomment %}
@@ -166,6 +179,11 @@
 						</div>
 					</div>
 				</div>
+				{% else %}
+					<div class="no-friend">
+						<span>You don't Have any messages buddy</span>
+					</div>
+				{% endif %}
 			</div>
 		</div>
 

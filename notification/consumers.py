@@ -55,7 +55,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 					await self.general_pagination_exhausted()
 				else:
 					payload = json.loads(payload)
-					print(payload)
+					# print(payload)
 					await self.send_general_notifications_payload(payload['notifications'], payload['new_page_number'])
 			elif command == "get_new_general_notifications":
 				payload = await get_new_general_notifications(self.scope["user"], content.get("newest_timestamp", None))
