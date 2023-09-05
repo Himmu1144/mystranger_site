@@ -52,3 +52,6 @@ ________________________________________________________________________________
 25/8/2023
 
 there is no need for private chat notification but we do have to set up a whatsapp like message updating feature on our message section but that is not a priority now therefore now i just have to build the front-end for now.
+
+_________________________________________________________________________________________________________________
+4/9/203 - working on front-end of the website
