@@ -1,53 +1,99 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block body %}
 
 <style>
 
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins&family=Roboto&family=Rubik&display=swap');
 
 
+    body{
+        background-color: #F9F9F9;
+        font-family: 'Rubik', sans-serif;
+        height: 100vh;
+        border: 2px solid blue;
+    }
+
+.home-container{
+    /* border: 2px solid red; */
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.box-left h3{
+    font-size: 32px;
+}
+.box-left p{
+    font-size: 20px;
+}
+
+.box-right img {
+    width: 391px;
+    height: 284px;
+}
+
+.center-box{
+    /* border: 2px solid blue; */
+    width: 62vw;
+    height: 76vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.box-left {
+    margin-bottom: 1em;
+}
+
+.box-right{
+    /* border: 2px solid rgb(0, 0, 0); */
+    margin-bottom: 3em;
+}
+
+.sub-head{
+    width: 400px;
+    margin-bottom: 2em;
+}
+
+.st{
+    margin-top: 2.5em;
+}
+
+.home-btn1 {
+    width: 85px;
+}
+
+.home-btn1:hover {
+    background-color:  #F9F9F9;
+    color: #343A40;
+}
+
+.home-btn2 {
+    width: 85px;
+    margin-left: 4px;
+}
+
+.bottom-box{
+    /* border: 2px solid red; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 14px;
+    height: 12vh;
+}
+
+.bottom-box img {
+    text-align: center;
+    width: 2.5rem;
+}
     
 </style>
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-        </li>
-      </ul>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
-    </div>
-  </div>
-</nav>
 
-<div class='home_container'>
+{% comment %} <div class='home_container'>
     <div class='d-flex justify-content-center flex-column'>
         
             <div class="p-5 mb-4 bg-light rounded-3">
@@ -57,10 +103,40 @@
                         Remember we all meet thousands of strangers in our life but there are only few of them which we can call mine.
                     </p>
                     
-                    <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-primary btn-lg">New Chat</button></a>
+                    <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-primary btn-lg">New Chat</button>
             </div>
         </div>
     </div>
+</div> {% endcomment %}
+
+<div class="home-container">
+
+    <div class="center-box">
+        <div class="box-left">
+        <h3>From Strangers to Friends</h3>
+        <p class="sub-head">Connect with random nearby college
+            Students anonymously</p>
+        
+        <p class="st">Start Chatting :</p>
+        <div class="head-buttons">
+            <button type="button" class="btn btn-dark home-btn1">Text</button>
+            <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-outline-dark home-btn2 ">Video</button></a>
+        </div>
+    </div>
+
+    <div class="box-right">
+        <img src="{% static 'images/2.2_tr.png' %}" alt="" srcset="">
+    </div>
+    </div>
+
+    <div class="bottom-box">
+
+        <p>scroll down for more</p>
+        <img src="{% static 'images/mouse.svg' %}" alt="" srcset="">
+    </div>
+
+    
+
 </div>
 
 {% endblock body %}
