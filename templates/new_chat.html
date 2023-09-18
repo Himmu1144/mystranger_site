@@ -3,6 +3,9 @@
 {% block body %}
 
 <style type="text/css">
+    body{
+        height: 100vh;
+    }
     .chat-log {
         height: 480px;
         overflow-x: hidden;
@@ -98,9 +101,13 @@
         display: flex;
         justify-content: center;
     }
+
+    .main-container{
+        padding: 0.5rem;
+    }
 </style>
 
-<div class="container">
+<div class="container col-md-12 main-container">
 
     <!-- Here we have just defined a template of message sending -->
 

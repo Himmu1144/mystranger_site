@@ -49,15 +49,28 @@
     .decline-friend-request {
         color: red;
     }
+
+    .c-main {
+        width: 35vw;
+        margin: auto;
+        margin-top: 5px;
+        border: 1px solid #707070;
+    }
+
+    .cont1 {
+        border-bottom: 2px solid #707070;
+        display: flex;
+    }
+
 </style>
 
 <div class="container">
-    <div class="card p-2">
+    <div class="card p-2 c-main">
 
         {% if friend_requests %}
         <div class="d-flex flex-row flex-wrap">
             {% for request in friend_requests %}
-            <div class="card flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
+            <div class="cont1 flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
                 {% comment %} <a class="profile-link" href="{% url 'account:view' user_id=request.sender.id %}">
                     <div class="card-image m-2">
                         <img class="img-fluid profile-image" src="{{request.sender.profile_image.url}}" alt="">
@@ -65,7 +78,7 @@
                 </a> {% endcomment %}
                 <a class="profile-link" href="{% url 'account:view' user_id=request.sender.id %}">
                     <div class="card-center px-2">
-                        <h4 class="card-title">{{request.sender.name}}</h4>
+                        <h4 class="">{{request.sender.name}}</h4>
                     </div>
                 </a>
                 <div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">

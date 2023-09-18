@@ -4,6 +4,15 @@
 {% block body %}
 
 <style type="text/css">
+
+	body{
+		height: 100vh;
+        border: 2px solid red;
+		display: flex;
+		flex-direction: column;
+        
+	}
+
 	.image-container{
 		max-width: 250px;
 		height: auto;
@@ -16,11 +25,13 @@
 		cursor: pointer;
 	}
 	.friends-icon{
-		color: #4287f5;
+		/* color: #4287f5; */
+		color: #009cda;
 		font-size: 40px;
 	}
 	.person-add-icon{
-		color: #4287f5;
+		/* color: #4287f5; */
+		color: #009cda;
 		font-size: 40px;
 	}
 	.friend-text{
@@ -41,8 +52,13 @@
 		content: none; 
 	}
 	.card{
-		border-radius: 12px;
+		border-radius: 8px;
 	}
+
+	.card-body{
+		min-width: 22vw;
+	}
+
 	.material-icons{
 		font-size: 30px;
 	}
@@ -64,9 +80,27 @@
 	.message-btn-text{
 		font-weight: 500;
 	}
+
+	.cont-main{
+		flex: 1;
+		margin-top: 2em;
+	}
+
+	/* .update-btn:hover{	
+    background-color:  #F9F9F9;
+    color: #343A40;
+} */
+
+	.blue-color{
+		color: #009cda;
+	}
+
+	/* input[type='radio']:checked:after {
+	background-color: black;
+	} */
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid cont-main">
 	<div class="d-flex flex-row justify-content-center flex-wrap align-items-start">
 
 		<div class="card profile-card m-2">
@@ -98,9 +132,9 @@
 
 		  		<!-- If Auth user is viewing their own profile -->
 		  		{% if is_self %}
-		  		<a  class="mt-4 btn btn-primary" href="{% url 'account:edit' user_id=request.user.id %}">Update</a>
-				<div class="d-flex flex-column mt-4">
-					<a class="m-auto" href="#">Change password</a>
+		  		<a  class="mt-4 update-btn btn btn-outline-dark" href="{% url 'account:edit' user_id=request.user.id %}">Update</a>
+				<div class="d-flex flex-column mt-3">
+					<a class="m-auto blue-color" href="#">Change password</a>
 				</div>
 		  		{% endif %}
 		  	</div>
@@ -112,7 +146,7 @@
 
 			
 
-			<div class="card m-2 px-4 pb-4">
+			<div class="card m-2 px-4 pb-4" style="border: none;">
 				<!-- Cancel Friend Request / Send Friend Request / Remove Friend -->
 				{% if is_friend == False and is_self == False %}
 
@@ -139,7 +173,7 @@
 						<!-- No requests have been sent -->
 						{% if request_sent == -1 %}
 						<div class="d-flex flex-column align-items-center pt-4">
-							<button class="btn btn-primary" id="id_send_friend_request_btn">
+							<button class="btn btn-primary" style="background-color: #009cda;" id="id_send_friend_request_btn">
 								Send Friend Request
 							</button>
 						</div>
@@ -187,8 +221,8 @@
 			{% endif %}
 
 			{% if is_friend %}
-				<div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" onclick="createOrReturnPrivateChat('{{id}}')">
-					<span class="material-icons m-auto">
+				<div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" style="background-color: #009cda;" onclick="createOrReturnPrivateChat('{{id}}')">
+					<span class="material-icons m-auto" >
 					message
 					</span>
 					<span class="message-btn-text m-auto pl-2">Message</span>

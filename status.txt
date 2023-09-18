@@ -58,3 +58,5 @@ ________________________________________________________________________________
 6/9/2023 - Home Page is Updated - currently everything is for pc not mobile
 
 9/9/2023 - working on the front-end of the video section
+12/9/2023 - video section
+19/9/23 - Mostly unresponsive front-end updated without any change in the back-end

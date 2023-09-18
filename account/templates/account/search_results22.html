@@ -1,7 +1,10 @@
+<!-- This is basically exactly the same as friend_list.html -->
+
 {% extends 'base.html' %}
 {% load static %}
 
 {% block body %}
+
 
 <style type="text/css">
 	.profile-image{
@@ -18,10 +21,10 @@
 		color: #000;
 		font-weight: 500;
 	}
-	{% comment %} .friends-text-container{
+	.friends-text-container{
 		border: 1px solid #cccccc;
 		border-radius: 12px;
-	} {% endcomment %}
+	}
 	.friends-btn:hover {
 		background-color: #bfbfbf;
 		border-color: #bfbfbf;
@@ -39,56 +42,38 @@
 		color: red;
 	}
 
-	.c-main {
-        width: 35vw;
-        margin: auto;
-        margin-top: 5px;
-        border: 1px solid #707070;
-    }
+	.c-main{
+		width: 50vw;
+		margin: auto;
+		margin-top: 5px;
+	}
 
-	.cont1 {
-        border-bottom: 2px solid #707070;
-        display: flex;
-    }
-
-	.name-title {
-        font-size: 20px;
-    }
-
-	.msg-btn{
-        font-size: 15px;
-        margin-left: 1em;
-    }
-	
 </style>
 
 <div class="container">
 	<div class="card p-2 c-main">
 
-		{% if friends %}
+		{% if accounts %}
 		<div class="d-flex flex-row flex-wrap">
-		{% for friend in friends %}
-		<div class="cont1 flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
-			{% comment %} <a class="profile-link" href="{% url 'account:view' user_id=friend.0.pk %}">
+		{% for account in accounts %}
+		<div class="card flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
+			{% comment %} <a class="profile-link" href="{% url 'account:view' user_id=account.0.id %}">
 				<div class="card-image m-2">
-					<img class="img-fluid profile-image" src="{{friend.0.profile_image.url}}" alt="">
+					<img class="img-fluid profile-image" src="{{account.0.profile_image.url}}" alt="">
 				</div>
 			</a> {% endcomment %}
-			
-			<div class="card-center px-2 d-flex">
-				<a class="profile-link" href="{% url 'account:view' user_id=friend.0.pk %}">
-					<h4 class="name-title">{{friend.0.name|truncatechars:50}}</h4>
-				</a>
-				{% if friend.1 %}
-				{% comment %} <a href="#" onclick="createOrReturnPrivateChat('{{friend.0.id}}')">Send a Message</a> {% endcomment %}
-				<a href="#" onclick="createOrReturnPrivateChat('{{friend.0.id}}')"><button class="btn btn-sm btn-outline-dark msg-btn">Message</button></a>
-				{% endif %}
-				
-			</div>
-			
+			<a class="profile-link" href="{% url 'account:view' user_id=account.0.id %}">
+				<div class="card-center px-2">
+					<h4 class="card-title">{{account.0.name}}</h4>
+					{% if account.1 %}
+					<p class="card-text"><a href="#" onclick="createOrReturnPrivateChat('{{account.0.id}}')">Send a Message</a></p>
+					{% endif %}
+					
+				</div>
+			</a>
 			<div class="d-flex flex-row card-right flex-grow-1 justify-content-end mx-2">
-				{% if friend.1 %}
-					<div class="d-flex flex-row friends-text-container p-2">
+				{% if account.1 %}
+					<div class="d-flex flex-row friends-text-container p-3">
 						<p class="friends-text m-auto">
 							Friends 
 						</p>
@@ -97,7 +82,7 @@
 						</span>
 					</div>
 				{% else %}
-					{% if friend.0 !=  request.user %}
+					{% if account.0 !=  request.user %}
 						<div class="d-flex flex-row friends-text-container p-3">
 							<p class="friends-text m-auto">
 								Not Friends 
@@ -106,7 +91,7 @@
 						</div>
 					{% endif %}
 				{% endif %}
-				{% if friend.0 == request.user %}
+				{% if account.0 == request.user %}
 					<div class="d-flex flex-row friends-text-container p-3">
 						<p class="friends-text m-auto">
 							This is you 
@@ -126,13 +111,14 @@
 		
 		{% else %} <!-- If no friends -->
 		<div class="d-flex flex-row flex-grow-1 justify-content-center align-items-center p-4">
-			<p>No friends :(</p>
+			<p>No results</p>
 		</div>
 		{% endif %}
 		</div>
 	</div>
 	
 </div>
+
 
 {%  include 'chat/snippets/create_or_return_private_chat.html' %}
 

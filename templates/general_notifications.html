@@ -608,11 +608,11 @@
 	   Start the functions that will be executed constantly
    */
 	function startGeneralNotificationService() {
-		if ("{{request.user.is_authenticated}}" == "True") {
+		/*if ("{{request.user.is_authenticated}}" == "True") {
 			setInterval(refreshGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getNewGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
-		}
+		}*/
 	}
 
 	startGeneralNotificationService()

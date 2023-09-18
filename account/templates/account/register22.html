@@ -5,15 +5,6 @@
 
 
 <style type="text/css">
-
-    body{
-        height: 100vh;
-        /* border: 2px solid red; */
-		display: flex;
-		flex-direction: column;
-        /* align-items: center; */
-    }
-
   .card-signin {
     width: 100%;
     max-width: 400px;
@@ -55,102 +46,45 @@
     /* border: 2px solid purple; */
     width: 25vw;
   }
-
-  .pass2{
-    margin-top: 10px;
-  }
-  
-  .radius{
-    border-radius: 4px !important;
-  }
-
-  .gender{
-    margin-left: 4px;
-    font-size: 0.94rem;
-  }
-
-  .terms-cons{
-    font-size: 0.94rem;
-    margin-top: 10px;
-    align-items: center;
-    display: flex;
-
-  }
-
-  .form-control{
-    border: 1px solid #707070;
-  }
-
-  .card-signin{
-    border: 1px solid #707070;
-  }
-
-  .card-signin a{
-    color: #009cda ;
-  }
-
-.main-cont{
-    flex: 1;
-    margin-top: 5em;
-    /* border: 2px solid blue; */
-
-}
-
-.rectangle{
-    margin-top: 0px;
-}
-
-#map2{
-    display: none;
-}
-
-#map{
-    border: 1px solid #707070;
-}
-
-.errors{
-    /* border: 2px solid red; */
-    margin-left: 21em;
-}
-
 </style>
 
-<div class="container-fluid main-cont">
+<div class="container-fluid">
   <div class='rectangle'>
     <div class='box1'>
       <div class="row justify-content-center">
-        <div class="card card-signin" style="height: 314px; width: 371px;">
-          <div class="card-body" style="padding-top: 0px !important;">
+        <div class="card card-signin" style="height: 321px; width: 371px;">
+          <div class="card-body">
             <form class="form-signin" method="post" onsubmit="return validateForm()">{% csrf_token %}
               <div class="d-flex flex-column pb-3">
               </div>
-              <input type="email" name="email" id="inputEmail" class="radius form-control" placeholder="Student Email address" required
+              <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required
                 autofocus>
               <input type="text" name="lat" id="lat" placeholder="lat" hidden>
               <input type="text" name="lon" id="lon" placeholder="lon" hidden>
               <input type="checkbox" name="notrust" id="notrust" hidden>
               <input type="text" name="universityName" id="universityName" hidden>
 
-              <input type="password" name="password1" id="inputPassword1" class="radius form-control" placeholder="Password"
+              <input type="password" name="password1" id="inputPassword1" class="form-control" placeholder="Password"
                 required>
 
-              <input type="password" name="password2" id="inputPassword2" class="radius form-control pass2"
+              <input type="password" name="password2" id="inputPassword2" class="form-control"
                 placeholder="Confirm password" required>
-              <div class="pl-3" style="margin-top: 10px;">
-                <span class=" mb-1">Gender : </span>
 
-                <span class="gender">
-                    <input type="radio" name="gender" value="True" required> Male
-                    <input type="radio" name="gender" value="False" style="margin-left: 4px;"> Female
-                </span>
-            </div>
-                <div class="terms-cons">
-                <input type="checkbox" name="terms" id="terms-conditions" required><span class="ml-2">I Accept the <a href="#">Terms & Conditions</a></span>
-            </div>
+              {% for field in registration_form %}
+              <p>
+                {% for error in field.errors %}
+              <p style="color: red">{{ error }}</p>
+              {% endfor %}
+              </p>
+              {% endfor %}
+              {% if registration_form.non_field_errors %}
+              <div style="color: red">
+                <p>{{registration_form.non_field_errors}}</p>
+              </div>
 
-              
+              {% endif %}
 
-              <button class="btn btn-md btn-outline-dark btn-block mt-3" type="submit">Register</button>
+              <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
 
             </form>
           </div>
@@ -167,21 +101,6 @@
 
     </div>
   </div>
-  <div class="errors">
-  {% for field in registration_form %}
-              <p>
-                {% for error in field.errors %}
-              <p style="color: red">{{ error }}</p>
-              {% endfor %}
-              </p>
-              {% endfor %}
-              {% if registration_form.non_field_errors %}
-              <div style="color: red">
-                <p>{{registration_form.non_field_errors}}</p>
-              </div>
-
-              {% endif %}
-            </div>
 </div>
 
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
