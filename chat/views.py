@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
+from django.db.models import Q
 
 import json
 
@@ -48,10 +49,21 @@ def private_chat_room_view(request, *args, **kwargs):
 			friend = room.user2
 		else:
 			friend = room.user1
+
+		'''
+		Fetching all the unread messages send by the friend to me (in our room) 
+		'''
+		
+		unread_messages = RoomChatMessage.objects.filter(Q(room=room) & Q(user=friend) & Q(read = False))
+		unread_messages_count = unread_messages.count()
+
 		m_and_f.append({
-			'message': "", # blank msg for now (since we have no messages)
+			'unread_messages_count': unread_messages_count, 
 			'friend': friend
 		})
+
+
+
 	context['m_and_f'] = m_and_f
 	context['debug'] = DEBUG
 	context['debug_mode'] = settings.DEBUG

@@ -3,6 +3,8 @@ from channels.db import database_sync_to_async
 from django.core.serializers import serialize
 from chat.exceptions import ClientError
 from django.core.paginator import Paginator
+from django.db.models import Q
+from itertools import chain
 
 from django.utils import timezone
 import json
@@ -11,7 +13,7 @@ from chat.models import RoomChatMessage, PrivateChatRoom
 from friend.models import FriendList
 from account.utils import LazyAccountEncoder
 from chat.constants import *
-from chat.utils import calculate_timestamp , LazyRoomChatMessageEncoder
+from chat.utils import calculate_timestamp, LazyRoomChatMessageEncoder
 
 
 class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
@@ -55,7 +57,8 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     payload = json.loads(payload)
                     await self.send_messages_payload(payload['messages'], payload['new_page_number'])
                 else:
-                    raise ClientError(204,"Something went wrong retrieving the chatroom messages.")
+                    raise ClientError(
+                        204, "Something went wrong retrieving the chatroom messages.")
                 await self.display_progress_bar(False)
             elif command == "get_user_info":
                 await self.display_progress_bar(True)
@@ -68,6 +71,16 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     raise ClientError(
                         "Something went wrong retrieving the other users account details.")
                 await self.display_progress_bar(False)
+
+            
+
+            elif command == "mark_room_read":
+                print('marking the messages as red for room - ',
+                      content['room_id'])
+                await mark_room_read(self.scope["user"], content['room_id'])
+                await self.send_json({
+                    "marked": 'true',
+                })
         except ClientError as e:
             await self.display_progress_bar(False)
             await self.handle_client_error(e)
@@ -84,7 +97,6 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         except Exception as e:
             print("EXCEPTION: " + str(e))
             pass
-
 
     async def join_room(self, room_id):
         """
@@ -123,7 +135,6 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     "user_id": self.scope["user"].id,
                 }
             )
-                        
 
     async def leave_room(self, room_id):
         """
@@ -133,6 +144,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         print("ChatConsumer: leave_room")
 
         room = await get_room_or_error(room_id, self.scope["user"])
+        await mark_room_read(self.scope["user"], room_id)
 
         # Notify the group that someone left
         await self.channel_layer.group_send(
@@ -171,7 +183,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                                   "Room access denied")
         else:
             raise ClientError("ROOM_ACCESS_DENIED",
-                                  "Room access denied")
+                              "Room access denied")
 
         # Get the room and send to the group about it
         room = await get_room_or_error(room_id, self.scope["user"])
@@ -217,15 +229,15 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         print("ChatConsumer: chat_leave")
         if event["name"]:
             await self.send_json(
-            {
-                "msg_type": MSG_TYPE_LEAVE,
-                "room": event["room_id"],
-                "uniName": event["uniName"],
-                "name": event["name"],
-                "user_id": event["user_id"],
-                "message": event["name"] + " disconnected.",
-            },
-        )
+                {
+                    "msg_type": MSG_TYPE_LEAVE,
+                    "room": event["room_id"],
+                    "uniName": event["uniName"],
+                    "name": event["name"],
+                    "user_id": event["user_id"],
+                    "message": event["name"] + " disconnected.",
+                },
+            )
 
     async def chat_message(self, event):
         """
@@ -253,12 +265,12 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         """
         print("ChatConsumer: send_messages_payload. ")
         await self.send_json(
-			{
-				"messages_payload": "messages_payload",
-				"messages": messages,
-				"new_page_number": new_page_number,
-			},
-		)
+            {
+                "messages_payload": "messages_payload",
+                "messages": messages,
+                "new_page_number": new_page_number,
+            },
+        )
 
     async def send_user_info_payload(self, user_info):
         """
@@ -285,7 +297,6 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
-
     async def handle_client_error(self, e):
         """
         Called when a ClientError is raised.
@@ -297,6 +308,8 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             errorData['message'] = e.message
             await self.send_json(errorData)
         return
+
+    
 
 
 @database_sync_to_async
@@ -349,6 +362,7 @@ def get_user_info(room, user):
 def create_room_chat_message(room, user, message):
     return RoomChatMessage.objects.create(user=user, room=room, content=message)
 
+
 @database_sync_to_async
 def get_room_chat_messages(room, page_number):
     try:
@@ -357,7 +371,7 @@ def get_room_chat_messages(room, page_number):
 
         payload = {}
         messages_data = None
-        new_page_number = int(page_number)  
+        new_page_number = int(page_number)
         if new_page_number <= p.num_pages:
             new_page_number = new_page_number + 1
             s = LazyRoomChatMessageEncoder()
@@ -369,3 +383,27 @@ def get_room_chat_messages(room, page_number):
     except Exception as e:
         print("EXCEPTION: " + str(e))
         return None
+
+
+
+
+@database_sync_to_async
+def mark_room_read(user, room_id):
+    """
+    marks all the message send by friend to me as "read"
+    """
+    if user.is_authenticated:
+
+        room = PrivateChatRoom.objects.filter(id=room_id).first()
+        if room.user1 == user:
+            friend = room.user2
+        else:
+            friend = room.user1
+        unread_messages = RoomChatMessage.objects.filter(
+            Q(room=room) & Q(user=friend) & Q(read=False))
+        if unread_messages:
+            for message in unread_messages:
+                message.read = True
+                message.save()
+
+    return

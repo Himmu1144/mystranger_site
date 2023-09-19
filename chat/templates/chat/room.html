@@ -195,6 +195,29 @@
 		color: black;
 	}
     
+	.friends{
+		justify-content: space-between;
+		width: 100%;
+		position: relative;
+	}
+
+	.notify-badge {
+      position: absolute;
+      background: red;
+	  /* border: 2px solid red; */
+      height: 1.2rem;
+      width: 1.2rem;
+      line-height: 1.2rem;
+      top: 1rem;
+      right: 2rem;
+      text-align: center;
+      font-size: 1rem;
+      border-radius: 50%;
+      color: white;
+      font-weight: 630;
+      margin-top: -15px;
+      margin-right: -25px;
+    }
 
 
 </style>
@@ -212,9 +235,14 @@
 						{% for x in m_and_f %}
 						<div class="d-flex flex-row p-2 friend-container flex-grow-1" onclick="onSelectFriend('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
 							{% comment %} <img class="profile-image rounded-circle img-fluid" id="id_friend_img_{{x.friend.id}}" src="{% static 'codingwithmitch/dummy_image.png' %}" > {% endcomment %}
-							<div class="d-flex flex-column">
+							<div class="d-flex flex-row friends">
 								<span class="username-span">{{x.friend.name}}</span>
-								<span class="friend-message-span">{{x.message|truncatechars:20}}</span>
+								{% if x.unread_messages_count != 0 %}
+								<span class="friend-message-span notify-badge" id="id_friend_count_{{x.friend.id}}">{{x.unread_messages_count}}</span>
+								{% else %}
+								<span class="friend-message-span notify-badge d-none" id="id_friend_count_{{x.friend.id}}">{{x.unread_messages_count}}</span>
+
+								{% endif %}
 							</div>
 						</div>
 						{% endfor %}
@@ -230,7 +258,7 @@
                 {% if m_and_f %}
             <!-- Right column content goes here -->
                 <div class="right-header" id="id_room_title">
-                    <a class="d-flex flex-row" target="_blank" id="id_user_info_container">
+                    <a class="d-flex flex-row" id="id_user_info_container">
                         <h4 class="ml-2" id="id_other_username"></h4>
                     </a>
                 </div>
@@ -342,6 +370,7 @@
 			setPageNumber("1")
 			disableChatLogScrollListener()
 		}
+		
 	}
 
 	function setupWebSocket(room_id){
@@ -387,6 +416,8 @@
 				getUserInfo()
 				getRoomChatMessages()
 				enableChatLogScrollListener()
+				markRoomCount()
+				
 			}
 
 			// user info coming in from backend
@@ -408,6 +439,10 @@
 			// new payload of messages coming in from backend
 			if(data.messages_payload){
 				handleMessagesPayload(data.messages, data.new_page_number)
+			}
+
+			if(data.marked){
+				setMsgNotificationsAsRead()
 			}
 
 		};
@@ -477,6 +512,26 @@
 			"command": "get_user_info",
 			"room_id": roomId,
 		}));
+	}
+	function markRoomCount(){
+		chatSocket.send(JSON.stringify({
+			"command": "mark_room_read",
+			"room_id": roomId,
+		}));
+	}
+
+	// function mark_room_read(){
+	// 	chatSocket.send(JSON.stringify({
+	// 		"command": "mark_room_read",
+	// 		"roomId": roomId,
+	// 	}));
+	// }
+
+	function setMsgNotificationsAsRead(){
+		var countElement = document.getElementById("id_msg_notifications_count")
+		countElement.style.background = "transparent"
+		countElement.style.display = "none"
+		getUnreadMessageNotificationsCount()
 	}
 
 	function handleUserInfoPayload(user_info){
@@ -708,6 +763,10 @@
 	function highlightFriend(userId){
 		// select new friend
 		document.getElementById("id_friend_container_" + userId).style.background = "#f2f2f2"
+		document.getElementById("id_friend_count_" + userId).style.display = "none"
+		var countElement = document.getElementById("id_msg_notifications_count")
+		countElement.style.background = "transparent"
+		countElement.style.display = "none"
 	}
 
 	function clearHighlightedFriend(){

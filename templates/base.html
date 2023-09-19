@@ -336,6 +336,15 @@
       color: #222222;
       font-size: 18px;
     }
+
+    .msg-notif{
+      display:none;
+    }
+
+    .main-msg-notif{
+      flex-direction: column;
+    }
+    
   </style>
 
 </head>
@@ -347,7 +356,7 @@
       <a class="navbar-brand" href="/">MyStranger</a>
       <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
         <!-- <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search using email..."> -->
-        <ul class="search-ul">
+        <ul class="search-ul mr-2">
           <li class="search-icon">
             <input type="search" name="q" id="id_q_large" placeholder="Search using email...">
             <label class="icon" onclick="executeQuery();">
@@ -360,12 +369,18 @@
 
     {% if request.user.is_authenticated %}
     <div class='d-flex'>
-      <a class="text-light p-2" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a>
+      <div class="btn-group dropleft">
+        <div class="d-flex notifications-icon-container rounded-circle align-items-center main-msg-notif" onclick="setMsgNotificationsAsRead()">
+          <span id="id_msg_notifications_count" class="notify-badge msg-notif" style="
+            right: 10px !important;"></span>
+          <a class="text-light p-2" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a>
+        </div>
+      </div>
 
       <div class="btn-group dropleft">
         <div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3"
           id="id_notification_dropdown_toggle" data-bs-toggle="dropdown" onclick="setGeneralNotificationsAsRead()">
-          <span id="id_general_notifications_count" class="notify-badge"></span>
+          <span id="id_general_notifications_count" class="notify-badge msg-notif"></span>
           <span style='color:white;'
             class="d-flex material-icons notif-icon notifications-material-icon m-auto align-items-center">notifications</span>
           <div class="dropdown-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle"
@@ -612,6 +627,11 @@
         setUnreadGeneralNotificationsCount(data['count'])
       }
 
+      if (data.general_msg_type == 8) {
+        console.log('Got the unread message notifications count')
+        setUnreadMessageNotificationsCount(data['count'])
+      }
+
 
 
       if (data.general_msg_type == 5) {
@@ -629,6 +649,7 @@
       setupGeneralNotificationsMenu()
       getFirstGeneralNotificationsPage()
       getUnreadGeneralNotificationsCount()
+      getUnreadMessageNotificationsCount()
     }
 
     notificationSocket.onerror = function (e) {

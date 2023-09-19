@@ -587,9 +587,23 @@
 	function setUnreadGeneralNotificationsCount(count){
 		var countElement = document.getElementById("id_general_notifications_count")
 		if(count > 0){
+			countElement.innerHTML = count
 			countElement.style.background = "red"
 			countElement.style.display = "block"
+		}
+		else{
+			countElement.style.background = "transparent"
+			countElement.style.display = "none"
+		}
+	}
+
+	function setUnreadMessageNotificationsCount(count){
+		var countElement = document.getElementById("id_msg_notifications_count")
+		
+		if(count > 0){
 			countElement.innerHTML = count
+			countElement.style.background = "red"
+			countElement.style.display = "block"
 		}
 		else{
 			countElement.style.background = "transparent"
@@ -612,6 +626,7 @@
 			setInterval(refreshGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getNewGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
+			
 		}*/
 	}
 
@@ -629,6 +644,14 @@
 			}));
 		}
 	}
+	function getUnreadMessageNotificationsCount(){
+		console.log('the fucking command for msg count is send')
+		if("{{request.user.is_authenticated}}"){
+			notificationSocket.send(JSON.stringify({
+				"command": "get_unread_msg_notifications_count",
+			}));
+		}
+	}
 
 	/*
 		Sets all the notifications currently visible as "read"
@@ -641,6 +664,12 @@
 			}));
 			getUnreadGeneralNotificationsCount()
 		}
+	}
+	function setMsgNotificationsAsRead(){
+		var countElement = document.getElementById("id_msg_notifications_count")
+		countElement.style.background = "transparent"
+		countElement.style.display = "none"
+		getUnreadMessageNotificationsCount()
 	}
 
 	
