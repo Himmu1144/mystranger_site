@@ -45,6 +45,7 @@ class LazyRoomChatMessageEncoder(Serializer):
         dump_object.update({'user_id': str(obj.user.id)})
         dump_object.update({'name': str(obj.user.name)})
         dump_object.update({'message': str(obj.content)})
+        dump_object.update({'read': str(obj.read)})
         dump_object.update({'uniName': str(obj.user.university_name)})
         dump_object.update({'natural_timestamp': calculate_timestamp(obj.timestamp)})
         return dump_object

@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<style type="text/css">
+    body{
+        height: 100vh;
+    }
+    .chat-log {
+        height: 480px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 10px;
+        background-color: #fff;
+        font-size: 0.9em;
+        flex-direction: column-reverse;
+    }
+
+    .profile-image {
+        width: 33px;
+        height: 33px;
+        margin-top: 0px;
+        margin-bottom: auto;
+    }
+
+    .profile-image:hover {
+        cursor: pointer;
+    }
+
+    .username-span {
+        font-weight: 600;
+        margin-top: 0px;
+        margin-bottom: auto;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .username-span:hover {
+        cursor: pointer;
+    }
+
+    .msg-p {
+        font-weight: 450;
+        margin-top: 5px;
+        margin-bottom: auto;
+        margin-left: 5px;
+        margin-right: 5px;
+        white-space: normal;
+        -ms-word-break: break-all;
+        word-break: break-all;
+    }
+
+    .message-container {
+        margin-top: 10px;
+        justify-content: start;
+    }
+
+    .timestamp-span {
+        font-weight: 400;
+        font-size: 0.8em;
+        color: var(--secondary-text-color);
+    }
+
+    .timestamp-span:hover {
+        cursor: pointer;
+    }
+
+    #id_chatroom_loading_spinner {
+        position: absolute;
+    }
+
+    .connected-users {
+        color: red;
+    }
+
+    .connected-users-icon {
+        color: red;
+    }
+
+    .connected-users-icon:hover {
+        cursor: default;
+    }
+
+    #bar {
+        color: black;
+    }
+
+    #skip {
+        padding: 0em 0.5em;
+    }
+
+    .skip-button {
+        margin-right: 0.2em;
+    }
+
+    .send-button {
+        margin-left: 0.2em;
+    }
+
+    .new_chat_container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .main-container{
+        padding: 0.5rem;
+    }
+</style>
+
+<div class="container col-md-12 main-container">
+
+    <!-- Here we have just defined a template of message sending -->
+
+    <div class="box d-flex">
+
+        <div class="mt-2 video col-4">
+            <div class="col-sm video">
+                <video height="300"  width="421" id="remote"></video>
+            </div>
+            <div class="col-sm video">
+                <video height="300" width="421" id="ours"></video>
+            </div>
+        </div>
+
+    <div class="card mt-2 col-8">
+        <div class="card-header">
+            <div class="d-flex flex-row justify-content-between">
+                <h3 class="">MyStranger</h3>
+                <div class="d-flex flex-row align-items-center">
+                    <span class="material-icons m-auto pr-1 connected-users-icon">person_outline</span>
+                    <span class="m-auto connected-users" id="id_connected_users"></span>
+                </div>
+
+            </div>
+        </div>
+        <div class="card-body p-1">
+            <div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+                <div class="text-primary" id="id_chatroom_loading_spinner" role="status" style="display: block; ">
+                    <span id='bar'>looking for someone you can chat with....</span>
+                </div>
+            </div>
+            <div class="d-flex flex-column" id="id_chat_log_container">
+                <div class="d-flex chat-log" id="id_chat_log">
+
+                </div>
+                <div class="d-flex chat-message-input-container">
+                    <button class="btn btn-primary chat-message-submit-button skip-button" id="skip_button">
+                        <span id="skip">Skip</span>
+                    </button>
+
+                    <a href="{% url 'new-chat' %}"><button class="btn btn-primary btn-lg chat-message-submit-button skip-button d-none" id="new_button">
+                        <span id="new">New</span>
+                    </button></a>
+
+                    <textarea disabled class="flex-grow-1 chat-message-input"
+                        id="id_chat_message_input"></textarea>
+                    <button disabled class="btn btn-primary chat-message-submit-button send-button"
+                        id="send_button">
+                        <span id="id_chat_message_submit" class="material-icons">send
+                        </span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{% include 'new_chat_js.html' %}
+
+{% endblock body %}

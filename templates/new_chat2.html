@@ -34,43 +34,62 @@
         height: 100%;
         /* border: 2px solid green; */
         margin: 0px;
-        width: 100%;
+        width: 99%;
+        align-items: center;
+        margin: auto;
+        /* justify-content: center; */
     }
 
     .left-column {
         display: flex;
         flex-direction: column;
         padding: 0px;
-        padding-left: 5px !important;
-        width: 28vw;
+        /* padding-left: 5px !important; */
+        width: auto;
+        height: 98%;
+        justify-content: space-between;
+        
     }
 
     .right-column {
-        height: 97%;
-        width: 69vw;
-        margin: auto;
+        height: 98%;
+        width: auto;
+        flex: 1;
         position: relative;
         border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        margin-left: 4px;
     }
 
 
     .upper-left {
         border: 2px solid #707070;
-        height: 46%;
-        margin-top: 10px;
-        width: 100%;
+        height: 49%;
+        /* margin-top: 10px; */
+        width: auto;
     }
 
     .lower-left {
-        /* border: 2px solid black; */
-        height: 46%;
-        width: 100%;
+        border: 2px solid black;
+        height: 49%;
+        width: auto;
         margin-top: 18px;
     }
 
-    video,
-    .video {
+    #remote {
         border-radius: 8px;
+        height: 100px;
+        width: 100%;
+        {% comment %} object-fit: cover; {% endcomment %}
+
+    }
+
+    #ours {
+        border-radius: 8px;
+        height: 100%;
+        width: 100%;
+
     }
 
     .right-header {
@@ -85,71 +104,83 @@
     .right-header img {
         margin-right: 10px;
     }
-   
-    .img1{
+
+    .img1 {
         margin-right: 1em;
     }
-    
-    .bottom-header{
-    margin: auto;
-    width: 70%;
-    display: flex;
-    position: absolute;
-    bottom: 0.5em;
-    left: 15%;
-    /* border: 2px solid black; */
 
+    .bottom-header {
+        margin: auto;
+        width: 70%;
+        display: flex;
+        {% comment %} position: absolute; {% endcomment %}
+        {% comment %} bottom: 0.5em; {% endcomment %}
+        {% comment %} left: 15%; {% endcomment %}
+        /* border: 2px solid black; */
+        justify-content: center;
+        align-items: center;
 }
+
     
-    .skip-btn{
+
+    .skip-btn {
         width: 72px;
         border-radius: 8px;
         height: 53px;
     }
 
-    .video-textarea{
-    border: 1px solid #707070;
-    border-radius: 8px;
-    margin-left: 5px;
-    padding-left: 10px;
-    padding-right: 40px;
+    .video-textarea {
+        border: 1px solid #707070;
+        border-radius: 8px;
+        margin-left: 5px;
+        padding-left: 10px;
+        padding-right: 40px;
+        width: 100%;
+        position: relative;
     }
 
-    .txtarea-cont{
-    display: contents;
-    position: absolute;
+    .txtarea-cont {
+        position: relative;
+        width: 75%;
+        display: flex;
+        align-items: center;
+        height: 53px;
     }
 
-    .send-btn{
-    position: absolute;
-    right: 13px;
-    top: 15px;
+    .send-btn {
+        position: absolute;
+        right: 10px;
+        top: 13px;
     }
 
-    .send-btn-cont{
-    border: none;
-    color: black;
-    background-color: white;
-    padding: 0px;
+    .send-btn-cont {
+        border: none;
+        color: black;
+        background-color: white;
+        padding: 0px;
     }
 
-    .status-txt{
-    color: #343a40;
-    text-align: center;
+    .status-txt {
+        color: #343a40;
+        text-align: center;
     }
 
-    .chat-log{
-        height: 450px;
+    .chat-log {
+        {% comment %} height: 450px; {% endcomment %}
+        max-height:69vh;
         overflow-x: hidden;
         overflow-y: auto;
         padding: 10px;
         background-color: #fff;
         font-size: 0.9em;
         flex-direction: column-reverse;
+        /* border:2px solid green; */
+        flex-grow: 1;
+        {% comment %} overflow: auto; {% endcomment %}
     }
 
     .msg-p {
-        font-weight: 450;
+        font-weight: 400;
         margin-top: 5px;
         margin-bottom: auto;
         margin-left: 5px;
@@ -164,6 +195,70 @@
         justify-content: start;
     }
 
+    .msg-style{
+        padding-right: 4px;
+        /* padding: 3px; */
+        padding-left: 4px;
+        /* color: wheat; */
+        /* color: white; */
+        min-height: 43px;
+        min-width: 90px;
+        max-width: 70%;
+        /* background: #343a40; */
+        /* background: #f9f8f8; */
+        background: #f0f2f2;
+        /* background: #ebf0f0; */
+
+        position: relative;
+        /* border: 1px solid black; */
+        border-radius: 8px;
+    }
+    .msg-style2{
+        padding-right: 4px;
+        /* padding: 3px; */
+        padding-left: 4px;
+        /* color: wheat; */
+        /* color: white; */
+        min-height: 43px;
+        min-width: 90px;
+        max-width: 70%;
+        /* background: #343a40; */
+        /* background: #daf5ff;  */
+        /* background: #fafafa;  The best up until now */
+        /* background: #f9f8f8; */
+
+        background: #f0f2f2;
+        /* background: #ebf0f0; */
+
+        position: relative;
+        /* border: 1px solid black; */
+        border-radius: 8px;
+    }
+
+    .msg-style::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        right: -8px;
+        height: 9px;
+        width: 15px;
+        /* background-color: red; */
+        background: linear-gradient(135deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+        /* background: linear-gradient(135deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+    }
+
+    .msg-style2::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -8px;
+        height: 9px;
+        width: 15px;
+        /* background-color: red; */
+        background: linear-gradient(226deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+        /* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+    }
+
     .username-span {
         font-weight: 600;
         margin-top: 0px;
@@ -172,69 +267,383 @@
         margin-right: 5px;
     }
 
-    
+    .typo{
+        margin-left: 1em;
+		color: green;
+		font-size: 16px;
+        
+    }
 
+    /* .bottom-header{
+        display: flex;
+        flex-direction: column;
+    }
+
+    .bottom2{
+        display: flex;
+        flex-direction: row;
+    } */
+
+    #id_chat_log_container{
+        /* border:2px solid red; */
+        flex:1;
+    }
+
+    #send_req_btn{
+        border: none;
+        background: none;
+    }
+
+    #cancel_req_btn{
+        border: none;
+        margin-right: 1.79em;
+        /* display: block; */
+        background: none;
+        font-size: 20px;
+    }
+
+    .box1{
+        display: flex;
+        align-items: center;
+    }
 
 </style>
 
 <div class="main-container">
+    <!-- <div id="confirmationDialog" style="display: none;">
+        <p>Are you sure you want to leave this page?</p>
+        <button id="returnButton">Return</button>
+        <button id="leaveButton">Leave</button>
+    </div> -->
+
+
     <div class="row cont-row">
-        <div class="left-column video">
-            <div class="upper-left video">
-                <video width="100%" id="remote"></video>
+        <div class="left-column">
+            <div class="upper-left">
+                <video id="remote"></video>
             </div>
-            <div class="lower-left video">
-                <video width="100%" id="ours"></video>
+            <div class="lower-left">
+                <video  id="ours"></video>
             </div>
         </div>
         <div class="right-column">
             <!-- Right column content goes here -->
             <div class="right-header">
                 <div class="box1">
-                    <p><strong>Stranger</strong></p>
+                    <p><strong id="strangerName">Stranger</strong></p>
+                    <span id="typing" class="typo d-none">typing...</span>
                 </div>
-                <div class="box2">
-                    <span class="img1"><img src="{% static 'images/add.svg' %}" width="32px" alt="" srcset=""></span>
+                <div class="d-flex box2">
+                    <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
+                                width="32px" alt="" srcset=""></span></button>
+                    <button class="d-none" id="cancel_req_btn"><i class="fa-solid fa-xmark "
+                            style="color:red;"></i></button>
+                    <!-- <button id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}" width="32px"
+                                alt="" srcset=""></span></button> -->
                     <img src="{% static 'images/report.svg' %}" width="22px" alt="" srcset="">
                 </div>
             </div>
             <div class="status-txt" id="id_chatroom_loading_spinner" role="status" style="display: block; ">
                 <span id='bar'>looking for someone you can chat with....</span>
+                
             </div>
             <div class="d-flex flex-column" id="id_chat_log_container">
                 <div class="d-flex chat-log" id="id_chat_log">
 
                 </div>
+                {% comment %} <div><span id="typing" class="typo d-none">Stranger is typing...</span></div> {% endcomment %}
                 <div class="bottom-header">
-                    <button class="btn btn-dark skip-btn" id="skip_button">
-                        <span id="skip">Skip</span>
-                    </button>
-                    <a href="{% url 'new-chat' %}"><button class="btn btn-dark skip-btn d-none" id="new_button">
-                        <span id="new">New</span>
-                    </button></a>
-                    <!-- <textarea disabled class="flex-grow-1 chat-message-input"
-                            id="id_chat_message_input"></textarea> -->
-                    <div class="txtarea-cont">
-
-                    <textarea disabled class="flex-grow-1 video-textarea"
-                            id="id_chat_message_input"></textarea>
-                    <button disabled class="chat-message-submit-button send-button send-btn-cont"
-                            id="send_button">
-                    <span id="id_chat_message_submit" class="material-icons send-btn">send
-                    </span>
-                </button>
+                    <!-- <div class="bottom2"> -->
+                        <button class="btn btn-dark skip-btn" id="skip_button">
+                            <span id="skip">Skip</span>
+                        </button>
+                        <a href="{% url 'new-chat' %}"><button class="btn btn-dark skip-btn d-none" id="new_button">
+                                <span id="new">New</span>
+                            </button></a>
+                        <!-- <textarea disabled class="flex-grow-1 chat-message-input"
+                                id="id_chat_message_input"></textarea> -->
+                        
+                        <div class="txtarea-cont">
+                            <textarea disabled class="flex-grow-1 video-textarea" id="id_chat_message_input"></textarea>
+                            <button disabled class="chat-message-submit-button send-button send-btn-cont" id="send_button">
+                                <span id="id_chat_message_submit" class="material-icons send-btn d-none">send
+                                </span>
+                            </button>
+                        </div>
+                <!-- </div> -->
                 </div>
-            </div>  
             </div>
         </div>
     </div>
 </div>
 
+<!-- 
+<script>
+    var userChoice = null;
 
+    document.getElementById("returnButton").addEventListener("click", function () {
+        userChoice = "return";
+        closeDialog();
+    });
 
+    document.getElementById("leaveButton").addEventListener("click", function () {
+        userChoice = "leave";
+        closeDialog();
+    });
 
+    function closeDialog() {
+        document.getElementById("confirmationDialog").style.display = "none";
+    }
 
+    window.onbeforeunload = function () {
+        if (userChoice === null) {
+            // If the user hasn't made a choice yet, display the custom dialog
+            document.getElementById("confirmationDialog").style.display = "block";
+            return "You have unsaved changes. Are you sure you want to leave this page?";
+        } else if (userChoice === "leave") {
+            // If the user chose to leave, allow the browser to proceed
+            return;
+        }
+    };
+
+</script> -->
 
 {% include 'new_chat_js.html' %}
+
+
+{% comment %}
+<script>
+
+    const our_video = document.getElementById("ours");
+    const remote_video = document.getElementById("remote");
+    let stream;
+    let rtcpeerconnection;
+    const constraints = {
+        'video': true,
+        'audio': false
+    }
+
+    // Contains the stun server URL we will be using.
+    let iceServers = {
+        iceServers: [
+            { urls: "stun:stun.services.mozilla.com" },
+            { urls: "stun:stun.l.google.com:19302" },
+        ],
+    };
+
+    navigator.mediaDevices.getUserMedia(constraints).then(s => {
+        stream = s;
+        our_video.srcObject = s;
+        our_video.onloadedmetadata = () => {
+            our_video.play()
+        }
+    })
+
+
+    console.log("Setting up the WebSocket - ")
+
+    // Correctly decide between ws:// and wss://
+    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+    var ws_path = ws_scheme + '://' + window.location.host + "/chat/"; // development
+
+    // console.log("Connecting to " + ws_path);
+    chatSocket = new WebSocket(ws_path);
+
+    // Handle incoming messages
+    chatSocket.onmessage = function (message) {
+
+        // Decode the JSON
+        console.log("Got websocket message.");
+        var data = JSON.parse(message.data);
+
+        if (data.my_id) {
+            // Settting up the self_id so that it can be used further on.
+            window.self_id = data.my_id
+            console.log('My_Id : ' + window.self_id)
+        }
+
+        if (data.status_user2) {
+            window.user = 'user2'
+            console.log(window.user)
+        }
+        if (data.status_user1) {
+            window.user = 'user1'
+            console.log(window.user)
+        }
+
+
+        if (data.grouped) {
+
+            console.log(data.response)
+            statusUpdate(data.response)
+            console.log('group_name : ' + data.grouped)
+            window.group_name = data.grouped
+
+            // chatSocket.send(JSON.stringify({
+            //     "command": 'grouped',
+            //     "group_name": data.grouped,
+            // }));
+
+
+            // here user1 is creating the offer
+
+            if (window.user == 'user1') {
+                // window.self_name = data.user1_self_name
+                // window.stranger = data.random_user_name
+                createOffer()
+                console.log('offer created')
+            }
+            else {
+                // window.self_name = data.random_user_name
+                // window.stranger = data.user1_self_name
+            }
+        }
+
+        if (data.group_leave) {
+            console.log("Got the data.group_leave msg....")
+            remote_video.srcObject = undefined;
+            remote_video.style.backgroundColor = 'rgba(64, 64, 64, 0.5)';
+
+            if (window.self_id == data.disconnector) {
+                response = 'You have disconnected.'
+            }
+            else {
+                response = 'Stranger have disconnected.'
+            }
+
+            console.log(data.group_leave)
+            statusUpdate(response)
+        }
+
+        if (data["command"] == "offer") {
+            console.log('offer recieved by ', window.user)
+            if (window.user == 'user2') {
+                console.log('user2 ----------')
+                createanswer(data["offer"]);
+                console.log('answer created')
+            }
+        } else if (data["command"] == "answer") {
+            if (window.user == 'user1') {
+                rtcpeerconnection.setRemoteDescription(data["answer"]);
+                console.log("answer set as remote");
+            }
+        } else if (data["command"] == "candidate") {
+            if (data["iscreated"] != window.user) {
+                const IceCandidate = new RTCIceCandidate(data["candidate"]);
+                rtcpeerconnection.addIceCandidate(IceCandidate);
+            }
+        }
+
+
+    }
+
+    // basic event listeners for our websocket
+    // ------------------------------------------------------------------------
+
+    chatSocket.addEventListener("open", function (e) {
+        console.log("ChatSocket OPEN")
+        // join chat room
+        if ("{{request.user.is_authenticated}}") {
+            chatSocket.send(JSON.stringify({
+                "command": "join",
+            }));
+        }
+
+    })
+
+
+    chatSocket.onclose = function (e) {
+        console.log('Chat socket closed.');
+
+    };
+
+    chatSocket.onOpen = function (e) {
+        console.log("ChatSocket onOpen", e)
+    }
+
+    chatSocket.onerror = function (e) {
+        console.log('ChatSocket error', e)
+    }
+
+    if (chatSocket.readyState == WebSocket.OPEN) {
+        console.log("ChatSocket OPENN")
+
+    } else if (chatSocket.readyState == WebSocket.CONNECTING) {
+        console.log("ChatSocket connecting..")
+    }
+
+
+    // status bar to inform the user about it's status 
+
+    function statusUpdate(message) {
+        var spinner = document.getElementById("bar")
+        spinner.innerHTML = message
+    }
+
+    // RTCPR Functions
+
+    function createOffer() {
+        rtcpeerconnection = new RTCPeerConnection(iceServers)
+        rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+        rtcpeerconnection.ontrack = OnTrackFunc;
+        stream.getTracks().forEach((track) => {
+            rtcpeerconnection.addTrack(track, stream);
+        });
+        rtcpeerconnection.createOffer().then((offer) => {
+            rtcpeerconnection.setLocalDescription(offer);
+            chatSocket.send(
+                JSON.stringify({
+                    command: "offer",
+                    offer: offer,
+                    group: window.group_name,
+                })
+            );
+        });
+
+    }
+
+    function OnIceCandidateFunc(e) {
+        if (e.candidate) {
+            chatSocket.send(
+                JSON.stringify({
+                    command: "candidate",
+                    candidate: e.candidate,
+                    iscreated: window.user,
+                    group: window.group_name,
+                })
+            );
+        }
+    }
+
+    function OnTrackFunc(e) {
+        remote_video.srcObject = e.streams[0];
+        remote_video.onloadedmetadata = () => {
+            remote_video.play();
+        };
+    }
+
+    function createanswer(offer) {
+        console.log("answer started");
+        rtcpeerconnection = new RTCPeerConnection(iceServers);
+        rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
+        rtcpeerconnection.ontrack = OnTrackFunc;
+        stream.getTracks().forEach((track) => {
+            rtcpeerconnection.addTrack(track, stream);
+        });
+        rtcpeerconnection.setRemoteDescription(offer);
+        rtcpeerconnection.createAnswer().then((answer) => {
+            rtcpeerconnection.setLocalDescription(answer);
+            chatSocket.send(
+                JSON.stringify({
+                    command: "answer",
+                    answer: answer,
+                    group: window.group_name,
+                })
+            );
+        });
+    }
+
+
+</script> {% endcomment %}
 
 {% endblock body %}

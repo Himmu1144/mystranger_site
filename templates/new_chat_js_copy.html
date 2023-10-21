@@ -1,5 +1,3 @@
-{% include 'friend/snippets/send_friend_request.html' %}
-{% include 'friend/snippets/cancel_friend_request.html' %}
 <script type="text/javascript">
 
     const our_video = document.getElementById("ours");
@@ -40,9 +38,6 @@
     // console.log("Connecting to " + ws_path);
     chatSocket = new WebSocket(ws_path);
 
-    let commandCount = 0;
-    let leaveCount = 0;
-
     // Handle incoming messages
     chatSocket.onmessage = function (message) {
 
@@ -51,7 +46,6 @@
         var data = JSON.parse(message.data);
         console.log(data)
 
-        
         if (data.my_id) {
             // Settting up the self_id so that it can be used further on.
             window.self_id = data.my_id
@@ -71,65 +65,36 @@
 
         if (data.grouped) {
 
-            commandCount++;
-
-            console.log('The value of grouped count is - ', commandCount)
-            if (commandCount === 1){
-
-                statusUpdate(data.response)
-                console.log(data.response)
-                console.log('group_name : ' + data.grouped)
-                window.group_name = data.grouped
+            statusUpdate(data.response)
+            console.log(data.response)
+            console.log('group_name : ' + data.grouped)
+            window.group_name = data.grouped
 
 
-                chatSocket.send(JSON.stringify({
-                    "command": 'grouped',
-                    "group_name": data.grouped,
-                }));
+            chatSocket.send(JSON.stringify({
+                "command": 'grouped',
+                "group_name": data.grouped,
+            }));
 
-                // Enabling the textarea and the send_btn
-                document.getElementById('id_chat_message_input').disabled = false;
-                document.getElementById('send_button').disabled = false;
-                document.getElementById('send_req_btn').disabled = false;
-                var send_icon = document.getElementById('id_chat_message_submit')
-                send_icon.classList.remove("d-none");
+            // Enabling the textarea and the send_btn
+            document.getElementById('id_chat_message_input').disabled = false;
+            document.getElementById('send_button').disabled = false;
 
 
-                // here user1 is creating the offer
+            // here user1 is creating the offer
 
-                if (window.user == 'user1') {
-                    window.self_name = data.user1_self_name
-                    window.stranger = data.random_user_name
-                    window.stranger_id = data.random_user_id
-                    createOffer()
-                    console.log('offer created')
-                }
-                else {
-                    window.self_name = data.random_user_name
-                    window.stranger = data.user1_self_name
-                    window.stranger_id = data.user1_self_id
-                }
-
-                document.getElementById('strangerName').innerHTML = window.stranger
-                console.log('The strangers id is - ', window.stranger_id)
-            } else {
-                console.log("This is the second time of grouped message so we will ignore it")
+            if (window.user == 'user1') {
+                window.self_name = data.user1_self_name
+                window.stranger = data.random_user_name
+                createOffer()
+                console.log('offer created')
+            }
+            else {
+                window.self_name = data.random_user_name
+                window.stranger = data.user1_self_name
             }
 
         }
-
-        if (data.isTyping) {
-            // Display "user is typing" message
-            if (data.id != window.self_id){
-            const typingIndicator = document.getElementById('typing');
-            typingIndicator.classList.remove("d-none");
-    
-            // Add a timeout to remove the message after a few seconds
-            setTimeout(() => {
-                typingIndicator.classList.add("d-none");
-            }, 3000); // Remove the message after 1 seconds (adjust as needed)
-        }
-        } 
 
         if (data["command"] == "offer") {
             console.log('offer recieved by ', window.user)
@@ -152,55 +117,46 @@
 
         if (data.leave) {
 
-            leaveCount++;
-            console.log('The value of leave count is - ', leaveCount)
-            if (leaveCount === 1){
-                remote_video.srcObject = undefined;
-                // remote_video.style.backgroundColor = 'rgba(64, 64, 64, 0.5)';
+            remote_video.srcObject = undefined;
+            remote_video.style.backgroundColor = 'rgba(64, 64, 64, 0.5)';
 
-                if (window.self_id == data.disconnector) {
-                    response = 'You have disconnected.'
-                }
-                else {
-                    response = window.stranger + ' have disconnected.'
-                }
-
-                // if(data.by_skip == 'skip'){
-                //     window.by_skip = true
-                //     statusUpdate(response)
-                // }
-                // else {
-                //     window.by_skip = false
-                // }
-
-                // if (window.by_skip && data.by_skip == 'normal'){
-                //     // we don't have to update the satatus
-                // }
-                // else {
-                //     statusUpdate(response)
-                // }
-
-                console.log(data.leave)
-                statusUpdate(response)
-
-
-
-                // again disabling the textarea and the send_btn
-                document.getElementById('id_chat_message_input').disabled = true;
-                document.getElementById('send_button').disabled = true;
-                document.getElementById('send_req_btn').disabled = true;
-
-                // hiding the skip button and showing new_chat button instead of that.
-                really_btn = document.getElementById('skip_button')
-                really_btn.style.display = 'none';
-                new_btn = document.getElementById('new_button')
-                new_btn.classList.remove("d-none");
-
-                send_icon = document.getElementById('id_chat_message_submit')
-                send_icon.classList.add("d-none");
-            } else{
-                console.log("This is the second time of leave message so we will ignore it")
+            if (window.self_id == data.disconnector) {
+                response = 'You have disconnected.'
             }
+            else {
+                response = window.stranger + ' have disconnected.'
+            }
+
+            // if(data.by_skip == 'skip'){
+            //     window.by_skip = true
+            //     statusUpdate(response)
+            // }
+            // else {
+            //     window.by_skip = false
+            // }
+
+            // if (window.by_skip && data.by_skip == 'normal'){
+            //     // we don't have to update the satatus
+            // }
+            // else {
+            //     statusUpdate(response)
+            // }
+
+            console.log(data.leave)
+            statusUpdate(response)
+
+
+
+            // again disabling the textarea and the send_btn
+            document.getElementById('id_chat_message_input').disabled = true;
+            document.getElementById('send_button').disabled = true;
+
+            // hiding the skip button and showing new_chat button instead of that.
+            really_btn = document.getElementById('skip_button')
+            really_btn.style.display = 'none';
+            new_btn = document.getElementById('new_button')
+            new_btn.classList.remove("d-none");
+
         }
 
         // Handle getting a message
@@ -219,12 +175,6 @@
 
     chatSocket.addEventListener("open", function (e) {
         console.log("ChatSocket OPEN")
-        // join chat room
-        if ("{{request.user.is_authenticated}}") {
-            chatSocket.send(JSON.stringify({
-                "command": "join",
-            }));
-        }
 
     })
 
@@ -307,37 +257,6 @@
         }
     };
 
-    // typing setup -----
-
-    const inputField = document.getElementById('id_chat_message_input');
-    inputField.addEventListener('input', () => {
-
-        // Send a "typing" event to the server using WebSocket
-        chatSocket.send(JSON.stringify(
-            {
-                "command": "typing",
-                "group_name": window.group_name,
-                "isTyping": true,
-                "userName": window.self_name, // Add the username
-                "userId": window.self_id, // Add the user's ID 
-            }
-        ));
-    });
-    
-
-    var sendFriendRequestBtn = document.getElementById("send_req_btn")
-	if (sendFriendRequestBtn != null){
-		sendFriendRequestBtn.addEventListener("click", function(){
-			sendFriendRequest(window.stranger_id, onFriendRequestSent)
-		})
-	}
-
-    var cancelFriendRequestBtn = document.getElementById("cancel_req_btn")
-	if(cancelFriendRequestBtn != null){
-		cancelFriendRequestBtn.addEventListener("click", function(){
-			cancelFriendRequest(window.stranger_id, onFriendRequestCancelled)
-		})
-	}
 
     // Here when the new button is clicked than simply refresh the page
     // document.getElementById('new_button').onclick = function (e) {
@@ -357,25 +276,6 @@
         spinner.innerHTML = message
     }
 
-    function onFriendRequestSent(){
-		var sendFriendRequestBtn = document.getElementById("send_req_btn")
-        sendFriendRequestBtn.style.display = "none"
-
-		var cancelFriendRequestBtn = document.getElementById("cancel_req_btn")
-        cancelFriendRequestBtn.classList.remove("d-none");
-		// though reloding the page is the easiest and most convenient way but we can try to do this without reloading the page
-		// if there's a way to do so then that is going to enhance the user experience
-	}
-
-    function onFriendRequestCancelled(){
-
-        var cancelFriendRequestBtn = document.getElementById("cancel_req_btn")
-        cancelFriendRequestBtn.classList.add("d-none");
-
-		var sendFriendRequestBtn = document.getElementById("send_req_btn")
-        sendFriendRequestBtn.style.display = "inline-block"
-	}
-
     // here we are going to write two lengthy functions which are going to add messages to our htnl template
 
     function appendChatMessage(data, isNewMessage) {
@@ -383,17 +283,15 @@
         uName = data['id']
         if (uName == window.self_id) {
             var username = 'You :'
-            var flex = true
         }
         else {
             var username = window.stranger + ' :'
-            var flex = false
         }
         var msg = message + '\n';
-        createChatMessageElement(msg, username, isNewMessage, flex)
+        createChatMessageElement(msg, username, isNewMessage)
     }
 
-    function createChatMessageElement(msg, username, isNewMessage, flex) {
+    function createChatMessageElement(msg, username, isNewMessage) {
         var chatLog = document.getElementById("id_chat_log")
 
         var newMessageDiv = document.createElement("div")
@@ -401,21 +299,10 @@
         newMessageDiv.classList.add("flex-row")
         newMessageDiv.classList.add("message-container")
 
-        if (flex){
-            newMessageDiv.style.justifyContent = "end";
-        } else{
-            newMessageDiv.style.justifyContent = "start";
-        }
 
         var div1 = document.createElement("div")
         div1.classList.add("d-flex")
         div1.classList.add("flex-column")
-        if (flex){
-            div1.classList.add("msg-style")
-
-        }else{
-            div1.classList.add("msg-style2")
-        }
 
         var div2 = document.createElement("div")
         div2.classList.add("d-flex")
@@ -425,12 +312,12 @@
         usernameSpan.addEventListener("click", function (e) {
             //selectUser(user_id)
         })
-        // usernameSpan.classList.add("username-span")
-        // usernameSpan.innerHTML = username
-        // div2.appendChild(usernameSpan)
+        usernameSpan.classList.add("username-span")
+        usernameSpan.innerHTML = username
+        div2.appendChild(usernameSpan)
 
 
-        // div1.appendChild(div2)
+        div1.appendChild(div2)
 
         var msgP = document.createElement("p")
 		msgP.innerHTML = validateText(msg)
@@ -441,7 +328,6 @@
         newMessageDiv.appendChild(div1)
 
         if (isNewMessage) {
-            console.log('yup adding below ig')
             chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
         }
 

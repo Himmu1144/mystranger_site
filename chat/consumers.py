@@ -49,6 +49,11 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             elif command == "send":
                 if len(content["message"].lstrip()) != 0:
                     await self.send_room(content["room"], content["message"])
+            elif command == 'typing':
+                await self.send_typing(content['group_name'], content['userId'])
+            elif command == "status_check":
+                print('status_check command recieved : ')
+                await self.status_check_service()
             elif command == "get_room_chat_messages":
                 await self.display_progress_bar(True)
                 room = await get_room_or_error(content['room_id'], self.scope["user"])
@@ -111,17 +116,30 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
 
         # Store that we're in the room
         self.room_id = room.id
-
+        group_name = room.group_name
         # Add them to the group so they get room messages
         await self.channel_layer.group_add(
             room.group_name,
             self.channel_name,
         )
 
+        # room.connected_users.add(self.scope['user'])
+        # room.save()
+        Added = await Add_or_remove_from_room(True, room, self.scope['user'])
+
         # Instruct their client to finish opening the room
         await self.send_json({
             "join": str(room.id),
+            "room_name" : group_name,
+            'room_id' : str(room.id),
         })
+
+        count = await connected_users_count(room)
+        print("_______________________ The count is ---------------", count)
+        if count > 1:
+            status = "online"
+        else:
+            status = "offline"
 
         if self.scope["user"].is_authenticated:
             # Notify the group that someone joined
@@ -130,9 +148,11 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 {
                     "type": "chat.join",
                     "room_id": room_id,
+                    "room_name":group_name,
                     "uniName": self.scope["user"].university_name,
                     "name": self.scope["user"].name,
                     "user_id": self.scope["user"].id,
+                    "status" : status,
                 }
             )
 
@@ -146,17 +166,43 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         room = await get_room_or_error(room_id, self.scope["user"])
         await mark_room_read(self.scope["user"], room_id)
 
+        
+
         # Notify the group that someone left
-        await self.channel_layer.group_send(
-            room.group_name,
-            {
-                "type": "chat.leave",
-                "room_id": room_id,
-                "uniName": self.scope["user"].university_name,
-                "name": self.scope["user"].name,
-                "user_id": self.scope["user"].id,
-            }
-        )
+        try:
+            await self.channel_layer.group_send(
+                room.group_name,
+                {
+                    "type": "chat.leave",
+                    "room_id": room_id,
+                    "uniName": self.scope["user"].university_name,
+                    "name": self.scope["user"].name,
+                    "user_id": self.scope["user"].id,
+                    
+                }
+            )
+        except Exception as e:
+            print('Exception during sending leave chat msg to group - ', str(e))
+
+        print("******* The leave chat msg is sent! **********")
+
+        # try:
+        #     await self.channel_layer.group_send(
+        #         room.group_name,
+        #         {
+        #             "type": "chat.leave",
+        #             "room_id": room_id,
+        #             "uniName": self.scope["user"].university_name,
+        #             "name": self.scope["user"].name,
+        #             "user_id": self.scope["user"].id,
+                    
+        #         }
+        #     )
+        # except Exception as e:
+        #     print('Exception during sending leave chat msg to group - ', str(e))
+
+        # print("******* The leave chat msg is sent AGAIN! **********")
+        
 
         # Remove that we're in the room
         self.room_id = None
@@ -166,6 +212,12 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             room.group_name,
             self.channel_name,
         )
+        try:
+            Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
+            print(Removed)
+        except Exception as e:
+            print('Exception during removing user from room.connected_users')
+            Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
         # Instruct their client to finish closing the room
         await self.send_json({
             "leave": str(room.id),
@@ -188,7 +240,17 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         # Get the room and send to the group about it
         room = await get_room_or_error(room_id, self.scope["user"])
 
-        await create_room_chat_message(room, self.scope["user"], message)
+        count = await connected_users_count(room)
+        if count > 1:
+            # This means the jerk is online so messages sent are marked as read
+            print('The connected_user_count is - ', count, " so marking msg as read")
+            await create_room_chat_message(room, self.scope["user"], message, True)
+            read = True
+        else:
+            # This means the jerk is onffline so messages sent are marked as unread
+            print('The connected_user_count is - ', count, " so marking msg as unread")
+            await create_room_chat_message(room, self.scope["user"], message, False)
+            read = False
 
         await self.channel_layer.group_send(
             room.group_name,
@@ -198,6 +260,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 "name": self.scope["user"].name,
                 "user_id": self.scope["user"].id,
                 "message": message,
+                "read" : read,
             }
         )
 
@@ -214,10 +277,12 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 {
                     "msg_type": MSG_TYPE_ENTER,
                     "room": event["room_id"],
+                    "room_name": event["room_name"],
                     "uniName": event["uniName"],
                     "name": event["name"],
                     "user_id": event["user_id"],
                     "message": event["name"] + " connected.",
+                    'status' : event['status'],
                 },
             )
 
@@ -255,9 +320,81 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 "user_id": event["user_id"],
                 "uniName": event["uniName"],
                 "message": event["message"],
+                "read": event["read"],
                 "natural_timestamp": timestamp,
             },
         )
+
+    async def status_check_service(self):
+
+        try:
+            room_id = self.room_id
+            room = await get_room_or_error(room_id, self.scope["user"])
+        except ClientError as e:
+            return await self.handle_client_error(e)
+        
+        count = await connected_users_count(room)
+        print("_______________________ The count is ---------------", count)
+        if count > 1:
+            status = "online"
+        else:
+            status = "offline"
+
+        if self.scope["user"].is_authenticated:
+            # Notify the group that someone joined
+            await self.channel_layer.group_send(
+                room.group_name,
+                {
+                    "type": "status.check",
+                    "room_id": room_id,
+                    'status_check' : 'checking_status',
+                    "status" : status,
+                    # "uniName": self.scope["user"].university_name,
+                    # "name": self.scope["user"].name,
+                    # "user_id": self.scope["user"].id,
+                }
+            )
+
+    async def status_check(self, event):
+        
+        # Send a message down to the client
+        print("ChatConsumer: status_check: " + str(self.scope["user"].id))
+        await self.send_json(
+            {
+                "status_check": event['status_check'],
+                "status": event['status'],
+                "room_id": event["room_id"],
+            }, 
+        )
+        
+
+
+    async def send_typing(self, group_name,userId):
+        """
+        Called by receive_json when someone starts typing a message to a room.
+        """
+        print("-----------  typing  ---------------\n")
+        print(userId," is typing a message.\n")
+        await self.channel_layer.group_send(
+            str(group_name),
+            {
+                'type': 'user.typing',
+                'isTyping' : True,
+                # 'username': userName,
+                'id' : userId,
+            }
+        )
+
+    async def user_typing(self, event):
+        # Send the "user is typing" message to the recipient user
+        await self.send_json(
+            {
+            'isTyping': event['isTyping'],
+            # 'username': event['username'],
+            'id' : event['id'],
+        }
+        )
+
 
     async def send_messages_payload(self, messages, new_page_number):
         """
@@ -359,8 +496,8 @@ def get_user_info(room, user):
 
 
 @database_sync_to_async
-def create_room_chat_message(room, user, message):
-    return RoomChatMessage.objects.create(user=user, room=room, content=message)
+def create_room_chat_message(room, user, message, read):
+    return RoomChatMessage.objects.create(user=user, room=room, content=message, read=read)
 
 
 @database_sync_to_async
@@ -407,3 +544,18 @@ def mark_room_read(user, room_id):
                 message.save()
 
     return
+
+@database_sync_to_async
+def Add_or_remove_from_room(Boolean, room,user):
+    if Boolean:
+        room.connected_users.add(user)
+        room.save()
+    else:
+        room.connected_users.remove(user)
+        room.save()
+    return True
+
+@database_sync_to_async
+def connected_users_count(room):
+    count = room.connected_users.all().count()
+    return count

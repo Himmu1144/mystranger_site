@@ -18,114 +18,19 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
         # Here we are defining some essential instance variables
         self.group_name = None
-        self.origin = None
         self.id = None
         
 
         print('Connect - ')
         await self.accept()
 
-
-    # --------------------------------------------------------------------------------
-
-    async def receive_json(self, content):
-
-        """
-        Called when we get a text frame. Channels will JSON-decode the payload
-        for us and pass it as the first argument.
-        """
-
-        command = content.get("command", None)
-        print("receive_json: " + str(command) , 'id : ' + str(self.id))
-
-        try:
-            if command == "join":
-                print("Trying to join a chat - ")
-                await self.join_room(self.scope['user'])
-            elif command == 'grouped':
-                self.group_name = content['group_name']
-                print(f'instance variable self.group_name has been set for {self.id} ')
-            elif command == 'send':
-                await self.send_room(content["group_name"], content['user_id'], content["message"])
-            elif command == 'typing':
-                await self.send_typing(content['group_name'], content['userId'], content['userName'])
-            elif command == 'skip':
-                await self.leaving_room()
-                # group_name = content['group_name']
-                # if group_name:
-                #     print('command : skip | the group does exist!')
-                #     await self.channel_layer.group_send(
-                #     group_name,
-                #     {
-                #         "type": "leave.room",
-                #         'by_skip' : 'skip',
-                #         'leave': 'Chat Disconnected',
-                #         'disconnector' : self.id,
-                #         'response' : 'You are no longer connected with the stranger.',
-                #     }
-                # )
-                # else :
-                #     print('command : skip | the group does not exist!')
-                #     user = await fetch_user(self.id)
-                #     is_removed = await removing_user_from_waiting_list(user, self.origin)
-                #     print(f'user - {self.id} is removed from wl - {is_removed}')
-                #     await self.send_json(
-                #         {
-                #             'leave': 'Chat Disconnected',
-                #             'disconnector' : self.id,
-                #             'response' : 'You are no longer connected with the stranger.',
-                #         },
-                #     )  
-            elif command == 'offer':
-                await self.channel_layer.group_send(content['group'],{
-                'type':'offer.message',
-                'offer':content['offer']
-            })
-            elif command == 'answer':
-                await self.channel_layer.group_send(content['group'],{
-                'type':'answer.message',
-                'answer':content['answer']
-            })
-            elif(content['command'] == 'candidate'):
-                await self.channel_layer.group_send(content['group'],{
-                    'type':'candidate.message',
-                    'candidate':content['candidate'],
-                    'iscreated':content['iscreated']
-                })
-        
-                
-        except Exception as e:
-            print(e)
-
-    # --------------------------------------------------------------------------------
-
-    async def disconnect(self, code):
-
-        """
-        Called when the WebSocket closes for any reason.
-        """
-        # Leave the room
-        print("ChatConsumer: disconnect")
-        try:
-            await self.leaving_room()
-        except Exception as e:
-            print("Disconnect EXCEPTION: " + str(e))
-
-
-    # --------------------------------------------------------------------------------
-
-
-    async def join_room(self, user):
-        """
-        Called by receive_json when someone sent a join command.
-        """
-
         # creating a user_profile for this user
+
         
         user = self.scope['user']
         university = user.university_name
         self.origin = user.origin
-        # print(self.origin)
+        print(self.origin)
 
         # Here we are creating a temporary profile of the user
         user1 = await create_user(self.channel_name,user)
@@ -165,268 +70,308 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         # users is the set of all the availlable strangers waiting in the wl
         print(users)
 
+        # if self.origin:
+        #     count = payload['origin_count']
+        #     users = payload['origin_users']
+        # else:
+        #     count = payload['nearby_count']
+        #     users = payload['nearby_users']
+
+        # count = payload['count']
+        # users = payload['users']
+
         print(f'the count is - {count}')
 
         '''
         Declaring the current user to identify which user is which one.
         '''
+       
 
-        
-        if count != 0 and count != None:
-            
-            # try:
+        if count != None:
+            if count != 0:
+                
+                # try:
 
-            print('yes another request is availlable')
-            # fetching random user from the set of availlable strangers and then removing that lucky stranger from the waiting list
-            random_user = user_random(users)
-            print(random_user, type(random_user),'^^^^^^^create_group^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
-            is_removed = await removing_user_from_waiting_list(random_user,self.origin)
-            print(is_removed)
-            if is_removed:
-                print('wassup -----------------------------------------')
-                print(f'random user has been selected (random_user_id : {random_user}) and thus also removed from the waiting list.')
-            else:
-                print('There is some error while removing ru from wl')
-            random_user_channel = random_user.channel_name
+                print('yes another request is availlable')
+                # fetching random user from the set of availlable strangers and then removing that lucky stranger from the waiting list
+                random_user = user_random(users)
+                print(random_user,'^^^^^^^create_group^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')
+                is_removed = await removing_user_from_waiting_list(random_user,self.origin)
+                if is_removed:
+                    print('wassup -----------------------------------------')
+                    print(f'random user has been selected (random_user_id : {random_user}) and thus also removed from the waiting list.')
+                random_user_channel = random_user.channel_name
 
-            '''
-            now we have two users availlable , user1_self who is seeking to connect with a stranger, user2_random who was patiently waiting in the waiting list to get connected with a stranger.
+                # except Exception as e:
+                #     print('This is my exception',e)
 
-            Now we have to create a group with these two users so that they can chat with each other.
-            '''
+                '''
+                now we have two users availlable , user1_self who is seeking to connect with a stranger, user2_random who was patiently waiting in the waiting list to get connected with a stranger.
 
-            group_name = await create_group(user1, random_user)
-            random_user_name, random_user_id = await fetch_name(random_user) 
-            user1_self_name , user1_self_id = await fetch_name(user1)
+                Now we have to create a group with these two users so that they can chat with each other.
+                '''
 
-            
+                group_name = await create_group(user1, random_user)
+                random_user_name, random_user_id = await fetch_name(random_user)
+                
+                user1_self_name , user1_self_id = await fetch_name(user1)
 
-            if group_name:
+                
 
-                await self.send_json(
-                    {
-                        "status_user1": 'user1',
-                        'user_id': self.id,
-                        'stranger' : random_user_name,
-                    },
-                )
+                if group_name:
 
-                print(f'model group is created! {group_name}')
-
-                # Adding user1 to a group named group_name
-
-                try:
-                    await self.channel_layer.group_add(
-                        str(group_name),
-                        str(user1_channel)
+                    await self.send_json(
+                        {
+                            "status_user1": 'user1',
+                            'user_id': self.id,
+                            'stranger' : random_user_name,
+                        },
                     )
-                except Exception as e:
-                    print(f'Execption in adding the users to the group - {e} ')
+
+                    print(f'model group is created! {group_name}')
+
+                    # Adding user1 to a group named group_name
+
+                    try:
+                        await self.channel_layer.group_add(
+                            str(group_name),
+                            str(user1_channel)
+                        )
+                    except Exception as e:
+                        print(f'Execption in adding the users to the group - {e} ')
+                        
+                    print(f'user1 channel - {user1_channel}')
+
+                    #  Adding user2_random to a group named group_name
+
+                    try:
+                        await self.channel_layer.group_add(
+                            str(group_name),
+                            str(random_user_channel)
+                        )
+                    except Exception as e:
+                        print(f'Execption in adding the users to the group - {e} ')
+
+                    print(f'random user channel - {random_user_channel}')
+
+
+                    print('django channels group is created!')
+
+                    '''
+                    Here we are sending a message to the group, informing both the users that now they are connected with a stranger and can chat with each other.
+                    '''
                     
-                print(f'user1 channel - {user1_channel}')
+                    # we have to check that why the fuck he is not sending message to the group, and even if he is sending than why it is not showing in the console.
+                    
+                    print(f'sending message to this group - {str(group_name)}')
 
-                #  Adding user2_random to a group named group_name
+                    try:
+                        await self.channel_layer.group_send(
+                            str(group_name),
+                            {
+                                "type": "joined.room",
+                                "grouped": group_name,
+                                "user1_self" : user1.id,
+                                'random_user' : random_user.id,
+                                'user1_self_name' : user1_self_name,
+                                "user1_self_id" : user1_self_id,
+                                'random_user_name' : random_user_name,
+                                'random_user_id' : random_user_id,
+                                'response' : 'You are now connected with a stranger.',
+                            }
+                        )
+                    except Exception as e:
+                        print(f'Execption in sending msg to the group - {e} ')
 
-                try:
-                    await self.channel_layer.group_add(
-                        str(group_name),
-                        str(random_user_channel)
-                    )
-                except Exception as e:
-                    print(f'Execption in adding the users to the group - {e} ')
+                    # await self.send_json(
+                    #     {
+                            
+                    #         "test": 'yup got the test message.' ,
+                            
+                    #     },
+                    # )
 
-                print(f'random user channel - {random_user_channel}')
+                    print('message about group creation has been sent!')
 
+                else:
+                    print('something went wrong and the group model is not created!')
 
-                print('django channels group is created!')
-
+            elif (count == 0):
                 '''
-                Here we are sending a message to the group, informing both the users that now they are connected with a stranger and can chat with each other.
+                here this means that though the waiting area exists but there is no user waiting in the waiting area thus therefore we are going to add this user to the waiting list so that it can get connected with others.
                 '''
-                
-                # we have to check that why the fuck he is not sending message to the group, and even if he is sending than why it is not showing in the console.
-                
-                print(f'sending message to this group - {str(group_name)}')
-
-                try:
-                    await self.channel_layer.group_send(
-                        str(group_name),
-                        {
-                            "type": "joined.room",
-                            "grouped": group_name,
-                            "user1_self" : user1.id,
-                            'random_user' : random_user.id,
-                            'user1_self_name' : user1_self_name,
-                            "user1_self_id" : user1_self_id,
-                            'random_user_name' : random_user_name,
-                            'random_user_id' : random_user_id,
-                            'response' : 'You are now connected with a stranger.',
-                        }
-                    )
-                except Exception as e:
-                    print(f'Execption in sending msg to the group - {e} ')
-
-
-                print('message about group creation has been sent!')
-
-                try:
-                    await self.channel_layer.group_send(
-                        str(group_name),
-                        {
-                            "type": "joined.room",
-                            "grouped": group_name,
-                            "user1_self" : user1.id,
-                            'random_user' : random_user.id,
-                            'user1_self_name' : user1_self_name,
-                            "user1_self_id" : user1_self_id,
-                            'random_user_name' : random_user_name,
-                            'random_user_id' : random_user_id,
-                            'response' : 'You are now connected with a stranger.',
-                        }
-                    )
-                except Exception as e:
-                    print(f'Execption in sending msg to the group - {e} ')
-
-                print('message about group creation has been sent! AGAIN!!!!!')
-
+                print('adding user to the waiting area by fetching the waiting area.')
+                waiting_list = await create_waiting_list_and_add_user(user1,self.origin)
+                print(f'random_user_channel - {user1_channel}')
+                await self.send_json(
+                {
+                    "status_user2": 'random_user',
+                    'user_id': self.id,
+                },
+            )
 
             else:
-                print('something went wrong and the group model is not created!')
+                print('There is some problem with the waiting list users count.')
 
-        elif (count == 0 or count == None):
+        else:
             '''
-            here this means that either the waiting list doesn't exist or there is no one in the waiting list , eitherway we have to add this user to the waitingg area
+            this means that waiting list doesn't exist thus we can't connect user1 with any random user and hence we have to add user1 into the waiting list so that it can be added by others.
             '''
-
-            print('adding user to the waiting area by fetching or creating the waiting area.')
+            print('adding user to the waiting area by creating a waiting area.')
             waiting_list = await create_waiting_list_and_add_user(user1,self.origin)
             print(f'random_user_channel - {user1_channel}')
             await self.send_json(
-            {
-                "status_user2": 'random_user',
-                'user_id': self.id,
-            },
-        )
+                {
+                    "status_user2": 'random_user',
+                    'user_id': self.id,
+                },
+            )
 
-        else:
-            print('There is some problem with the waiting list users count.')
 
+    # --------------------------------------------------------------------------------
+
+    async def receive_json(self, content):
+
+        """
+        Called when we get a text frame. Channels will JSON-decode the payload
+        for us and pass it as the first argument.
+        """
+
+        command = content.get("command", None)
+        print("receive_json: " + str(command) , 'id : ' + str(self.id))
+
+        try:
+            if command == 'grouped':
+                self.group_name = content['group_name']
+                print(f'instance variable self.group_name has been set for {self.id} ')
+            elif command == 'send':
+                await self.send_room(content["group_name"], content['user_id'], content["message"])
+            elif command == 'skip':
+                group_name = content['group_name']
+                if group_name:
+                    print('command : skip | the group does exist!')
+                    await self.channel_layer.group_send(
+                    group_name,
+                    {
+                        "type": "leave.room",
+                        'by_skip' : 'skip',
+                        'leave': 'Chat Disconnected',
+                        'disconnector' : self.id,
+                        'response' : 'You are no longer connected with the stranger.',
+                    }
+                )
+                else :
+                    print('command : skip | the group does not exist!')
+                    user = await fetch_user(self.id)
+                    is_removed = await removing_user_from_waiting_list(user, self.origin)
+                    print(f'user - {self.id} is removed from wl - {is_removed}')
+                    await self.send_json(
+                        {
+                            'leave': 'Chat Disconnected',
+                            'disconnector' : self.id,
+                            'response' : 'You are no longer connected with the stranger.',
+                        },
+                    )  
+            elif command == 'offer':
+                await self.channel_layer.group_send(content['group'],{
+                'type':'offer.message',
+                'offer':content['offer']
+            })
+            elif command == 'answer':
+                await self.channel_layer.group_send(content['group'],{
+                'type':'answer.message',
+                'answer':content['answer']
+            })
+            elif(content['command'] == 'candidate'):
+                await self.channel_layer.group_send(content['group'],{
+                    'type':'candidate.message',
+                    'candidate':content['candidate'],
+                    'iscreated':content['iscreated']
+                })
         
-    async def joined_room(self, event):
+                
+        except Exception as e:
+            print(e)
 
-        await self.send_json(
-            {
-                "grouped": event['grouped'],
-                "user1": event["user1_self"],
-                "user1_self_name": event["user1_self_name"],
-                "user1_self_id": event["user1_self_id"],
-                "random_user_name": event["random_user_name"],
-                "random_user_id": event["random_user_id"],
-                "random_user": event["random_user"],
-                "response": event["response"],
-            },
-        )
+    # --------------------------------------------------------------------------------
 
+    async def disconnect(self, code):
 
-    async def leaving_room(self):
-        """
-        Called by receive_json when someone sent a leave command.
-        """
         if self.group_name:
 
+
             print('group_name in Diconnect Function')
-            print("ChatConsumer: leave_room")
-            print('The group name is - ', self.group_name)
-            group_name = str(self.group_name)
-            my_id = str(self.id)
 
-            try:
+        
+            user_self = await fetch_user(self.id)
+            if user_self:
+
+                print('Discarding the group')
+
+                group_obj = await fetch_group(user_self)
+                group_dict = await group_info(group_obj)
+                group_name =  group_dict['group_name']
+
+
+            
+                user1_channel = group_dict['user1_channel']
+                user1_id = group_dict['user1_id']
+                random_user_channel = group_dict['random_user_channel']
+                random_user_id = group_dict['random_user_id']
+                
+
+                # But before that we have to notify in the group that it has been discarded.
+
                 await self.channel_layer.group_send(
                     str(group_name),
                     {
                         "type": "leave.room",
                         'leave': 'Chat Disconnected',
                         'by_skip' : 'normal',
-                        'disconnector' : my_id,
+                        'disconnector' : self.id,
                         'response' : 'You are no longer connected with the stranger.',
                     }
                 )
 
-                print('Leaving group msg has been sent')
-            except Exception as e:
-                print("Leave room msg send exception - ", str(e))
+                # Discarding both the users from the group named group_name
 
-                try:
-                    await self.channel_layer.group_send(
-                        str(group_name),
-                        {
-                            "type": "leaving.message",
-                            'leave': 'Chat Disconnected',
-                            'disconnector' : my_id,
-                            'response' : 'You are no longer connected with the stranger.',
-                        }
-                    )
-
-                    print('Leaving group msg has been sent')
-                except Exception as e:
-                    print("Leave room msg send exception Again !!!!!!!- ", str(e))
-
-            try:
-                await self.channel_layer.group_send(
-                    str(group_name),
-                    {
-                        "type": "leave.room",
-                        'leave': 'Chat Disconnected',
-                        'by_skip' : 'normal',
-                        'disconnector' : my_id,
-                        'response' : 'You are no longer connected with the stranger.',
-                    }
-                )
-
-                print('Leaving group msg has been sent')
-            except Exception as e:
-                print("Leave room msg send exception - ", str(e))
-
-                try:
-                    await self.channel_layer.group_send(
-                        str(group_name),
-                        {
-                            "type": "leaving.message",
-                            'leave': 'Chat Disconnected',
-                            'disconnector' : my_id,
-                            'response' : 'You are no longer connected with the stranger.',
-                        }
-                    )
-
-                    print('Leaving group msg has been sent')
-                except Exception as e:
-                    print("Leave room msg send exception Again !!!!!!!- ", str(e))
-
-
-            # Discarding User from the group
-            print(f'Discarding user from the group.')
-            print("The channel name is - ", self.channel_name)
-            try:
-
+                # Discarding User1 from the group
+                print(f'Discarding {user1_channel} from the group.')
                 await self.channel_layer.group_discard(
-                    str(self.group_name),
-                    str(self.channel_name)
+                    str(group_name),
+                    str(user1_channel)
                 )
 
-                print('user has been discarded from the group')
-            except Exception as e:
-                print('discarding group exception - ', str(e))
+                # Discarding random_user from the group
+                print(f'Discarding {random_user_channel} from the group.')
+                await self.channel_layer.group_discard(
+                    str(group_name),
+                    str(random_user_channel)
+                )
 
+                # Deleting both the users
 
-            # Deleting User
-            if self.id:
-                print(f'deleting the user - {self.id}')
-                user_deleted = await delete_user(self.id)
-                print(f'Status : ' + str(user_deleted))
+                # Deleting User1
+                print(f'deleting user1 - {user1_id}')
+                user1_deleted = await delete_user(user1_id)
+                print(f'Status : ' + str(user1_deleted))
 
-            self.group_name = None
-            self.id = None
-            self.origin = None
+                # Deleting random_user
+                print(f'deleting random_user - {random_user_id}')
+                random_user_deleted = await delete_user(random_user_id)
+                print(f'Status : ' + str(random_user_deleted))
+
+                self.group_name = None
+
+            else:
+
+                '''
+                This means that the group has already been discarded beacuse both the uers have already been deleted.
+                therefore here we have to do nothing.
+                '''
+
+                print('Just chill group has already been discarded.')
+                self.group_name = None
         
         else:
 
@@ -442,10 +387,31 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                     'response' : 'You are no longer connected with the stranger.',
                 },
             )
-            if self.id:
-                delete_user_self = await delete_user(self.id)
-                print(f'Status : {delete_user_self}')
-                self.id = None
+
+            delete_user_self = await delete_user(self.id)
+            print(f'Status : {delete_user_self}')
+            self.id = None
+
+            
+
+
+    # --------------------------------------------------------------------------------
+
+
+    async def joined_room(self, event):
+
+        await self.send_json(
+            {
+                "grouped": event['grouped'],
+                "user1": event["user1_self"],
+                "user1_self_name": event["user1_self_name"],
+                "user1_self_id": event["user1_self_id"],
+                "random_user_name": event["random_user_name"],
+                "random_user_id": event["random_user_id"],
+                "random_user": event["random_user"],
+                "response": event["response"],
+            },
+        )
 
     async def leave_room(self, event):
         await self.send_json(
@@ -458,14 +424,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             },
         )
 
-    async def leaving_message(self, event):
-        await self.send_json(
-            {
-                'leave' : event['leave'],
-                'disconnector' : event['disconnector'],
-                'response' : event['response'],
-            }
-        )
     # --------------------------------------------------------------------------------
 
     async def send_room(self, group_name, user_id, message):
@@ -489,7 +447,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
-
     async def chat_message(self, event):
         """
         Called when someone has messaged our chat.
@@ -503,32 +460,6 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             },
         )
     
-    async def send_typing(self, group_name,userId,userName):
-        """
-        Called by receive_json when someone starts typing a message to a room.
-        """
-        print("-----------  typing  ---------------\n")
-        print(userName," is typing a message.\n")
-        await self.channel_layer.group_send(
-            str(group_name),
-            {
-                'type': 'user.typing',
-                'isTyping' : True,
-                'username': userName,
-                'id' : userId,
-            }
-        )
-
-    async def user_typing(self, event):
-        # Send the "user is typing" message to the recipient user
-        await self.send_json(
-            {
-            'isTyping': event['isTyping'],
-            'username': event['username'],
-            'id' : event['id'],
-        }
-        )
-
     # --------------------------------------------------------------------------------
 
     async def offer_message(self,event):
@@ -855,28 +786,12 @@ def removing_user_from_waiting_list(user,origin):
             waiting_list = WaitingArea.objects.get(pk=1)
             if waiting_list:
                 is_removed = waiting_list.remove_user(user)
-                if is_removed:
-                    return True
-                else:
-                    '''This means that the user must have fetched the random_user from nearby Waiting List'''
-                    waiting_list = WaitingArea.objects.get(pk=2)
-                    if waiting_list:
-                        is_removed = waiting_list.remove_user(user)
         else:
             waiting_list = WaitingArea.objects.get(pk=2)
             if waiting_list:
                 is_removed = waiting_list.remove_user(user)
-                if is_removed:
-                    return True
-                else:
-                    '''This means that the user must have fetched the random_user from origin Waiting List'''
-                    waiting_list = WaitingArea.objects.get(pk=1)
-                    if waiting_list:
-                        is_removed = waiting_list.remove_user(user)
-
     except WaitingArea.DoesNotExist:
         waiting_list = None
-        print('Error - removing_user_from_waiting_list')
     return is_removed
 
 # ----------------------------------------------------------------------------------------

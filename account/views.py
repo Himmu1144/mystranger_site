@@ -174,9 +174,9 @@ def edit_account_view(request, *args, **kwargs):
         return HttpResponse("You cannot edit someone elses profile.")
     context = {}
     if request.POST:
-        name = request.POST.get('name')
+        # name = request.POST.get('name')
         origin = request.POST.get('my_dist')
-        account.name = name
+        # account.name = name
         account.origin = origin
         account.save()
         return redirect("account:view", user_id=account.pk)

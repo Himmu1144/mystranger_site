@@ -133,6 +133,7 @@
 			notifications.forEach(notification => {
 
 				submitGeneralNotificationToCache(notification)
+				
 
 				//console.log('HandleGeneral Notification timestamp - ',notification['timestamp'])
 				setGeneralOldestTimestamp(notification['timestamp'])
@@ -622,12 +623,13 @@
 	   Start the functions that will be executed constantly
    */
 	function startGeneralNotificationService() {
-		/*if ("{{request.user.is_authenticated}}" == "True") {
-			setInterval(refreshGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
+		if ("{{request.user.is_authenticated}}" == "True") {
+			{% comment %} setInterval(refreshGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getNewGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
+			setInterval(getUnreadMessageNotificationsCount, GENERAL_NOTIFICATION_INTERVAL) {% endcomment %}
 			
-		}*/
+		}
 	}
 
 	startGeneralNotificationService()
@@ -645,7 +647,7 @@
 		}
 	}
 	function getUnreadMessageNotificationsCount(){
-		console.log('the fucking command for msg count is send')
+		{% comment %} console.log('the fucking command for msg count is send') {% endcomment %}
 		if("{{request.user.is_authenticated}}"){
 			notificationSocket.send(JSON.stringify({
 				"command": "get_unread_msg_notifications_count",

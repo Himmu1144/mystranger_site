@@ -66,6 +66,7 @@ def private_chat_room_view(request, *args, **kwargs):
 
 	context['m_and_f'] = m_and_f
 	context['debug'] = DEBUG
+	context['id'] = request.user.id
 	context['debug_mode'] = settings.DEBUG
 	return render(request, "chat/room.html", context)
 

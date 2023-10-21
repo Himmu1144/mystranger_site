@@ -33,14 +33,14 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         """
         Called when the websocket is handshaking as part of initial connection.
         """
-        print("NotificationConsumer: connect: " + str(self.scope["user"]))
+        # print("NotificationConsumer: connect: " + str(self.scope["user"]))
         await self.accept()
 
     async def disconnect(self, code):
         """
         Called when the WebSocket closes for any reason.
         """
-        print("NotificationConsumer: disconnect")
+        # print("NotificationConsumer: disconnect")
 
     async def receive_json(self, content):
         """
@@ -48,13 +48,13 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         for us and pass it as the first argument.
         """
         command = content.get("command", None)
-        print("NotificationConsumer: receive_json. Command: " + command)
+        # print("NotificationConsumer: receive_json. Command: " + command)
         try:
             if command == "get_general_notifications":
                 payload = await get_general_notifications(self.scope["user"], content.get("page_number", None))
                 # print(payload)
                 if payload == None or payload == '{}':
-                    print('There is no payload so pagination exhaustion')
+                    # print('There is no payload so pagination exhaustion')
                     await self.general_pagination_exhausted()
                 else:
                     payload = json.loads(payload)
@@ -84,11 +84,11 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                     payload = json.loads(payload)
                     await self.send_updated_friend_request_notification(payload['notification'])
             elif command == "refresh_general_notifications":
-                print('The trouble')
+                # print('The trouble')
                 payload = await refresh_general_notifications(self.scope["user"], content['oldest_timestamp'], content['newest_timestamp'])
-                print('Is here')
+                # print('Is here')
                 if payload == None:
-                    print('The payload is not present | payload == None')
+                    # print('The payload is not present | payload == None')
                     raise ClientError(
                         204, "Something went wrong. Try refreshing the browser.")
                 else:
@@ -101,21 +101,22 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                     payload = json.loads(payload)
                     await self.send_unread_general_notification_count(payload['count'])
             elif command == "get_unread_msg_notifications_count":
-                print('The command is here ------------------------------')
+                # print('The command is here ------------------------------')
                 payload = await get_unread_message_notification_count(self.scope["user"])
                 if payload != None:
                     payload = json.loads(payload)
                     await self.send_unread_msg_notification_count(payload['count'])
                 else:
-                    print('bc no payload', payload)
+                    # print('bc no payload', payload)
+                    pass
             elif command == "mark_notifications_read":
                 await mark_notifications_read(self.scope["user"])
         except Exception as e:
-            print("EXCEPTION: receive_json: " + str(e))
+            # print("EXCEPTION: receive_json: " + str(e))
             pass
 
     async def display_progress_bar(self, shouldDisplay):
-        print("NotificationConsumer: display_progress_bar: " + str(shouldDisplay))
+        # print("NotificationConsumer: display_progress_bar: " + str(shouldDisplay))
         await self.send_json(
             {
                 "progress_bar": shouldDisplay,
@@ -126,7 +127,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         """
         Called by receive_json when ready to send a json array of the notifications
         """
-        print("NotificationConsumer: send_general_notifications_payload")
+        # print("NotificationConsumer: send_general_notifications_payload")
         await self.send_json(
             {
                 "general_msg_type": GENERAL_MSG_TYPE_NOTIFICATIONS_PAYLOAD,
@@ -153,7 +154,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         """
         Called by receive_json when pagination is exhausted for general notifications
         """
-        print("General Pagination DONE... No more notifications.")
+        # print("General Pagination DONE... No more notifications.")
         await self.send_json(
             {
                 "general_msg_type": GENERAL_MSG_TYPE_PAGINATION_EXHAUSTED,
@@ -300,20 +301,20 @@ def refresh_general_notifications(user, oldest_timestamp, newest_timestamp):
     """
     payload = {}
     if user.is_authenticated:
-        print(oldest_timestamp)
+        # print(oldest_timestamp)
         # remove timezone because who cares
         oldest_ts = oldest_timestamp[0:oldest_timestamp.find("+")]
-        print(oldest_ts)
+        # print(oldest_ts)
         oldest_ts = datetime.strptime(str(oldest_ts), '%Y-%m-%d %H:%M:%S.%f')
-        print(oldest_ts)
-        print('This is empty', newest_timestamp)
+        # print(oldest_ts)
+        # print('This is empty', newest_timestamp)
         # remove timezone because who cares
         newest_ts = newest_timestamp[0:newest_timestamp.find("+")]
-        print(newest_ts)
+        # print(newest_ts)
         newest_ts = datetime.strptime(newest_ts, '%Y-%m-%d %H:%M:%S.%f')
         newest_ts = newest_ts + timedelta(seconds=2)
         newest_ts = newest_ts.strftime('%Y-%m-%d %H:%M:%S.%f')
-        print(newest_ts)
+        # print(newest_ts)
         friend_request_ct = ContentType.objects.get_for_model(FriendRequest)
         friend_list_ct = ContentType.objects.get_for_model(FriendList)
         notifications = Notification.objects.filter(target=user, content_type__in=[
@@ -376,7 +377,7 @@ def mark_notifications_read(user):
     """
     marks a notification as "read"
     """
-    print('Tf read is not getting called')
+    # print('Tf read is not getting called')
     if user.is_authenticated:
         notifications = Notification.objects.filter(target=user)
         if notifications:
@@ -407,7 +408,7 @@ def get_unread_message_notification_count(user):
                 Q(room=room) & Q(user=friend) & Q(read=False)).count()
             count += unread_messages_count
         payload['count'] = count
-        print('The total unread msg for user - ', user, 'is - ', count)
+        # print('The total unread msg for user - ', user, 'is - ', count)
         return json.dumps(payload)
 
     else:

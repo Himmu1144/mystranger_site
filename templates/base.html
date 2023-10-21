@@ -592,10 +592,10 @@
 
     // Handle incoming messages
     notificationSocket.onmessage = function (message) {
-      console.log("Got notification websocket message.");
+      // console.log("Got notification websocket message.");
       var data = JSON.parse(message.data);
 
-      console.log(data)
+      // console.log(data)
 
       /*
       GENERAL NOTIFICATIONS
@@ -613,7 +613,7 @@
 
       // Refresh [newest_timestamp >= NOTIFICATIONS >= oldest_timestamp]
       if (data.general_msg_type == 2) {
-        console.log('Got the notification')
+        // console.log('Got the notification')
         refreshGeneralNotificationsData(data['notifications'])
       }
 
