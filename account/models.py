@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from friend.models import FriendList
+from django.utils.translation import gettext_lazy as _
+
 
 
 # Create your models here.
@@ -56,7 +58,9 @@ class Account(AbstractBaseUser):
                               max_length=100, unique=True, null=False)
     name = models.CharField(max_length=100, default='Stranger')
     university_name = models.CharField(max_length=100, default='Unknown',blank=False)
+    universityName = models.CharField(max_length=200, default="",blank=True)
     origin = models.BooleanField(default=False)
+    flags = models.IntegerField(default=0, blank=True)
     date_joined = models.DateTimeField(
         verbose_name='date joined', auto_now_add=True)
     last_login = models.DateTimeField(verbose_name='last login', auto_now=True)
@@ -64,6 +68,19 @@ class Account(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    terms = models.BooleanField(default=True,blank=False,null=False)
+
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+    ]
+    gender = models.CharField(
+        max_length=1,
+        null=False,
+        choices=GENDER_CHOICES,
+        default='M',  # Set a default value
+        verbose_name=_('Gender')
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name','university_name']

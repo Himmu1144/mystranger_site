@@ -1,14 +1,17 @@
 from django.shortcuts import render, redirect
 from account.forms import RegistrationForm, AccountAuthenticationForm
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from account.models import Account
-from mystranger_app.models import University, UniversityProfile
+from mystranger_app.models import University, UniversityProfile , Flags
 from friend.models import FriendList, FriendRequest
 from django.db.models import Q
 from mystranger_app.utils import calculate_distance
 from friend.utils import get_friend_request_or_false
 from friend.friend_request_status import FriendRequestStatus
+from django.contrib.auth.hashers import make_password
+import json
 
 
 def register_view(request, *args, **kwargs):
@@ -112,6 +115,8 @@ def account_view(request, *args, **kwargs):
         context['name'] = account.name
         context['email'] = account.email
         context['origin'] = account.origin
+        context['universityName'] = account.universityName
+        context['gender'] = account.gender
 
         try:
             friend_list = FriendList.objects.get(user=account)
@@ -176,8 +181,10 @@ def edit_account_view(request, *args, **kwargs):
     if request.POST:
         # name = request.POST.get('name')
         origin = request.POST.get('my_dist')
+        universityName = request.POST.get('uniname')
         # account.name = name
         account.origin = origin
+        account.universityName = universityName
         account.save()
         return redirect("account:view", user_id=account.pk)
     else:
@@ -186,12 +193,37 @@ def edit_account_view(request, *args, **kwargs):
             "id": account.pk,
             "email": account.email,
             "name": account.name,
-            "origin": account.origin
+            "origin": account.origin,
+            'universityName' : account.universityName,
         }
 
         context['form'] = initial
 
     return render(request, "account/edit_account.html", context)
+
+def edit_pass_view(request, *args, **kwargs):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    user_id = kwargs.get("user_id")
+    account = Account.objects.get(pk=user_id)
+    if account.pk != request.user.pk:
+        return HttpResponse("You cannot edit someone elses profile.")
+    
+    context = {}
+    if request.POST:
+        pass1 = request.POST.get('pass1')
+        pass2 = request.POST.get('pass2')
+        if pass1 != pass2:
+            context['error'] = "password field and conform password field doesn't match"
+            return render(request, "account/edit_account_pass.html",context)
+        elif pass1 == pass2:
+            account.password = make_password(pass1)
+            account.save()
+            context['success'] = "Password Has been Changed."
+            return render(request, "account/edit_account_pass.html",context)
+
+    
+    return render(request, "account/edit_account_pass.html",context)
 
 
 # This is basically almost exactly the same as friends/friend_list_view
@@ -200,8 +232,11 @@ def account_search_view(request, *args, **kwargs):
     if request.method == "GET":
         search_query = request.GET.get("q")
         if len(search_query) > 0:
-            search_results = Account.objects.filter(email__icontains=search_query).filter(
-                name__icontains=search_query).distinct()
+            print('The search query - ', search_query)
+            # search_results = Account.objects.filter(email__icontains=search_query).filter(
+            #     name__icontains=search_query).distinct()
+            search_results = Account.objects.filter(email=search_query)
+            print("The search results are - ",search_results)
             user = request.user
             accounts = []  # [(account1, True), (account2, False), ...]
             if user.is_authenticated:

@@ -349,10 +349,20 @@
 		/* font-size: 12px; */
 	}
 
-	
+	/* Styling the scrollbar track (the non-draggable part) */
+::-webkit-scrollbar-track {
+    background: none; /* Set the color of the track */ 
+
+}
 
 	.svg-path {
     	/* fill: #FF5733; Change the fill color to your desired color */
+	}
+
+	.friends-list-container{
+		/* border: 2px solid; */
+		max-height: 70vh;
+		overflow: scroll;
 	}
 
 </style>
@@ -918,7 +928,11 @@
 	}
 
 	function handleUserInfoPayload(user_info) {
-		document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName']
+		if (user_info['uni_name'] == ""){
+			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName'] 
+		} else{
+			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uni_name'] 
+		}
 		document.getElementById("id_user_info_container").href = "{% url 'account:view' user_id=4586463456756486676 %}".replace("4586463456756486676", user_info['id'])
 	}
 

@@ -8,7 +8,7 @@ from django.db.models import Q
 import random
 import json
 
-class ChatConsumer(AsyncJsonWebsocketConsumer):
+class ChatConsumerText(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
 
@@ -76,22 +76,22 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 #             'response' : 'You are no longer connected with the stranger.',
                 #         },
                 #     )  
-            elif command == 'offer':
-                await self.channel_layer.group_send(content['group'],{
-                'type':'offer.message',
-                'offer':content['offer']
-            })
-            elif command == 'answer':
-                await self.channel_layer.group_send(content['group'],{
-                'type':'answer.message',
-                'answer':content['answer']
-            })
-            elif(content['command'] == 'candidate'):
-                await self.channel_layer.group_send(content['group'],{
-                    'type':'candidate.message',
-                    'candidate':content['candidate'],
-                    'iscreated':content['iscreated']
-                })
+            # elif command == 'offer':
+            #     await self.channel_layer.group_send(content['group'],{
+            #     'type':'offer.message',
+            #     'offer':content['offer']
+            # })
+            # elif command == 'answer':
+            #     await self.channel_layer.group_send(content['group'],{
+            #     'type':'answer.message',
+            #     'answer':content['answer']
+            # })
+            # elif(content['command'] == 'candidate'):
+            #     await self.channel_layer.group_send(content['group'],{
+            #         'type':'candidate.message',
+            #         'candidate':content['candidate'],
+            #         'iscreated':content['iscreated']
+            #     })
         
                 
         except Exception as e:
@@ -538,24 +538,24 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     # --------------------------------------------------------------------------------
 
-    async def offer_message(self,event):
-        await self.send_json({
-            'command':'offer',
-            'offer':event['offer']
-        })
+    # async def offer_message(self,event):
+    #     await self.send_json({
+    #         'command':'offer',
+    #         'offer':event['offer']
+    #     })
 
-    async def answer_message(self,event):
-        await self.send_json({
-            'command':'answer',
-            'answer':event['answer']
-        })
+    # async def answer_message(self,event):
+    #     await self.send_json({
+    #         'command':'answer',
+    #         'answer':event['answer']
+    #     })
 
-    async def candidate_message(self,event):
-        await self.send_json({
-            'command':'candidate',
-            'candidate':event['candidate'],
-            'iscreated':event['iscreated']
-        })
+    # async def candidate_message(self,event):
+    #     await self.send_json({
+    #         'command':'candidate',
+    #         'candidate':event['candidate'],
+    #         'iscreated':event['iscreated']
+    #     })
     
 
 # Writing functions to fetch data from database through database_sync_to_async context
@@ -616,11 +616,11 @@ def fetching_waiting_list(university_name,origin):
         waiting_list = None
         if origin:
             # This means we are dealing with users of origin
-            waiting_list = WaitingArea.objects.get(pk=1)
+            waiting_list = WaitingArea.objects.get(pk=3)
             if waiting_list:
                 return waiting_list
         else:
-            waiting_list = WaitingArea.objects.get(pk=2)
+            waiting_list = WaitingArea.objects.get(pk=4)
             if waiting_list:
                 return waiting_list
     except WaitingArea.DoesNotExist:
@@ -653,8 +653,8 @@ def fetching_waiting_list_count(university_name,origin,auth_user):
         count = None
         if origin:
             # This means we are dealing with users of origin
-            waiting_list = WaitingArea.objects.get(pk=1)
-            waiting_list_nearby = WaitingArea.objects.get(pk=2)
+            waiting_list = WaitingArea.objects.get(pk=3)
+            waiting_list_nearby = WaitingArea.objects.get(pk=4)
             users_nearby = waiting_list_nearby.users.filter(user__university_name=university_name)
             set1 = set(users_nearby)
 
@@ -673,10 +673,10 @@ def fetching_waiting_list_count(university_name,origin,auth_user):
             return count , set3
         else:
             
-            waiting_list = WaitingArea.objects.get(pk=2)
+            waiting_list = WaitingArea.objects.get(pk=4)
             
             # we need the count of all the users from origin that are from his university plus all the users from wl that are in his nearby_list
-            waiting_list_origin = WaitingArea.objects.get(pk=1)
+            waiting_list_origin = WaitingArea.objects.get(pk=3)
             users = waiting_list_origin.users.filter(user__university_name=university_name)
             print(users)
             users_nearby = waiting_list.users.filter(user__university_name=university_name)
@@ -859,25 +859,25 @@ def removing_user_from_waiting_list(user,origin):
     try:
         if origin:
             # This means we are dealing with users of origin
-            waiting_list = WaitingArea.objects.get(pk=1)
+            waiting_list = WaitingArea.objects.get(pk=3)
             if waiting_list:
                 is_removed = waiting_list.remove_user(user)
                 if is_removed:
                     return True
                 else:
                     '''This means that the user must have fetched the random_user from nearby Waiting List'''
-                    waiting_list = WaitingArea.objects.get(pk=2)
+                    waiting_list = WaitingArea.objects.get(pk=4)
                     if waiting_list:
                         is_removed = waiting_list.remove_user(user)
         else:
-            waiting_list = WaitingArea.objects.get(pk=2)
+            waiting_list = WaitingArea.objects.get(pk=4)
             if waiting_list:
                 is_removed = waiting_list.remove_user(user)
                 if is_removed:
                     return True
                 else:
                     '''This means that the user must have fetched the random_user from origin Waiting List'''
-                    waiting_list = WaitingArea.objects.get(pk=1)
+                    waiting_list = WaitingArea.objects.get(pk=3)
                     if waiting_list:
                         is_removed = waiting_list.remove_user(user)
 
@@ -916,19 +916,19 @@ def create_waiting_list_and_add_user(user,origin):
 
     if origin:
         try:
-            waiting_list = WaitingArea.objects.get(pk=1)
+            waiting_list = WaitingArea.objects.get(pk=3)
             if waiting_list:
                 is_added = waiting_list.add_user(user)
         except:
-            waiting_list = WaitingArea.objects.create(pk=1)
+            waiting_list = WaitingArea.objects.create(pk=3)
             is_added = waiting_list.add_user(user)
     else:
         try:
-            waiting_list = WaitingArea.objects.get(pk=2)
+            waiting_list = WaitingArea.objects.get(pk=4)
             if waiting_list:
                 is_added = waiting_list.add_user(user)
         except:
-            waiting_list = WaitingArea.objects.create(pk=2)
+            waiting_list = WaitingArea.objects.create(pk=4)
             is_added = waiting_list.add_user(user)
     return is_added
 

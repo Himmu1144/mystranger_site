@@ -24,6 +24,14 @@
 		position: absolute;
 		margin-top: 40px;
 	}
+
+	.notif-btn{
+		background-color: #009cda;
+	}
+
+	.notif-btn:hover{
+		background-color: #0296d1;
+	}
 </style>
 
 
@@ -271,7 +279,7 @@
 			div2.id = assignGeneralDiv2Id(notification)
 
 			pos_action = document.createElement("a")
-			pos_action.classList.add("btn", "btn-primary", "mr-2")
+			pos_action.classList.add("btn", "btn-primary", "mr-2", 'notif-btn')
 			pos_action.href = "#"
 			pos_action.innerHTML = "Accept"
 			pos_action.addEventListener("click", function (e) {

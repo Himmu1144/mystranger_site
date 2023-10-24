@@ -11,14 +11,20 @@
     body{
         background-color: #F9F9F9;
         font-family: 'Rubik', sans-serif;
-        height: 100vh;
-        border: 2px solid blue;
+        /* height: 100vh; */
+        /* border: 2px solid blue; */
+        display: flex;
+        flex-direction: column;
+        scroll-behavior: smooth;
     }
 
 .home-container{
     /* border: 2px solid red; */
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
+    /* flex: 1; */
+    height: calc(100vh - 58px);
+    justify-content: space-between;
     flex-direction: column;
     align-items: center;
 }
@@ -38,7 +44,8 @@
 .center-box{
     /* border: 2px solid blue; */
     width: 62vw;
-    height: 76vh;
+    /* height: 76vh; */
+    margin-top: 6em;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -82,14 +89,27 @@
     flex-direction: column;
     align-items: center;
     font-size: 14px;
-    height: 12vh;
+    /* height: 12vh; */
+    height: 90px;
+}
+
+.navbar{
+    position: sticky;
+    top: 0;
 }
 
 .bottom-box img {
     text-align: center;
     width: 2.5rem;
 }
-    
+
+.info-section{
+    /* height: 100vh; */
+    height: calc(100vh - 58px);
+    /* width: 100vw; */
+    border: 2px solid red;
+}
+
 </style>
 
 
@@ -119,8 +139,15 @@
         
         <p class="st">Start Chatting :</p>
         <div class="head-buttons">
-            <button type="button" class="btn btn-dark home-btn1">Text</button>
-            <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-outline-dark home-btn2 ">Video</button></a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'new-chat-text' %}"><button type="button" class="btn btn-dark home-btn1">Text</button></a>
+                <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-outline-dark home-btn2 ">Video</button></a>
+            {% else %}
+            <a href="#"><button type="button" class="btn btn-dark home-btn1" onclick="login_req()">Text</button></a>
+            <a href="#"><button type="button" class="btn btn-outline-dark home-btn2 " onclick="login_req()">Video</button></a>
+            <p class="mt-1" id="login-req-txt" style="font-size:14px; display: none;">login required </p>
+            {% endif %}
+            
         </div>
     </div>
 
@@ -130,13 +157,25 @@
     </div>
 
     <div class="bottom-box">
-
-        <p>scroll down for more</p>
-        <img src="{% static 'images/mouse.svg' %}" alt="" srcset="">
+        <a href="#info-sec" class="bottom-box" style="text-decoration: none; color: #343a40;">
+            <p>scroll down for more</p>
+            <img src="{% static 'images/mouse.svg' %}" alt="" srcset=""> </a>
     </div>
 
     
 
 </div>
 
+{% comment %} <section class="info-section" id="info-sec">
+    <p>here i can add anything </p>
+</section> {% endcomment %}
+
+<script>
+    function login_req() {
+    var login_req_txt = document.getElementById("login-req-txt")
+    login_req_txt.style.display = "block"
+    // You can replace the alert with your desired code to show the message.
+}
+
+</script>
 {% endblock body %}

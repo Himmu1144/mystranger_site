@@ -344,6 +344,37 @@
     .main-msg-notif{
       flex-direction: column;
     }
+
+    .navbar{
+      height: 58px;
+    }
+
+    
+/* Styling the scrollbar track */
+::-webkit-scrollbar {
+    width: 10px; /* Set the width of the scrollbar */
+}
+
+/* Styling the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+    background: #e1e1e9; /* Set the color of the thumb */
+    border-radius: 5px; /* Round the corners of the thumb */
+}
+
+/* Styling the scrollbar track (the non-draggable part) */
+::-webkit-scrollbar-track {
+    background: #dfdfdf; /* Set the color of the track */
+    /* background: #eee;  */
+    /* background: #bcdfed; Set the color of the track */
+}
+
+
+.btn:focus,
+.btn:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+    
     
   </style>
 
@@ -530,7 +561,7 @@
     {% else %}
     <div class='d-flex'>
       <a class="p-2 text-light dropleft" href="{% url 'login' %}">Login</a>
-      <a class="btn btn-outline-primary text-light dropleft" href="{% url 'register' %}">Register</a>
+      <a class=" p-2 text-light dropleft" href="{% url 'register' %}">Register</a>
     </div>
     {% endif %}
   </nav>

@@ -48,14 +48,19 @@
 		  		<form class="form-signin" method="post">{% csrf_token %}
 					  <!-- <input type="email" name="email" id="id_input_email" class="form-control" placeholder="Email address" required autofocus value={{form.initial.email}}> -->
 					  <h6 class="mt-4 field-heading">Name</h6>
-					  <!-- <input type="text" name="name" id="id_input_name" class="form-control" placeholder="name" required
-					value="{{form.name}}"> -->
+					  {% comment %} <input type="text" name="name" id="id_input_name" class="form-control" placeholder="name" required
+					value="{{form.name}}"> {% endcomment %}
 					<h6>{{form.name}}</h6>
 					
 		  			<!-- <input class="d-none" type="file" id="id_profile_image_file_selector" name="profile_image_file_selector" onchange="readURL(this)"> -->
+					  
 			  		<h6 class="mt-4 field-heading">Email</h6>
-                    <h6>{{form.email}}</h6>
-
+					  <h6>{{form.email}}</h6>
+					  
+			  		<h6 class="mt-4 field-heading">University Name</h6>
+					<input type="text" name="uniname" id="id_input_uniname" class="form-control" placeholder="University Name" required
+					value="{{form.universityName}}">
+                    {% comment %} <h6>{{form.universityName}}</h6> {% endcomment %}
 
 					<p class="mt-4 mb-1 field-heading">Distance</p>
 					{% if form.origin %}

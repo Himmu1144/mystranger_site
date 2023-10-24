@@ -166,6 +166,13 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         room = await get_room_or_error(room_id, self.scope["user"])
         await mark_room_read(self.scope["user"], room_id)
 
+        try:
+            Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
+            print(Removed)
+        except Exception as e:
+            print('Exception during removing user from room.connected_users')
+            Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
+
         
 
         # Notify the group that someone left
@@ -212,12 +219,12 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             room.group_name,
             self.channel_name,
         )
-        try:
-            Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
-            print(Removed)
-        except Exception as e:
-            print('Exception during removing user from room.connected_users')
-            Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
+        # try:
+        #     Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
+        #     print(Removed)
+        # except Exception as e:
+        #     print('Exception during removing user from room.connected_users Again!!')
+        #     Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
         # Instruct their client to finish closing the room
         await self.send_json({
             "leave": str(room.id),
@@ -548,11 +555,23 @@ def mark_room_read(user, room_id):
 @database_sync_to_async
 def Add_or_remove_from_room(Boolean, room,user):
     if Boolean:
-        room.connected_users.add(user)
-        room.save()
+        users = room.connected_users.all()
+        print('***********************')
+        print('users - ', users)
+        print(user not in users)
+        if user not in users:
+            room.connected_users.add(user)
+            room.save()
     else:
-        room.connected_users.remove(user)
-        room.save()
+        users = room.connected_users.all()
+        print("%%%%%%%%%%%%%%%%")
+        print('users - ', users)
+        print(user in users)
+        if user in users:
+            room.connected_users.remove(user)
+            room.save()
+        print("%%%%%%%%%%%%%%%%")
+        print('users - ', room.connected_users.all())
     return True
 
 @database_sync_to_async

@@ -98,6 +98,32 @@
 	/* input[type='radio']:checked:after {
 	background-color: black;
 	} */
+
+	.radio2{
+		{% comment %} border: 2px solid red; {% endcomment %}
+    display: flex;
+    height: 40px;
+	}
+
+	.radio2 p{
+		margin-top: 0;
+		margin-bottom: 1rem;
+	}
+
+	.radio-sec{
+		display: flex;
+		justify-content: space-between;
+		margin-top: 1em;
+	}
+
+	.btn-send{
+		background-color: #009cda;
+	}
+
+	/* .btn-send:hover{
+		background-color: #0c87b8;
+	} */
+
 </style>
 
 <div class="container-fluid cont-main">
@@ -109,24 +135,66 @@
 		  		<!-- <div class="image-container mx-auto mb-4">
 		  			<img class="d-block border border-dark rounded-circle img-fluid mx-auto profile-image" alt="codingwithmitch logo" id="id_profile_image" src="{{profile_image}}">
 		  		</div> -->
-                <p class="mt-4 mb-1 field-heading">Name</p>
-                <h5>{{name}}</h5>
 
-		  		<p class="mt-4 mb-1 field-heading">Email</p>
-                <h6>{{email}}</h6>
+				<div>
+					<div>
+				  <p class="mt-2 mb-1 field-heading">Name</p>
+				  <h6>{{name}}</h6>
+				</div>
+				{% comment %} <div>
+				  {% if universityName %}
+					<p class="mt-2 mb-1 field-heading">University</p>
+					<h6>{{universityName}}</h6>
+				  {% endif %}
+				</div> {% endcomment %}
 
-		  		<p class="mt-4 mb-1 field-heading">Distance</p>
-				{% if origin %}
-				<div>
-				<input type="radio" name="my_dist" checked> Origin
-				<input type="radio" name="my_dist" disabled> Nearby
-			</div>
-				{% else %}
-				<div>
-				<input type="radio" name="my_dist" disabled> Origin
-				<input type="radio" name="my_dist" checked> Nearby
-			</div>
-				{% endif %}
+				</div>
+
+				  <p class="mt-2 mb-1 field-heading">Email</p>
+				  <h6>{{email}}</h6>
+
+
+				  <div class="radio-sec">
+
+				  
+				  
+  
+				  
+				{% comment %} {% if universityName %}
+					<p class="mt-2 mb-1 field-heading">University Name</p>
+					<h6 style="font-size:1rem;">{{universityName}}</h6>
+				{% endif %} {% endcomment %}
+
+					<div class="radio1">
+						<p class=" mb-1 field-heading">Distance</p>
+						{% if origin %}
+							<div>
+								<input type="radio" name="my_dist" checked> Origin
+								<input type="radio" name="my_dist" disabled> Nearby
+							</div>
+						{% else %}
+							<div>
+								<input type="radio" name="my_dist" disabled> Origin
+								<input type="radio" name="my_dist" checked> Nearby
+							</div>
+						{% endif %}
+					</div>
+
+					<div class="radio2 mt-2">
+						<p class="mb-1 field-heading">Gender :</p>
+	
+						{% if gender == 'M' %}
+							<div class="ml-2">
+								<p>Male</p>
+							</div>
+						{% else %}
+							<div class="ml-2">
+								<p>Female</p>
+							</div>
+						{% endif %}
+					</div>
+					
+				</div>
 			  		
 			  
 
@@ -134,7 +202,7 @@
 		  		{% if is_self %}
 		  		<a  class="mt-4 update-btn btn btn-outline-dark" href="{% url 'account:edit' user_id=request.user.id %}">Update</a>
 				<div class="d-flex flex-column mt-3">
-					<a class="m-auto blue-color" href="#">Change password</a>
+					<a class="m-auto blue-color" href="{% url 'account:edit-pass' user_id=request.user.id %}">Change password</a>
 				</div>
 		  		{% endif %}
 		  	</div>
@@ -173,7 +241,7 @@
 						<!-- No requests have been sent -->
 						{% if request_sent == -1 %}
 						<div class="d-flex flex-column align-items-center pt-4">
-							<button class="btn btn-primary" style="background-color: #009cda;" id="id_send_friend_request_btn">
+							<button class="btn btn-primary btn-send" style="background-color: #009cda;" id="id_send_friend_request_btn">
 								Send Friend Request
 							</button>
 						</div>

@@ -7,10 +7,24 @@ from django.contrib.auth import authenticate
 class RegistrationForm(UserCreationForm):
 
     email = forms.EmailField(max_length=255,help_text='Enter a Valid Email.')
+     # Add gender field to the form
+    gender = forms.ChoiceField(
+        choices=Account.GENDER_CHOICES,
+        widget=forms.RadioSelect,
+        initial='M',  # Set an initial value
+        label='Gender'
+    )
+
+     # Add "Terms and Conditions" field to the form
+    terms = forms.BooleanField(
+        required=True,
+        label='I accept the Terms and Conditions',
+        initial=True # Set the initial value as needed
+    )
 
     class Meta:
         model = Account
-        fields = ('email', 'password1','password2')
+        fields = ('email', 'password1','password2','gender', 'terms')
 
     def clean_email(self):
         email = self.cleaned_data['email'].lower()
@@ -37,6 +51,7 @@ class RegistrationForm(UserCreationForm):
         if '.' in name:
             name = name.split('.')[0].capitalize()
         account.name = name
+        account.terms = self.cleaned_data['terms']
         account.email = self.cleaned_data['email'].lower()
         account.university_name = email.split('@')[-1:][0]
         if commit:
@@ -46,6 +61,7 @@ class RegistrationForm(UserCreationForm):
 class AccountAuthenticationForm(forms.ModelForm):
     email = forms.EmailField(max_length=255,label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
+
 
     class Meta:
         model = Account

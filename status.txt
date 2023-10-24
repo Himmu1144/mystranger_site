@@ -63,4 +63,7 @@ ________________________________________________________________________________
 4/10/2023 - working on the faulty video section
 12/10/2023 - send_rqst_btn from video section
 16/10/23 - 17/10/2023 - improving video fron-end
-19/10/203 - improving message front-end
+19/10/203 - 20/10/2023 - improving message front-end
+21/10/2023 - 22/10/203  working on the page
+25/10/2023  working on the page - Mos wants to finish this page today 
+

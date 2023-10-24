@@ -91,6 +91,21 @@ class GroupConnect(models.Model):
     def __str__(self):
         return f'{self.user1.id}{self.user2.id}'
     
+
+class Flags(models.Model):
+
+    # id = models.IntegerField(primary_key=True)
+    flag_user_id = models.IntegerField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Flags', verbose_name="Flagged", on_delete=models.CASCADE)
+    Flagger = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Flagged_by',verbose_name="Flagged_by", on_delete=models.CASCADE)
+    reason = models.CharField(max_length=3000)
+
+    def __str__(self):
+        return f'{self.user.name} - {self.id}'
+
+
+
+    
 '''
 Creating University profile, these profiles are going to be used as a temporary university untill someone verifies and created the actual university from the backend.
 '''
