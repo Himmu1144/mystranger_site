@@ -15,6 +15,7 @@ DEBUG = False
 
 
 def private_chat_room_view(request, *args, **kwargs):
+    
     user = request.user
     room_id = request.GET.get("room_id")
 

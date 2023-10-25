@@ -423,12 +423,12 @@
       <a class="text-light p-2" style='text-decoration:none;'
         href="{% url 'account:view' user_id=request.user.id %}">Account</a>
 
-      <span class="bar">
+      <span class="bar" id="bar-btn">
         <div class="drop-btn">
           <span><i class="fa-solid fa-bars p-2"></i></span>
         </div>
         <!-- <div class="tooltip"></div> -->
-        <div class="wrapper">
+        <div class="wrapper" id="wrapper-btn">
           <ul class="menu-bar">
             <li>
               <!-- <a href="#">
@@ -437,7 +437,13 @@
                 </div>
                 Home
               </a> -->
-              <a class="p-2 text-light dropleft" style='text-decoration:none;' href="{% url 'logout' %}">Logout</a>
+              <a class="p-2 dropleft" style='text-decoration:none;' href="{% url 'logout' %}">
+              
+                <div class="icon">
+                  <span class="fas fa-sign-out-alt"></span>
+                </div>
+                Log out
+              </a>
             </li>
             <li class="setting-item">
               <a href="#">
@@ -464,11 +470,11 @@
               </a>
             </li>
             <li>
-              <a href="#">
+              <a href="{% url "feedback" %}">
                 <div class="icon">
                   <span class="fas fa-comment-alt"></span>
                 </div>
-                Feedback
+                Found a bug \ Feedback 
               </a>
             </li>
           </ul>
@@ -601,6 +607,7 @@
       help_drop.style.display = "none";
       menu_bar.style.marginLeft = "0px";
     });
+
   </script>
 
   {% block body %}{% endblock body %}

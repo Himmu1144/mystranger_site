@@ -73,7 +73,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     payload = json.loads(payload)
                     await self.send_user_info_payload(payload['user_info'])
                 else:
-                    raise ClientError(
+                    raise ClientError(204,
                         "Something went wrong retrieving the other users account details.")
                 await self.display_progress_bar(False)
 
@@ -99,9 +99,10 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         try:
             if self.room_id != None:
                 await self.leave_room(self.room_id)
-        except Exception as e:
+        except ClientError as e:
             print("EXCEPTION: " + str(e))
-            pass
+            await self.handle_client_error(e)
+            
 
     async def join_room(self, room_id):
         """
@@ -169,9 +170,10 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         try:
             Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
             print(Removed)
-        except Exception as e:
+        except ClientError as e:
             print('Exception during removing user from room.connected_users')
             Removed = await Add_or_remove_from_room(False,room,self.scope['user'])
+            return await self.handle_client_error(e)
 
         
 
@@ -188,7 +190,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     
                 }
             )
-        except Exception as e:
+        except ClientError as e:
             print('Exception during sending leave chat msg to group - ', str(e))
 
         print("******* The leave chat msg is sent! **********")
@@ -464,17 +466,17 @@ def get_room_or_error(room_id, user):
     try:
         room = PrivateChatRoom.objects.get(pk=room_id)
     except PrivateChatRoom.DoesNotExist:
-        raise ClientError("Invalid room.")
+        raise ClientError("Invalid room.","room doesn't exist")
 
     # Is this user allowed in the room? (must be user1 or user2)
     if user != room.user1 and user != room.user2:
-        raise ClientError("You do not have permission to join this room.")
+        raise ClientError("Permission Denied","You do not have permission to join this room.")
 
     # Are the users in this room friends?
     friend_list = FriendList.objects.get(user=user).friends.all()
     if not room.user1 in friend_list:
         if not room.user2 in friend_list:
-            raise ClientError("You must be friends to chat.")
+            raise ClientError("Not Friends","You must be friends to chat.")
     return room
 
 # I don't think this requires @database_sync_to_async since we are just accessing a model field
@@ -498,6 +500,7 @@ def get_user_info(room, user):
         return json.dumps(payload)
     except ClientError as e:
         print("EXCEPTION: " + str(e))
+
     print("none I guess?...")
     return None
 

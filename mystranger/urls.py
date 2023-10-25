@@ -32,6 +32,7 @@ urlpatterns = [
     path('new_chat/', new_chat_view , name='new-chat' ),
     path('new_chat_text/', new_chat_text_view , name='new-chat-text' ),
     path('search/', account_search_view, name="search"),
+    path('feedback/', feedback_view, name="feedback"),
     
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),

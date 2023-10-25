@@ -48,7 +48,7 @@ def friend_requests(request, *args, **kwargs):
 		else:
 			return HttpResponse("You can't view another users friend requets.")
 	else:
-		redirect("login")
+		return redirect("login")
 	return render(request, "friend/friend_requests.html", context)
 
 def send_friend_request(request, *args, **kwargs):
