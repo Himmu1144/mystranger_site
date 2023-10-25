@@ -573,6 +573,7 @@
   </nav>
 
   <script>
+    {% if request.user.is_authenticated %}
     const drop_btn = document.querySelector(".drop-btn span");
     const tooltip = document.querySelector(".tooltip");
     const menu_wrapper = document.querySelector(".wrapper");
@@ -607,6 +608,8 @@
       help_drop.style.display = "none";
       menu_bar.style.marginLeft = "0px";
     });
+
+    {% endif %}
 
   </script>
 
