@@ -126,7 +126,6 @@
   cursor: pointer;
 }
 
-
 .box1{
   width: 50%;
     display: flex;
@@ -166,6 +165,7 @@
   font-size:10px;
 }
 
+
 </style>
 
 <div class="container-fluid main-cont">
@@ -181,7 +181,7 @@
                 autofocus>
               <input type="text" name="lat" id="lat" placeholder="lat" hidden>
               <input type="text" name="lon" id="lon" placeholder="lon" hidden>
-              <input type="checkbox" name="notrust" id="notrust" hidden>
+              <input type="checkbox" name="notrust" id="notrust">
               <input type="text" name="universityName" id="universityName" hidden>
 
               <input type="password" name="password1" id="inputPassword1" class="radius form-control" placeholder="Password"
@@ -211,22 +211,23 @@
     </div>
     <div class='box2'>
       <div class="box2-upper">
-      <h6 id="uniName"></h6>
-      <div class="dropdown">
-        <div class="dropdown-toggle" id="reg-info" style="display:none;" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"> <i class="fa-solid fa-circle-info"></i>
+        <h6 id="uniName"></h6>
+        {% comment %} <span class="ml-1 reg-info dropdown-toggle"></span> {% endcomment %}
+        <div class="dropdown">
+          <div class="dropdown-toggle" id="reg-info" style="display:none;" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"> <i class="fa-solid fa-circle-info"></i>
+          </div>
+          
+          <div class="dropdown-menu reg-menu" style="display:none;">
+            <p>If your university is not present in the search result than please either select any nearby location or search the coordinates of your university in this format lat,lon  </p>
+          </div>
+          
         </div>
-        
-        <div class="dropdown-menu reg-menu" style="display:none;">
-          <p>If your university is not present in the search result than please either select any nearby location or search the coordinates of your university in this format lat,lon  </p>
-        </div>
-        
       </div>
+      <h6 id="uniAddress"></h6>
+      <div id="map" style="height: 292px; width: 350px;"></div>
     </div>
-    <h6 id="uniAddress"></h6>
-    <div id="map" style="height: 292px; width: 350px;"></div>
-  </div>
-    <button style="display: none;" id="not_my_uni" onclick="notMyUni()">Not My University</button>
-    
+      <button style="display: none;" id="not_my_uni" onclick="notMyUni()">Not My University</button>
+      
     </div>
   </div>
   <div class="errors">
@@ -272,51 +273,87 @@
       console.log("Mouse left the element.");
   });
 
-  mapboxgl.accessToken = 'pk.eyJ1IjoiYW5tb2xqbyIsImEiOiJjbG43bnFnaHowenF3Mm9xbWJmaHJraW9xIn0.kYnR9lTYI_0xU9e2aZespA';
+  // we don't wanna load map everytime a user registers , we only wanna load map when the university isn't registered in the database
+
+  function loadMapInstance(){
+    loadCount++;
+    console.log('############ THe load count is - ', loadCount)
+
+    if(loadCount > 1){
+      console.log('Load count is > 1 so we are gonna ignore it', loadCount)
+    } else {
+      
+
+      mapboxgl.accessToken = '{{accesstoken}}';
     
+      console.log('initializing the map instance for once')
 
-    var map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [77.2219388, 28.6517178],
-      zoom:  2 // Default zoom level
-    });
+      var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [77.2219388, 28.6517178],
+        zoom:  2 // Default zoom level
+      });
 
-    // Create a default Marker and add it to the map.
-    const marker1 = new mapboxgl.Marker()
-      .setLngLat([77.2219388, 28.6517178])
-      .addTo(map);
-    
+      // Create a default Marker and add it to the map.
+      const marker1 = new mapboxgl.Marker()
+        .setLngLat([77.2219388, 28.6517178])
+        .addTo(map);
+      
+      console.log('initializing the map geocoder instance for once')
+      
 
-    var geocoder = new MapboxGeocoder({ // Initialize the geocoder
-      accessToken: mapboxgl.accessToken, // Set the access token
-      mapboxgl: mapboxgl, // Set the mapbox-gl instance
-      marker: false, // Do not use the default marker style
-      placeholder: 'Search for universities and colleges', // Placeholder text for the search bar
-      // bbox: [79.0000, 5.0000, 82.0000, 10.0000], // Boundary for Berkeley
-      types: 'poi',
-      countries: 'IN',
-      bbox: [68.1766451354, 6.754087679, 97.4025614766, 35.4940095078],
+      var geocoder = new MapboxGeocoder({ // Initialize the geocoder
+        accessToken: mapboxgl.accessToken, // Set the access token
+        mapboxgl: mapboxgl, // Set the mapbox-gl instance
+        marker: false, // Do not use the default marker style
+        placeholder: 'Search for universities and colleges', // Placeholder text for the search bar
+        // bbox: [79.0000, 5.0000, 82.0000, 10.0000], // Boundary for Berkeley
+        {% comment %} types: 'point', {% endcomment %}
+        types: 'poi',
+        countries: 'IN',
+        bbox: [68.1766451354, 6.754087679, 97.4025614766, 35.4940095078],
 
-      proximity: {
-        longitude: 77.2167, // Longitude of New Delhi
-        latitude: 28.6139 // Latitude of New Delhi
-      }
+        proximity: {
+          longitude: 77.2167, // Longitude of New Delhi
+          latitude: 28.6139 // Latitude of New Delhi
+        }
+  }); 
 
-    });
+    function getGeocoder (){
+      return geocoder
+    }
+    function getMap (){
+      return map
+    }
 
+  
     geocoder.on('result', function (ev) {
       var notrust = document.getElementById('notrust')
       notrust.checked = true
-      console.log('printing the search reesult', ev.result, window.notrust);
+      console.log('printing the search reesult', ev.result);
       document.getElementById('uniName').innerHTML = 'University Name : ' + ev.result['text']
       document.getElementById('universityName').value = ev.result['text']
+      document.getElementById('uniAddress').innerHTML = 'Address : ' + ev.result['place_name']
       document.getElementById('lon').value = ev.result['geometry']['coordinates'][0] 
       document.getElementById('lat').value = ev.result['geometry']['coordinates'][1]
       marker1.setLngLat([ev.result['geometry']['coordinates'][0], ev.result['geometry']['coordinates'][1]]);
       console.log('Updated all the values')
+
     });
+
+    }
+
+    
+
+  }
+
+
   
+
+
+
+
   // Here we are handling the socket connection and also what happens when socket disconnects.
   // -----------------------------------------------------------------------------------------
 
@@ -343,21 +380,26 @@
 
     if (data.universityName != null && data.universityName != 'nope' && data.fetched_from != 1) {
       console.log('hurrah ', data.universityName)
+      
       document.getElementById('not_my_uni').style.display = 'none'
       document.getElementById('uniName').innerHTML = 'University Name : ' + data.universityName
       document.getElementById('uniAddress').innerHTML = 'Address : ' + data.universityAddress
       document.getElementById('universityName').value = data.universityName
       document.getElementById('lat').value = data.lat
       document.getElementById('lon').value = data.lon
-      showMap(data.lon, data.lat, 14)
+      {% comment %} showMap(data.lon, data.lat, 14) {% endcomment %}
+      window.nomap = true
       var notrust = document.getElementById('notrust')
       notrust.checked = false
       
     } else if (data.fetched_from == 1 && data.universityName != null && data.universityName != 'nope'){
       console.log('hurrah no trust ', data.universityName)
+      
       document.getElementById('uniName').innerHTML = 'University Name : ' + data.universityName
+      document.getElementById('universityName').value = data.universityName
       document.getElementById('lat').value = data.lat
       document.getElementById('lon').value = data.lon
+      loadMapInstance();
       showMap(data.lon, data.lat, 14)
       document.getElementById('not_my_uni').style.display = 'block'
       var notrust = document.getElementById('notrust')
@@ -369,6 +411,7 @@
 
       // This means that the university doesn't exist thus we gotta show the search tot ake the input
 
+      loadMapInstance()
       console.log('This university does not exist in the database.')
       document.getElementById('uniName').innerHTML = 'Unable to find your university'
       document.getElementById('universityName').value = ''
@@ -422,11 +465,20 @@
         "email_address": emailAddress,
       }));
     } else if (emailAddress == '') {
-      
-      showMap(77.2219388, 28.6517178, 2)
-      document.getElementById('uniName').innerHTML = ''
-      document.getElementById('universityName').value = ''
-      document.getElementById('uniAddress').innerHTML = ''
+      if (window.nomap){
+
+        document.getElementById('uniName').innerHTML = ''
+        document.getElementById('universityName').value = ''
+        document.getElementById('uniAddress').innerHTML = ''
+      } else {
+
+        showMap(77.2219388, 28.6517178, 2)
+        document.getElementById('uniName').innerHTML = ''
+        document.getElementById('universityName').value = ''
+        document.getElementById('uniAddress').innerHTML = ''
+      }
+      window.nomap = false
+
 
     }
   }
@@ -459,7 +511,8 @@
   function showSearchBar() {
     document.getElementById('not_my_uni').style.display = 'none'
     document.getElementById('reg-info').style.display = 'flex'
-
+    let geocoder = getGeocoder()
+    let map = getMap()
     if (map.hasControl(geocoder)) {
       // Remove the geocoder control from the map
       map.removeControl(geocoder);
@@ -501,9 +554,18 @@
       var suggetions = document.querySelector('.suggestions')
       suggetions.style.display = "none"
 
+
+
+
     } else {
       console.log("This is a string");
     }
+
+
+    
+
+    
+
 
     });
 

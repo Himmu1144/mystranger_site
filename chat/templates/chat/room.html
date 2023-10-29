@@ -269,6 +269,10 @@
 		display: inline-block;
 	}
 
+	.friend-container:hover{
+		background: #f2f2f2;
+	}
+
 	.no-friend{
 		display: flex;
 		justify-content: center;
@@ -365,6 +369,100 @@
 		overflow: scroll;
 	}
 
+	.back-arrow{
+		display: none;
+	}
+
+	.no-selection{
+		height: 100%;
+		position: absolute;
+		border: 1px solid #707070;
+		border-radius: 8px;
+		background: #f0f0f0;
+		z-index: 1;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.contenta{
+		/* border: 2px solid green;
+		height: 40%;
+    	width: 45%; */
+	}
+
+	.contenta p {
+		font-weight: 900px;
+	}
+
+	/* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 500px) {  
+	body{
+		height: unset;
+	}
+	.main-container{
+		/* height: 90vh; */
+		height: calc(100vh - 58px);
+		flex: unset;
+	}
+
+	.cont-row{
+		position: relative;
+		overflow: hidden;
+	}
+
+	.left-column{
+		width: 99%;
+    	height: 99%;
+	}
+
+	.right-column{
+		position: absolute;
+		left: 100%;
+		width: 99%;
+    	height: 99%;
+		margin-left: 0px;
+		transition: left 0.5s; 
+	}
+
+	.back-arrow{
+		display: block;
+		margin-right: 2px;	
+	}
+
+	#id_other_username{
+		font-size: 15px;
+	}
+
+	#offline_dot{
+		font-size: 15px;
+	}
+
+	#online_dot{
+		font-size: 15px;
+	}
+
+	.video-textarea{
+		height: 40px;
+	}
+
+	.send-btn{
+		font-size: 18px;
+		top: 11px;
+	}
+
+	.top-cont-left{
+		width: 70%;
+	}
+
+	.typo{
+		margin-left: 1em;
+    	font-size: 11px;
+	}
+
+  }
+
 </style>
 
 <div class="main-container">
@@ -404,11 +502,15 @@
 			</div>
 		</div>
 		<div class="right-column">
+			<div class="no-selection">
+				<div class="contenta"><p>Click on the friend whith whom you wanna chat</p></div>
+			</div>
 			<div class="card" id="id_chatroom_card">
 				{% if m_and_f %}
 				<!-- Right column content goes here -->
 				<div class="right-header" id="id_room_title">
 					<div class="d-flex top-cont-left">
+						<div class="back-arrow" id="bk-arrow" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></div>
 					<a class="d-flex flex-row" id="id_user_info_container">
 						<h4 class="ml-2" id="id_other_username"></h4>
 					</a>
@@ -505,6 +607,11 @@
 
 <script type="text/javascript">
 
+	function goBack(){
+		var rightColumn = document.querySelector('.right-column');
+		rightColumn.style.left = '100%';
+	}
+
 	{% comment %} var generalCachedMsgNotifList = new List([]) {% endcomment %}
 
 	// submitGeneralMsgNotificationToCache()
@@ -594,27 +701,35 @@
 	var room_name = null;
 	var auth_user_id = {{id}};
 
-	onStart()
+	// onStart()
 
-	function onStart() {
-		{% if room %}
-		if ("{{room.user1}}" == "{{request.user}}") {
-			onSelectFriend("{{room.user2.id}}")
-		}
-		else {
-			onSelectFriend("{{room.user1.id}}")
-		}
-		{% else %}
-		{% if m_and_f %}
-		onSelectFriend("{{m_and_f.0.friend.id}}")
-		{% endif %}
-		{% endif %}
-	}
+	// function onStart() {
+	// 	{% if room %}
+	// 	if ("{{room.user1}}" == "{{request.user}}") {
+	// 		onSelectFriend("{{room.user2.id}}")
+	// 	}
+	// 	else {
+	// 		onSelectFriend("{{room.user1.id}}")
+	// 	}
+	// 	{% else %}
+	// 	{% if m_and_f %}
+	// 	onSelectFriend("{{m_and_f.0.friend.id}}")
+	// 	{% endif %}
+	// 	{% endif %}
+	// }
 
 	function onSelectFriend(userId) {
+		var cleanup = document.querySelector('.no-selection')
+		cleanup.style.display = 'none';
 		createOrReturnPrivateChat(userId)
 		clearHighlightedFriend()
 		highlightFriend(userId)
+		updatePhone()
+	}
+
+	function updatePhone(){
+		var rightColumn = document.querySelector('.right-column');
+		rightColumn.style.left = '0%';
 	}
 
 	function closeWebSocket() {
@@ -830,7 +945,7 @@
 	}
 
 
-	document.getElementById('id_chat_message_input').focus();
+	// document.getElementById('id_chat_message_input').focus();
 	document.getElementById('id_chat_message_input').onkeyup = function (e) {
 		if (e.keyCode === 13 && e.shiftKey) {  // enter + return
 			// Handled automatically by textarea
@@ -929,9 +1044,9 @@
 
 	function handleUserInfoPayload(user_info) {
 		if (user_info['uni_name'] == ""){
-			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName'] 
+			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName'].slice(0,12) + '...' 
 		} else{
-			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uni_name'] 
+			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uni_name'].slice(0,25) + '...' 
 		}
 		document.getElementById("id_user_info_container").href = "{% url 'account:view' user_id=4586463456756486676 %}".replace("4586463456756486676", user_info['id'])
 	}

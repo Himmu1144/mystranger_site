@@ -11,6 +11,7 @@ from mystranger_app.utils import calculate_distance
 from friend.utils import get_friend_request_or_false
 from friend.friend_request_status import FriendRequestStatus
 from django.contrib.auth.hashers import make_password
+from mystranger.settings import accesstoken
 import json
 
 
@@ -20,6 +21,8 @@ def register_view(request, *args, **kwargs):
     context = {}
     if user.is_authenticated:
         return HttpResponse(f'You are already authenticated as {user.name} with email - {user.email}')
+
+    context['accesstoken'] = accesstoken
 
     if request.method == "POST":
         form = RegistrationForm(request.POST)

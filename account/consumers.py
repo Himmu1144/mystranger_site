@@ -47,11 +47,12 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
         '''
         first we will check that do we have a university associated with that email or not.
         '''
-        university = None
+        universityName = None
         lat = None 
         lon = None
         uniprofile = False
         fetched_from = None
+        address = None
 
         print('Everything at None - Just starting')
 
@@ -62,22 +63,24 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
             if university:
                 lat = university.lat
                 lon = university.lon
-                university = university.universityName
+                universityName = university.universityName
+                address = university.universityAddress
                 fetched_from = 0
 
                 print('fetched from - 0 , found on existing universities')
+                # print('The address is - ', address, university)
             else:
                 '''
                 This means that we don't have any university associated with the given email, therefore we are now going to look into our database to check whether we have any university in our database that is associated with this email.
                 '''
 
                 universities_database = {
-                    "gn.amity.edu": ["Amity University, Greater Noida", 28.54322285, 77.33274829733952],
-                    "galgotiasuniversity.edu.in": ["Galgotias University", 28.3671232, 77.54045993787369],
-                    "bennett.edu.in": ["Bennett University", 28.450610849999997, 77.58391181955102],
-                    "sharda.ac.in": ["Sharda University", 28.4734073, 77.4829339],
-                    "niu.edu.in": ["Noida International University", 28.37390315, 77.54131056418103],
-                    "cu.edu.in": ["Chandigarh University", 30.7680079, 76.57566052483162],
+                    "gn.amity.edu": ["Amity University, Greater Noida", 28.54322285, 77.33274829733952,'Amity Address'],
+                    "galgotiasuniversity.edu.in": ["Galgotias University", 28.3671232, 77.54045993787369,'Galgotia Address'],
+                    "bennett.edu.in": ["Bennett University", 28.450610849999997, 77.58391181955102, 'bennet Address'],
+                    "sharda.ac.in": ["Sharda University", 28.4734073, 77.4829339, 'sharda Address'],
+                    "niu.edu.in": ["Noida International University", 28.37390315, 77.54131056418103, 'niu address'],
+                    "cu.edu.in": ["Chandigarh University", 30.7680079, 76.57566052483162, 'cu address'],
                 }
 
                 
@@ -85,7 +88,8 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
                 try:
                     if name in universities_database:
                         info = universities_database[name]
-                        university = info[0]
+                        universityName = info[0]
+                        address = info[3]
                         lat = info[1]
                         lon = info[2]
                         fetched_from = 2
@@ -107,14 +111,16 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
                         if university:
                             lat = university.lat
                             lon = university.lon
-                            university = university.universityName
+                            universityName = university.universityName
+                            address = university.universityAddress
                             uniprofile = True
                             fetched_from = 1
 
                         else:
                             print('Only Option is to take user input')
                             fetched_from = 'nope'
-                            university = 'nope'
+                            universityName = 'nope'
+                            address = 'nope'
                         
                 except Exception as e:
                     print(e)
@@ -124,7 +130,8 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json(
             {
                 'fetched_from' : fetched_from,
-                'universityName': str(university),
+                'universityName': str(universityName),
+                'universityAddress': str(address),
                 'lat': lat,
                 'lon': lon,
             },

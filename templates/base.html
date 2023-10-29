@@ -374,6 +374,148 @@
     outline: none !important;
     box-shadow: none !important;
 }
+
+.bar-left{
+  display: none;
+}
+
+.nav-left{
+  display: flex;
+  align-items: center;
+}
+
+.search-bar{
+  margin-right: 2em;
+}
+
+.nav-msg2{
+  display: none;
+}
+
+.navbar-brand{
+  margin-left: 0.5em;
+}
+
+
+  /* Media query for tablet width 768px */
+  @media only screen and (min-width: 768px) and (max-width: 1023px) { 
+    
+    .nav-msg{
+      display: none;
+    }
+
+    .nav-msg2{
+      height: 40px;
+    width: 40px;
+    /* display: none; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+    .nav-msg2 i{
+      font-size: 16px;
+    }
+
+    .btn-group{
+      margin-right: 1em;
+    }
+
+    .nav-notif{
+      margin-right: 0px;
+    }
+
+    
+
+  }
+
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+    #wrapper-btn2{
+      left: 2px;
+    /* display: flex; */
+      width: 315px;
+      right: 0px;
+    }
+
+    .navbar-brand{
+      font-size: 18px;
+      /* margin-left: 1em; */
+      margin-right: 0em;
+    }
+
+    .search-bar{
+      display: none;
+    }
+
+    .nav-phone{
+      flex-direction: row-reverse;
+    }
+
+    .btn-group {
+    padding-top: 0px;
+    margin-right: 0em;
+}
+
+.nav-msg{
+  display: none;
+}
+
+.nav-msg2{
+  display: block;
+}
+
+  .account-nav{
+    display: none;
+  }
+
+  .bar-big {
+    display: none;
+  }
+
+  .bar-left .drop-btn{
+    padding: 0px;
+    background: none;
+    line-height: 0px;
+  }
+
+  .bar-left .drop-btn span {
+    /* float: right; */
+    line-height: 0px;
+    font-size: 0px;
+    /* cursor: pointer; */
+}
+
+  .left-icon{
+    display: flex;
+    align-items: center;
+  }
+
+  .bar-left{
+    display: flex;
+  }
+
+  .bar-left .dropleft .dropdown-menu {
+    top: 3em;
+    right: -100%;
+    left: auto; 
+  }
+
+  .bar-left .scrollable-menu {
+    height: auto;
+    max-height: 75vh;
+    width: 318px;
+    overflow-x: hidden;
+}
+
+
+
+.bar-left .wrapper ul {
+    width: 315px; 
+  }
+
+  }
     
     
   </style>
@@ -384,51 +526,14 @@
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">MyStranger</a>
-      <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
-        <!-- <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search using email..."> -->
-        <ul class="search-ul mr-2">
-          <li class="search-icon">
-            <input type="search" name="q" id="id_q_large" placeholder="Search using email...">
-            <label class="icon" onclick="executeQuery();">
-              <span id="sicon-logo" onclick="executeQuery();" class="fas fa-search"></span>
-            </label>
-          </li>
-        </ul>
-      </form>
-    </div>
-
-    {% if request.user.is_authenticated %}
-    <div class='d-flex'>
-      <div class="btn-group dropleft">
-        <div class="d-flex notifications-icon-container rounded-circle align-items-center main-msg-notif" onclick="setMsgNotificationsAsRead()">
-          <span id="id_msg_notifications_count" class="notify-badge msg-notif" style="
-            right: 10px !important;"></span>
-          <a class="text-light p-2" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a>
-        </div>
-      </div>
-
-      <div class="btn-group dropleft">
-        <div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3"
-          id="id_notification_dropdown_toggle" data-bs-toggle="dropdown" onclick="setGeneralNotificationsAsRead()">
-          <span id="id_general_notifications_count" class="notify-badge msg-notif"></span>
-          <span style='color:white;'
-            class="d-flex material-icons notif-icon notifications-material-icon m-auto align-items-center">notifications</span>
-          <div class="dropdown-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle"
-            id="id_general_notifications_container">
-          </div>
-        </div>
-      </div>
-
-      <a class="text-light p-2" style='text-decoration:none;'
-        href="{% url 'account:view' user_id=request.user.id %}">Account</a>
-
-      <span class="bar" id="bar-btn">
+      <div class="left-icon">
+        {% if request.user.is_authenticated %}
+      <span class="bar-left bar" id="bar-btn2">
         <div class="drop-btn">
           <span><i class="fa-solid fa-bars p-2"></i></span>
         </div>
         <!-- <div class="tooltip"></div> -->
-        <div class="wrapper" id="wrapper-btn">
+        <div class="wrapper" id="wrapper-btn2">
           <ul class="menu-bar">
             <li>
               <!-- <a href="#">
@@ -561,8 +666,193 @@
           </ul>
         </div>
       </span>
-
+      {% endif %}
+      <a class="navbar-brand" href="/">MyStranger</a>
     </div>
+      <div class="nav-left">
+        <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
+          <!-- <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search using email..."> -->
+          <ul class="search-ul mr-2">
+            <li class="search-icon">
+              <input type="search" name="q" id="id_q_large" placeholder="Search using email...">
+              <label class="icon" onclick="executeQuery();">
+                <span id="sicon-logo" onclick="executeQuery();" class="fas fa-search"></span>
+              </label>
+            </li>
+          </ul>
+        </form>
+      
+
+      {% if request.user.is_authenticated %}
+      <div class='d-flex nav-phone' style="align-items: center;">
+        <div class="btn-group dropleft">
+          <div class="d-flex notifications-icon-container rounded-circle align-items-center main-msg-notif" onclick="setMsgNotificationsAsRead()">
+            <span id="id_msg_notifications_count" class="notify-badge msg-notif" style="
+              right: 10px !important;"></span>
+            <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a>
+            <a class="text-light p-2 nav-msg2" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}"><i class="fa-solid fa-message" style="color: #ffffff;"></i></a>
+          </div>
+        </div>
+
+        <div class="btn-group dropleft nav-notif ">
+          <div class="d-flex notifications-icon-container rounded-circle align-items-center mr-3"
+            id="id_notification_dropdown_toggle" data-bs-toggle="dropdown" onclick="setGeneralNotificationsAsRead()">
+            <span id="id_general_notifications_count" class="notify-badge msg-notif"></span>
+            <span style='color:white;'
+              class="d-flex material-icons notif-icon notifications-material-icon m-auto align-items-center">notifications</span>
+            <div class="dropdown-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle"
+              id="id_general_notifications_container">
+            </div>
+          </div>
+        </div>
+
+        <a class="text-light p-2 nav-msg account-nav" style='text-decoration:none;'
+          href="{% url 'account:view' user_id=request.user.id %}">Account</a>
+        <a class="text-light p-2 nav-msg2 account-nav" style='text-decoration:none;'
+          href="{% url 'account:view' user_id=request.user.id %}"><i class="fa-solid fa-user" style="color: #ffffff;"></i></a>
+
+        <span class="bar bar-big" id="bar-btn">
+          <div class="drop-btn drop-btn2">
+            <span><i class="fa-solid fa-bars p-2"></i></span>
+          </div>
+          <!-- <div class="tooltip"></div> -->
+          <div class="wrapper wrapper2" id="wrapper-btn">
+            <ul class="menu-bar menu-bar2">
+              <li>
+                <!-- <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-home"></span>
+                  </div>
+                  Home
+                </a> -->
+                <a class="p-2 dropleft" style='text-decoration:none;' href="{% url 'logout' %}">
+                
+                  <div class="icon">
+                    <span class="fas fa-sign-out-alt"></span>
+                  </div>
+                  Log out
+                </a>
+              </li>
+              <li class="setting-item setting-item2">
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-cog"></span>
+                  </div>
+                  Settings & privacy <i class="fas fa-angle-right"></i>
+                </a>
+              </li>
+              <li class="help-item help-item2">
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-question-circle"></span>
+                  </div>
+                  Help & support <i class="fas fa-angle-right"></i>
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-user"></span>
+                  </div>
+                  About us
+                </a>
+              </li>
+              <li>
+                <a href="{% url "feedback" %}">
+                  <div class="icon">
+                    <span class="fas fa-comment-alt"></span>
+                  </div>
+                  Found a bug \ Feedback 
+                </a>
+              </li>
+            </ul>
+            <!-- Settings & privacy Menu-items -->
+            <ul class="setting-drop setting-drop2">
+              <li class="arrow back-setting-btn back-setting-btn2"><span class="fas fa-arrow-left"></span>Settings & privacy
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-user"></span>
+                  </div>
+                  Personal info
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-lock"></span>
+                  </div>
+                  Password
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-address-book"></span>
+                  </div>
+                  Activity log
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-globe-asia"></span>
+                  </div>
+                  Languages
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-sign-out-alt"></span>
+                  </div>
+                  Log out
+                </a>
+              </li>
+            </ul>
+            <!-- Help & support Menu-items -->
+            <ul class="help-drop help-drop2">
+              <li class="arrow back-help-btn back-help-btn2"><span class="fas fa-arrow-left"></span>Help & support</li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-question-circle"></span>
+                  </div>
+                  Help centre
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-envelope"></span>
+                  </div>
+                  Support Inbox
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-comment-alt"></span>
+                  </div>
+                  Send feedback
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <div class="icon">
+                    <span class="fas fa-exclamation-circle"></span>
+                  </div>
+                  Report problem
+                </a>
+              </li>
+            </ul>
+          </div>
+        </span>
+
+      </div>
+    </div>
+  </div>
 
     {% else %}
     <div class='d-flex'>
@@ -589,13 +879,13 @@
       tooltip.classList.toggle("show");
     });
     setting_item.onclick = (() => {
-      menu_bar.style.marginLeft = "-400px";
+      menu_bar.style.marginLeft = "-321px";
       setTimeout(() => {
         setting_drop.style.display = "block";
       }, 100);
     });
     help_item.onclick = (() => {
-      menu_bar.style.marginLeft = "-400px";
+      menu_bar.style.marginLeft = "-321px";
       setTimeout(() => {
         help_drop.style.display = "block";
       }, 100);
@@ -607,6 +897,41 @@
     help_btn.onclick = (() => {
       help_drop.style.display = "none";
       menu_bar.style.marginLeft = "0px";
+    });
+
+    const drop_btn2 = document.querySelector(".drop-btn2 span");
+    const tooltip2 = document.querySelector(".tooltip2");
+    const menu_wrapper2 = document.querySelector(".wrapper2");
+    const menu_bar2 = document.querySelector(".menu-bar2");
+    const setting_drop2 = document.querySelector(".setting-drop2");
+    const help_drop2 = document.querySelector(".help-drop2");
+    const setting_item2 = document.querySelector(".setting-item2");
+    const help_item2 = document.querySelector(".help-item2");
+    const setting_btn2 = document.querySelector(".back-setting-btn2");
+    const help_btn2 = document.querySelector(".back-help-btn2");
+    drop_btn2.onclick = (() => {
+      menu_wrapper2.classList.toggle("show");
+      tooltip2.classList.toggle("show");
+    });
+    setting_item2.onclick = (() => {
+      menu_bar2.style.marginLeft = "-400px";
+      setTimeout(() => {
+        setting_drop2.style.display = "block";
+      }, 100);
+    });
+    help_item2.onclick = (() => {
+      menu_bar2.style.marginLeft = "-400px";
+      setTimeout(() => {
+        help_drop2.style.display = "block";
+      }, 100);
+    });
+    setting_btn2.onclick = (() => {
+      menu_bar2.style.marginLeft = "0px";
+      setting_drop2.style.display = "none";
+    });
+    help_btn.onclick = (() => {
+      help_drop2.style.display = "none";
+      menu_bar2.style.marginLeft = "0px";
     });
 
     {% endif %}

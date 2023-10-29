@@ -58,7 +58,7 @@ body {
 
     .upper-left {
     {% comment %} border: 2px solid #707070; {% endcomment %}
-    min-width : 392px;
+    /* min-width : 392px; */
     
     width: auto;
     height: 49.5%;
@@ -69,7 +69,7 @@ body {
     .lower-left {
         {% comment %} border: 2px solid black; {% endcomment %}
         height: 49.5%;
-        min-width : 392px;
+        /* min-width : 392px; */
         width: auto;
 
         {% comment %} width: fit-content; {% endcomment %}
@@ -372,6 +372,152 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+.bottom-header{
+    margin-bottom: 8px;
+}
+
+/* Media query for tablet width 320px */
+@media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+    .cont-row{
+        display: flex;
+        flex-direction: column;
+        align-items: unset;
+    }
+
+    .left-column {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        height: 40vh;
+        /* width: auto; */
+        justify-content: space-between;
+        margin-top: 2px;
+        
+}
+
+.upper-left {
+    position: relative;
+    width: 100%;
+    /* min-width: 315px; */
+    /* width: auto; */
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#remote {
+    border-radius: 8px;
+    object-fit: cover;
+    height: 100%;
+    width: 99% !important;
+    background-color: gainsboro;
+}
+
+.lower-left {
+    height: auto;
+    width: auto;
+    position: absolute;
+    right: 2px;
+
+    /* min-width: 315px; */
+    /* width: auto; */
+    /* width: fit-content; */
+}
+
+
+#ours {
+    width: 80px !important;
+    border-radius: 8px;
+    /* object-fit: fill; */
+    height: 100%;
+}
+
+.right-column{
+    margin-top: 2px;
+    margin-left: 0px;
+    height: 30%;
+}
+
+.right-header{
+    height: 2.5em;
+    padding: 0.5em;
+}
+
+.right-column p {
+    font-size: 14px;
+}
+
+.typo{
+    margin-left: 4px;
+    /* color: green; */
+    font-size: 11px;
+}
+
+.img1 img {
+    width: 24px !important;
+}
+
+#cancel_req_btn{
+    font-size: 18px;
+    margin-right: 1em;
+}
+
+.status-txt span {
+    font-size: 12px;
+}
+
+.bottom-header {
+    margin-bottom: 4px;
+}
+
+.send-btn{
+    font-size: 18px;
+    top: 11px;
+}
+
+.txtarea-cont{
+    align-items: unset;
+    height: 40px;
+}
+
+.skip-btn{
+    width: 63px;
+    /* border-radius: 8px; */
+    height: 40px;
+    font-size: 15px;
+}
+
+.msg-style{
+    min-height: 32px;
+    min-width: 55px;
+}
+
+.msg-style p {
+    font-size:12px
+}
+
+.msg-style2 p {
+    font-size:12px
+}
+
+.msg-style2{
+    min-height: 32px;
+    min-width: 55px;
+}
+
+.chat-log{
+    max-height: 30vh;
+}
+
+.flagy{
+    right: 8px !important;
+    /* top: 100%; */
+    top: -6px !important;
+}
+
+}
 
 </style>
 
@@ -411,7 +557,7 @@ body {
                             <span class="img2"><img src="{% static 'images/report.svg' %}" width="22px" alt="" srcset=""></span>
                         </button>
 
-                        <form class="dropdown-menu p-4" id="flag-form" action="{% url "chat:flag" %}" method='post'>
+                        <form class="dropdown-menu p-4 flagy" id="flag-form" action="{% url "chat:flag" %}" method='post'>
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label for="flag-reason" class="form-label">Reason To Flag - </label>

@@ -37,6 +37,16 @@
 		/* border: 2px solid red; */
 		margin-top: 4em;
 	}
+
+	/* Media query for tablet width 768px */
+  @media only screen and (min-width: 768px) and (max-width: 1023px) { 
+
+	.conti-main {
+		width: 45vw;
+		/* border: 2px solid red; */
+		margin-top: 1em;
+	}
+}
 </style>
 
 <div class="container-fluid conti-main">
@@ -58,7 +68,7 @@
 					  <h6>{{form.email}}</h6>
 					  
 			  		<h6 class="mt-4 field-heading">University Name</h6>
-					<input type="text" name="uniname" id="id_input_uniname" class="form-control" placeholder="University Name" required
+					<input type="text" name="uniname" id="id_input_uniname" class="form-control" placeholder="University Name"
 					value="{{form.universityName}}">
                     {% comment %} <h6>{{form.universityName}}</h6> {% endcomment %}
 

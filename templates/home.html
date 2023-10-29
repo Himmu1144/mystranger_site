@@ -110,6 +110,67 @@
     border: 2px solid red;
 }
 
+    /* Media query for tablet width 768px */
+    @media only screen and (min-width: 768px) and (max-width: 1023px) { 
+
+        body {
+            /* border: 5px solid red; */
+        }
+
+        .center-box{
+            width: auto;
+            justify-content: center;
+        }
+
+        .box-left{
+            width: 46%;
+        }
+
+        .sub-head {
+            max-width: 400px;
+            margin-bottom: 0em;
+        }
+
+        .st {
+            margin-top: 1.5em;
+        }
+
+        .box-right{
+            width: 48%;
+        }
+
+        .box-right img {
+            width: 371px;
+            height: 264px;
+        }
+
+    }
+
+    
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+    .box-right{
+        display: none;
+    }
+
+    .center-box{
+        width: 71vw
+    }
+
+    .box-left h3 {
+    font-size: 24px;
+}
+
+.box-left p {
+    font-size: 16px;
+    width: 200px;
+}
+
+
+}
+
+
 </style>
 
 
@@ -152,7 +213,8 @@
     </div>
 
     <div class="box-right">
-        <img src="{% static 'images/2.2_tr.png' %}" alt="" srcset="">
+        <img src="{% static 'images/2.2_tr_nohand.png' %}" alt="" srcset="">
+        {% comment %} <img src="{% static 'images/2.2_tr_super_modified.png' %}" alt="" srcset=""> {% endcomment %}
     </div>
     </div>
 
@@ -165,10 +227,10 @@
     
 
 </div>
-
+{% comment %} 
 <section class="info-section" id="info-sec">
     <p>here i can add anything </p>
-</section>
+</section> {% endcomment %}
 
 <script>
     function login_req() {

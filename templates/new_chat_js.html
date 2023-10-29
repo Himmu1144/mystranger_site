@@ -127,7 +127,8 @@
                     window.stranger_email = data.user1_self_email
                 }
 
-                document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + window.stranger_email
+                {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + window.stranger_email {% endcomment %}
+                document.getElementById('strangerName').innerHTML = window.stranger 
                 document.getElementById('report_btn').disabled = false;
                 document.getElementById('flag_user_id').value = window.stranger_id;
                 document.getElementById('flag_user_name').value = window.stranger;

@@ -172,3 +172,4 @@ CHANNEL_LAYERS = {
 BASE_URL = "http://127.0.0.1:8000"
 TIME_ZONE = 'Asia/Kolkata'
 USE_TZ = False
+accesstoken = 'pk.eyJ1IjoiYW5tb2xqbyIsImEiOiJjbG43bnFnaHowenF3Mm9xbWJmaHJraW9xIn0.kYnR9lTYI_0xU9e2aZespA'
