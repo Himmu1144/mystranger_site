@@ -66,4 +66,7 @@ ________________________________________________________________________________
 19/10/203 - 20/10/2023 - improving message front-end
 21/10/2023 - 22/10/203  working on the page
 25/10/2023  working on the page - Mos wants to finish this page today 
-
+-----------------------------------------------------------------------------------
+twisted-iocpsupport==1.0.2 - this bastard is giving wheels error
+mi tukon - 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
+from prod_new to git to pull to server on master | or from server to git to pull to laptop (prod_new)

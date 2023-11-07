@@ -456,6 +456,13 @@
 		<button type="submit" id="login">Log in</button>
 	</div>	
 </form>
+{% if unverified %}
+<p>{{unverified}}</p>
+{% endif %}
+
+{% if token_status %}
+      <p>{{token_status}}</p>
+    {% endif %}
 {% comment %} <div class="d-flex flex-column">
 	<a class="m-auto" href="#">Reset password</a>
 </div> {% endcomment %}
