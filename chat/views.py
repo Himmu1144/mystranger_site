@@ -88,7 +88,7 @@ def create_or_return_private_chat(request, *args, **kwargs):
         if request.method == "POST":
             user2_id = request.POST.get("user2_id")
             try:
-                user2 = Account.objects.get(pk=user2_id)
+                user2 = Account.objects.get(pk=user2_id, is_verified = True)
                 chat = find_or_create_private_chat(user1, user2)
                 payload['response'] = "Successfully got the chat."
                 payload['chatroom_id'] = chat.id
@@ -113,7 +113,7 @@ def report_view(request, *args, **kwargs):
             flag_user_name = request.POST.get('flag_user_name')
             reason = request.POST.get('flag-reason')
             
-            account = Account.objects.get(pk=flag_user_id)
+            account = Account.objects.get(pk=flag_user_id, is_verified = True)
             
             flag_object = Flags.objects.filter(user=account, Flagger=user)
             

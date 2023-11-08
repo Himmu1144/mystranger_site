@@ -13,7 +13,7 @@ def friends_list_view(request, *args, **kwargs):
 		user_id = kwargs.get("user_id")
 		if user_id:
 			try:
-				this_user = Account.objects.get(pk=user_id)
+				this_user = Account.objects.get(pk=user_id, is_verified = True)
 				context['this_user'] = this_user
 			except Account.DoesNotExist:
 				return HttpResponse("That user does not exist.")
@@ -41,7 +41,7 @@ def friend_requests(request, *args, **kwargs):
 		user = request.user
 		if user.is_authenticated:
 			user_id = kwargs.get("user_id")
-			account = Account.objects.get(pk=user_id)
+			account = Account.objects.get(pk=user_id, is_verified = True)
 			if account == user:
 				friend_requests = FriendRequest.objects.filter(receiver=account, is_active=True)
 				if friend_requests.exists():
@@ -60,7 +60,7 @@ def send_friend_request(request, *args, **kwargs):
 	if request.method == "POST" and user.is_authenticated:
 		user_id = request.POST.get("receiver_user_id")
 		if user_id:
-			receiver = Account.objects.get(pk=user_id)
+			receiver = Account.objects.get(pk=user_id, is_verified = True)
 			try:
 				# Get any friend requests (active and not-active)
 				friend_requests = FriendRequest.objects.filter(sender=user, receiver=receiver)
@@ -121,7 +121,7 @@ def remove_friend(request, *args, **kwargs):
 		user_id = request.POST.get("receiver_user_id")
 		if user_id:
 			try:
-				removee = Account.objects.get(pk=user_id)
+				removee = Account.objects.get(pk=user_id, is_verified = True)
 				friend_list = FriendList.objects.get(user=user)
 				friend_list.unfriend(removee)
 				payload['response'] = "Successfully removed that friend."
@@ -164,7 +164,7 @@ def cancel_friend_request(request, *args, **kwargs):
 	if request.method == "POST" and user.is_authenticated:
 		user_id = request.POST.get("receiver_user_id")
 		if user_id:
-			receiver = Account.objects.get(pk=user_id)
+			receiver = Account.objects.get(pk=user_id, is_verified = True)
 			try:
 				friend_requests = FriendRequest.objects.filter(sender=user, receiver=receiver, is_active=True)
 			except FriendRequest.DoesNotExist:

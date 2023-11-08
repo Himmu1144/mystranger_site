@@ -69,6 +69,7 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     terms = models.BooleanField(default=True,blank=False,null=False)
+    is_verified = models.BooleanField(default=False)
 
     GENDER_CHOICES = [
         ('M', 'Male'),

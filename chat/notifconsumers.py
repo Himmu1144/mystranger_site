@@ -57,7 +57,7 @@ def unread_msg_count(friends_dict,user):
     id_unread_msg_dict = {}
     for id in friends_dict.values():
         # print('The id is -', id)
-        friend = Account.objects.filter(id=id).first()
+        friend = Account.objects.filter(id=id, is_verified = True).first()
         # print("friend is - " , friend)
         if friend:
             # This means here we have both friend and user

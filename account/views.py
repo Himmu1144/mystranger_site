@@ -51,7 +51,7 @@ def register_view(request, *args, **kwargs):
                     uniName = request.POST.get('universityName')
                     university_profile = fetch_or_create_uniprofile(
                         name, lat, lon, uniName)
-                    university_profile.add_user(account)
+                    university_profile.add_user(account) #here we are adding our unverified user into uni profile same goes for uni model
                 else:
                     university = fetch_or_create_uni(name, lat, lon)
                     university.add_user(account)
@@ -136,9 +136,9 @@ def account_view(request, *args, **kwargs):
     context = {}
     user_id = kwargs.get("user_id")
     try:
-        account = Account.objects.get(pk=user_id)
+        account = Account.objects.get(pk=user_id, is_verified = True)
     except:
-        return HttpResponse("Something went wrong.")
+        return HttpResponse("Account Does Not Exist! or Is not verified Yet!")
     if account:
         context['id'] = account.id
         context['name'] = account.name
@@ -205,7 +205,7 @@ def edit_account_view(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect("login")
         user_id = kwargs.get("user_id")
-        account = Account.objects.get(pk=user_id)
+        account = Account.objects.get(pk=user_id, is_verified = True)
         if account.pk != request.user.pk:
             return HttpResponse("You cannot edit someone elses profile.")
         context = {}
@@ -271,7 +271,7 @@ def account_search_view(request, *args, **kwargs):
                 print('The search query - ', search_query)
                 # search_results = Account.objects.filter(email__icontains=search_query).filter(
                 #     name__icontains=search_query).distinct()
-                search_results = Account.objects.filter(email=search_query)
+                search_results = Account.objects.filter(email=search_query, is_verified = True)
                 print("The search results are - ",search_results)
                 user = request.user
                 accounts = []  # [(account1, True), (account2, False), ...]
@@ -392,6 +392,8 @@ def verify(request , auth_token):
                 messages.success(request, 'Your account is already verified.')
                 return redirect('login')
                 
+            token_obj.user.is_verified = True
+            token_obj.user.save()  
             token_obj.is_verified = True
             token_obj.save()
             messages.success(request, 'Your account has been verified.')
