@@ -371,10 +371,10 @@ def send_email_view(request, email, token):
     try:
 
         subject = 'Your accounts need to be verified'
-        # message = f'Hi paste the link to verify your account http://mystranger.in/account/verify/{token}'
-        message = f'Hi paste the link to verify your account http://127.0.0.1:8000/account/verify/{token}'
+        message = f'Hi paste the link to verify your account https://mystranger.in/account/verify/{token}'
+        # message = f'Hi paste the link to verify your account http://127.0.0.1:8000/account/verify/{token}'
         from_email = 'info@mystranger.in'
-        recipient_list = ['himmu1144@gmail.com']
+        recipient_list = [email]
         send_mail(subject, message, from_email, recipient_list)
         
     except Exception as e:
