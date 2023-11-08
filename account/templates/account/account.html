@@ -296,7 +296,17 @@
 					<span class="message-btn-text m-auto pl-2">Message</span>
 				</div>
 			{% endif %}
-
+			<div class="card m-2 px-4 pb-4">
+				<!-- Friend requests -->
+		  		<div class="d-flex flex-column pt-4">
+					<a href="{% url "account:nearby-uni" %}">
+						<div class="d-flex flex-row align-items-center justify-content-center icon-container">
+							<span class="mr-2"><i class="fa-solid fa-location-dot" style="color: #009cda; font-size:22px;"></i></span><span class="friend-text">Nearby Universities</span>
+						</div>
+					</a>
+				</div>
+			</div>
+			
 		</div>
 		{% endif %}
 

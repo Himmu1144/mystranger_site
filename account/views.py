@@ -12,6 +12,7 @@ from friend.utils import get_friend_request_or_false
 from friend.friend_request_status import FriendRequestStatus
 from django.contrib.auth.hashers import make_password
 from mystranger.settings import accesstoken
+# from CodingWithMitchChat.settings import accesstoken
 import json
 from django.core.mail import send_mail
 import uuid
@@ -61,13 +62,15 @@ def register_view(request, *args, **kwargs):
                 account_token.save()
                 send_email_view(request, email, auth_token)
                 print('email has been sent!')
+                return HttpResponse('An email has been sent to you, please verify your account!')
+
                 # login(request, account)
                 # destination = kwargs.get('next')
                 # if destination:
                 #     return redirect(destination)
                 # else:
                 #     return redirect('home')
-                return redirect('account:token')
+                # return redirect('account:token')
             else:
                 context['registration_form'] = form
 
@@ -405,3 +408,54 @@ def verify(request , auth_token):
     except Exception as e:
         print(e)
         return redirect('home')
+
+def nearby_uni(request):
+    context = {}
+    try:
+        if not request.user.is_authenticated:
+            return redirect("login")
+        
+        user = request.user
+        user_university_name = user.university_name
+        nearby_lst = []
+        try:
+            uni_obj = University.objects.get(name=user_university_name)
+            user_uni_num = uni_obj.users.filter(is_verified = True).count()
+            context['user_uni'] = uni_obj.universityName
+            context['user_uni_num'] = user_uni_num
+
+            nearby_universities = uni_obj.nearbyList.all()
+            for university in nearby_universities:
+                # print(university)
+                # print(type(university))
+                if not university.name == user_university_name:
+                    nearby_lst.append({
+                        'university' : university.universityName,
+                        'students' : university.users.filter(is_verified = True).count(),
+                    })
+            context['nearby_lst'] = nearby_lst
+            # print(nearby_lst)
+
+
+        except University.DoesNotExist:
+            try:
+                uni_prof = UniversityProfile.objects.get(name=user_university_name)
+                user_uni_num = uni_obj.users.filter(is_verified = True).count()
+                context['user_uni'] = uni_obj.universityName
+                context['user_uni_num'] = user_uni_num
+
+                nearby_universities = uni_obj.nearbyList.all()
+                for university in nearby_universities:
+                    if not university.name == user_university_name:
+                        nearby_lst.append({
+                            'university' : university.universityName,
+                            'students' : university.users.filter(is_verified = True).count(),
+                        })
+                context['nearby_lst'] = nearby_lst
+                
+            except UniversityProfile.DoesNotExist:
+                print('Something Went Wrong....')
+        
+    except Exception as e:
+        print(e)
+    return render(request, 'account/nearby_uni_list.html',context)

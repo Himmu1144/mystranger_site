@@ -5,7 +5,8 @@ from account.views import (
     edit_account_view,
     # edit_pass_view,
     tokenSend,
-    verify
+    verify,
+    nearby_uni,
     
 )
 
@@ -18,4 +19,6 @@ urlpatterns = [
 
 	path('register/token/', tokenSend, name="token"),
     path('verify/<auth_token>' , verify , name="verify"),
+    path('nearby/universities' , nearby_uni , name="nearby-uni"),
+    
 ]
