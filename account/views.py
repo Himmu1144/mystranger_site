@@ -21,58 +21,61 @@ from django.contrib import messages
 
 def register_view(request, *args, **kwargs):
 
-    user = request.user
     context = {}
-    if user.is_authenticated:
-        return HttpResponse(f'You are already authenticated as {user.name} with email - {user.email}')
+    try:
+        user = request.user
+        if user.is_authenticated:
+            return HttpResponse(f'You are already authenticated as {user.name} with email - {user.email}')
 
-    context['accesstoken'] = accesstoken
+        context['accesstoken'] = accesstoken
 
-    if request.method == "POST":
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            form.save()
+        if request.method == "POST":
+            form = RegistrationForm(request.POST)
+            if form.is_valid():
+                form.save()
 
-            email = form.cleaned_data['email'].lower()
-            raw_password = form.cleaned_data['password1']
-            account = authenticate(email=email, password=raw_password)
+                email = form.cleaned_data['email'].lower()
+                raw_password = form.cleaned_data['password1']
+                account = authenticate(email=email, password=raw_password)
 
-            # add the university if not already added than add the user to that university
-            name = email.split('@')[-1:][0]
-            lat = request.POST.get('lat')
-            lon = request.POST.get('lon')
+                # add the university if not already added than add the user to that university
+                name = email.split('@')[-1:][0]
+                lat = request.POST.get('lat')
+                lon = request.POST.get('lon')
 
-            # we are creating or fetching the university model but if the info came from user input then we are going to create a university profile, the university model is only going to be created when either it came from the database or it is manually verified from the backend.
+                # we are creating or fetching the university model but if the info came from user input then we are going to create a university profile, the university model is only going to be created when either it came from the database or it is manually verified from the backend.
 
-            notrust = request.POST.get('notrust')
-            if notrust:
-                # This means that location is obtained from the user input and can't be trusted therefore we are gonna create a university profile
-                uniName = request.POST.get('universityName')
-                university_profile = fetch_or_create_uniprofile(
-                    name, lat, lon, uniName)
-                university_profile.add_user(account)
+                notrust = request.POST.get('notrust')
+                if notrust:
+                    # This means that location is obtained from the user input and can't be trusted therefore we are gonna create a university profile
+                    uniName = request.POST.get('universityName')
+                    university_profile = fetch_or_create_uniprofile(
+                        name, lat, lon, uniName)
+                    university_profile.add_user(account)
+                else:
+                    university = fetch_or_create_uni(name, lat, lon)
+                    university.add_user(account)
+
+                auth_token = str(uuid.uuid4())
+                account_token = AccountToken.objects.create(user = account, auth_token = auth_token)
+                account_token.save()
+                send_email_view(request, email, auth_token)
+                print('email has been sent!')
+                # login(request, account)
+                # destination = kwargs.get('next')
+                # if destination:
+                #     return redirect(destination)
+                # else:
+                #     return redirect('home')
+                return redirect('account:token')
             else:
-                university = fetch_or_create_uni(name, lat, lon)
-                university.add_user(account)
+                context['registration_form'] = form
 
-            auth_token = str(uuid.uuid4())
-            account_token = AccountToken.objects.create(user = account, auth_token = auth_token)
-            account_token.save()
-            send_email_view(request, email, auth_token)
-            print('email has been sent!')
-            # login(request, account)
-            # destination = kwargs.get('next')
-            # if destination:
-            #     return redirect(destination)
-            # else:
-            #     return redirect('home')
-            return redirect('account:token')
         else:
+            form = RegistrationForm()
             context['registration_form'] = form
-
-    else:
-        form = RegistrationForm()
-        context['registration_form'] = form
+    except Exception as e:
+        print(e)
 
     return render(request, 'account/register.html', context)
 
@@ -88,32 +91,36 @@ def logout_view(request):
 def login_view(request, *args, **kwargs):
 
     context = {}
-    user = request.user
-    if user.is_authenticated:
-        return redirect('home')
+    
+    try:
+        user = request.user
+        if user.is_authenticated:
+            return redirect('home')
 
-    if request.method == 'POST':
-        form = AccountAuthenticationForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email'].lower()
-            password = request.POST.get('password')
-            user = authenticate(email=email, password=password)
-            if user:
-                user_token = AccountToken.objects.filter(user = user).first()
-                if user_token is not None:
-                    if user_token.is_verified:
-                        login(request, user)
-                        destination = kwargs.get('next')
-                        if destination:
-                            return redirect(destination)
+        if request.method == 'POST':
+            form = AccountAuthenticationForm(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data['email'].lower()
+                password = request.POST.get('password')
+                user = authenticate(email=email, password=password)
+                if user:
+                    user_token = AccountToken.objects.filter(user = user).first()
+                    if user_token is not None:
+                        if user_token.is_verified:
+                            login(request, user)
+                            destination = kwargs.get('next')
+                            if destination:
+                                return redirect(destination)
+                            else:
+                                return redirect('home')
                         else:
-                            return redirect('home')
-                    else:
-                        messages.warning(request, 'Please Verify Your Account First!')
-                        return render(request, 'account/login.html', context)
-        else:
-            context['login_form'] = form
-
+                            messages.warning(request, 'Please Verify Your Account First!')
+                            return render(request, 'account/login.html', context)
+            else:
+                context['login_form'] = form
+    except Exception as e:
+        print(e)
+        
     return render(request, 'account/login.html', context)
 
 
@@ -193,34 +200,39 @@ def account_view(request, *args, **kwargs):
 
 
 def edit_account_view(request, *args, **kwargs):
-    if not request.user.is_authenticated:
-        return redirect("login")
-    user_id = kwargs.get("user_id")
-    account = Account.objects.get(pk=user_id)
-    if account.pk != request.user.pk:
-        return HttpResponse("You cannot edit someone elses profile.")
-    context = {}
-    if request.POST:
-        # name = request.POST.get('name')
-        origin = request.POST.get('my_dist')
-        universityName = request.POST.get('uniname')
-        # account.name = name
-        account.origin = origin
-        account.universityName = universityName
-        account.save()
-        return redirect("account:view", user_id=account.pk)
-    else:
+    try:
 
-        initial = {
-            "id": account.pk,
-            "email": account.email,
-            "name": account.name,
-            "origin": account.origin,
-            'universityName' : account.universityName,
-        }
+        if not request.user.is_authenticated:
+            return redirect("login")
+        user_id = kwargs.get("user_id")
+        account = Account.objects.get(pk=user_id)
+        if account.pk != request.user.pk:
+            return HttpResponse("You cannot edit someone elses profile.")
+        context = {}
+        if request.POST:
+            # name = request.POST.get('name')
+            origin = request.POST.get('my_dist')
+            universityName = request.POST.get('uniname')
+            # account.name = name
+            account.origin = origin
+            account.universityName = universityName
+            account.save()
+            return redirect("account:view", user_id=account.pk)
+        else:
 
-        context['form'] = initial
+            initial = {
+                "id": account.pk,
+                "email": account.email,
+                "name": account.name,
+                "origin": account.origin,
+                'universityName' : account.universityName,
+            }
 
+            context['form'] = initial
+
+    except Exception as e:
+        print(e)
+        
     return render(request, "account/edit_account.html", context)
 
 # def edit_pass_view(request, *args, **kwargs):
@@ -251,27 +263,32 @@ def edit_account_view(request, *args, **kwargs):
 # This is basically almost exactly the same as friends/friend_list_view
 def account_search_view(request, *args, **kwargs):
     context = {}
-    if request.method == "GET":
-        search_query = request.GET.get("q")
-        if len(search_query) > 0:
-            print('The search query - ', search_query)
-            # search_results = Account.objects.filter(email__icontains=search_query).filter(
-            #     name__icontains=search_query).distinct()
-            search_results = Account.objects.filter(email=search_query)
-            print("The search results are - ",search_results)
-            user = request.user
-            accounts = []  # [(account1, True), (account2, False), ...]
-            if user.is_authenticated:
-                # get the authenticated users friend list
-                auth_user_friend_list = FriendList.objects.get(user=user)
-                for account in search_results:
-                    accounts.append(
-                        (account, auth_user_friend_list.is_mutual_friend(account)))
-                context['accounts'] = accounts
-            else:
-                for account in search_results:
-                    accounts.append((account, False))
-                context['accounts'] = accounts
+    try:
+
+        if request.method == "GET":
+            search_query = request.GET.get("q")
+            if len(search_query) > 0:
+                print('The search query - ', search_query)
+                # search_results = Account.objects.filter(email__icontains=search_query).filter(
+                #     name__icontains=search_query).distinct()
+                search_results = Account.objects.filter(email=search_query)
+                print("The search results are - ",search_results)
+                user = request.user
+                accounts = []  # [(account1, True), (account2, False), ...]
+                if user.is_authenticated:
+                    # get the authenticated users friend list
+                    auth_user_friend_list = FriendList.objects.get(user=user)
+                    for account in search_results:
+                        accounts.append(
+                            (account, auth_user_friend_list.is_mutual_friend(account)))
+                    context['accounts'] = accounts
+                else:
+                    for account in search_results:
+                        accounts.append((account, False))
+                    context['accounts'] = accounts
+
+    except Exception as e:
+        print(e)
 
     return render(request, "account/search_results.html", context)
 
@@ -350,13 +367,18 @@ def fetch_or_create_uniprofile(name, Lat, Lon, uniName):
 
 
 def send_email_view(request, email, token):
-    subject = 'Your accounts need to be verified'
-    # message = f'Hi paste the link to verify your account http://mystranger.in/account/verify/{token}'
-    message = f'Hi paste the link to verify your account http://127.0.0.1:8000/account/verify/{token}'
-    from_email = 'info@mystranger.in'
-    recipient_list = ['himmu1144@gmail.com']
-    send_mail(subject, message, from_email, recipient_list)
+    try:
 
+        subject = 'Your accounts need to be verified'
+        # message = f'Hi paste the link to verify your account http://mystranger.in/account/verify/{token}'
+        message = f'Hi paste the link to verify your account http://127.0.0.1:8000/account/verify/{token}'
+        from_email = 'info@mystranger.in'
+        recipient_list = ['himmu1144@gmail.com']
+        send_mail(subject, message, from_email, recipient_list)
+        
+    except Exception as e:
+        print(e)
+        
     # email_from = settings.EMAIL_HOST_USER
     # recipient_list = [email]
     # send_mail(subject, message , email_from ,recipient_list )

@@ -124,25 +124,25 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
                         
                 except Exception as e:
                     print(e)
+
+            await self.send_json(
+                {
+                    'fetched_from' : fetched_from,
+                    'universityName': str(universityName),
+                    'universityAddress': str(address),
+                    'lat': lat,
+                    'lon': lon,
+                },
+            )
+
+            if uniprofile:
+                await self.send_json(
+                {
+                    'trust_button' : 'Not My University'
+                },
+            )
         except Exception as e:
             print(e)
-
-        await self.send_json(
-            {
-                'fetched_from' : fetched_from,
-                'universityName': str(universityName),
-                'universityAddress': str(address),
-                'lat': lat,
-                'lon': lon,
-            },
-        )
-
-        if uniprofile:
-            await self.send_json(
-            {
-                'trust_button' : 'Not My University'
-            },
-        )
 
 
 '''

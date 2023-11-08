@@ -21,56 +21,61 @@ def private_chat_room_view(request, *args, **kwargs):
 
     context = {}
 
-    # Redirect them if not authenticated
-    if not user.is_authenticated:
-        return redirect("login")
+    try:
 
-    if room_id:
-        try:
-            room = PrivateChatRoom.objects.get(pk=room_id)
-            context["room"] = room
-        except PrivateChatRoom.DoesNotExist:
-            return HttpResponse('The room you are trying to access does not exist.')
 
-    # 1. Find all the rooms this user is a part of
-    rooms1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
-    rooms2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
+        # Redirect them if not authenticated
+        if not user.is_authenticated:
+            return redirect("login")
 
-    # 2. merge the lists
-    rooms = list(chain(rooms1, rooms2))
-    print(str(len(rooms)))
+        if room_id:
+            try:
+                room = PrivateChatRoom.objects.get(pk=room_id)
+                context["room"] = room
+            except PrivateChatRoom.DoesNotExist:
+                return HttpResponse('The room you are trying to access does not exist.')
 
-    """
-	m_and_f:
-		[{"message": "hey", "friend": "Mitch"}, {
-		    "message": "You there?", "friend": "Blake"},]
-	Where message = The most recent message
-	"""
-    m_and_f = []
-    for room in rooms:
-        # Figure out which user is the "other user" (aka friend)
-        if room.user1 == user:
-            friend = room.user2
-        else:
-            friend = room.user1
+        # 1. Find all the rooms this user is a part of
+        rooms1 = PrivateChatRoom.objects.filter(user1=user, is_active=True)
+        rooms2 = PrivateChatRoom.objects.filter(user2=user, is_active=True)
 
-        '''
-		Fetching all the unread messages send by the friend to me (in our room)
-		'''
+        # 2. merge the lists
+        rooms = list(chain(rooms1, rooms2))
+        print(str(len(rooms)))
 
-        unread_messages = RoomChatMessage.objects.filter(
-            Q(room=room) & Q(user=friend) & Q(read=False))
-        unread_messages_count = unread_messages.count()
+        """
+        m_and_f:
+            [{"message": "hey", "friend": "Mitch"}, {
+                "message": "You there?", "friend": "Blake"},]
+        Where message = The most recent message
+        """
+        m_and_f = []
+        for room in rooms:
+            # Figure out which user is the "other user" (aka friend)
+            if room.user1 == user:
+                friend = room.user2
+            else:
+                friend = room.user1
 
-        m_and_f.append({
-            'unread_messages_count': unread_messages_count,
-                'friend': friend
-        })
+            '''
+            Fetching all the unread messages send by the friend to me (in our room)
+            '''
 
-    context['m_and_f'] = m_and_f
-    context['debug'] = DEBUG
-    context['id'] = request.user.id
-    context['debug_mode'] = settings.DEBUG
+            unread_messages = RoomChatMessage.objects.filter(
+                Q(room=room) & Q(user=friend) & Q(read=False))
+            unread_messages_count = unread_messages.count()
+
+            m_and_f.append({
+                'unread_messages_count': unread_messages_count,
+                    'friend': friend
+            })
+
+        context['m_and_f'] = m_and_f
+        context['debug'] = DEBUG
+        context['id'] = request.user.id
+        context['debug_mode'] = settings.DEBUG
+    except Exception as e:
+        print(e)
     return render(request, "chat/room.html", context)
 
 # Ajax call to return a private chatroom or create one if does not exist

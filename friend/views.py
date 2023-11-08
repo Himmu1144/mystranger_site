@@ -37,18 +37,21 @@ def friends_list_view(request, *args, **kwargs):
 
 def friend_requests(request, *args, **kwargs):
 	context = {}
-	user = request.user
-	if user.is_authenticated:
-		user_id = kwargs.get("user_id")
-		account = Account.objects.get(pk=user_id)
-		if account == user:
-			friend_requests = FriendRequest.objects.filter(receiver=account, is_active=True)
-			if friend_requests.exists():
-				context['friend_requests'] = friend_requests
+	try:
+		user = request.user
+		if user.is_authenticated:
+			user_id = kwargs.get("user_id")
+			account = Account.objects.get(pk=user_id)
+			if account == user:
+				friend_requests = FriendRequest.objects.filter(receiver=account, is_active=True)
+				if friend_requests.exists():
+					context['friend_requests'] = friend_requests
+			else:
+				return HttpResponse("You can't view another users friend requets.")
 		else:
-			return HttpResponse("You can't view another users friend requets.")
-	else:
-		return redirect("login")
+			return redirect("login")
+	except Exception as e:
+		print(e)
 	return render(request, "friend/friend_requests.html", context)
 
 def send_friend_request(request, *args, **kwargs):
