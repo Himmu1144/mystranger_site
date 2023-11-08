@@ -202,7 +202,7 @@
 		  		{% if is_self %}
 		  		<a  class="mt-4 update-btn btn btn-outline-dark" href="{% url 'account:edit' user_id=request.user.id %}">Update</a>
 				<div class="d-flex flex-column mt-3">
-					<a class="m-auto blue-color" href="{% url 'account:edit-pass' user_id=request.user.id %}">Change password</a>
+					<a class="m-auto blue-color" href="{% url "password_change" %}">Change password</a>
 				</div>
 		  		{% endif %}
 		  	</div>

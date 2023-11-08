@@ -24,9 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^ispo8=(mo-fh97st*89fxn+$y^rfi%+s_vukcet^9eb=p#l##'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'account.Account' 
 AUTHENTICATION_BACKENDS = ( 
@@ -168,14 +169,28 @@ CHANNEL_LAYERS = {
     },
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'email'
-EMAIL_HOST_PASSWORD = 'password'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'email'
+# EMAIL_HOST_PASSWORD = 'password'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtpout.secureserver.net'  # GoDaddy SMTP server
+EMAIL_PORT = 587  # This is the SMTP port for GoDaddy
+EMAIL_USE_TLS = True  # Use TLS (Transport Layer Security)
+EMAIL_HOST_USER = 'info@mystranger.in'  # Your GoDaddy email
+EMAIL_HOST_PASSWORD = 'evilstranger666'  # Your GoDaddy email password
+DEFAULT_FROM_EMAIL = 'info@mystranger.in'  # Set the default "from" address
+
 
 BASE_URL = "http://127.0.0.1:8000"
 TIME_ZONE = 'Asia/Kolkata'
 USE_TZ = False
 accesstoken = 'pk.eyJ1IjoiYW5tb2xqbyIsImEiOiJjbG43bnFnaHowenF3Mm9xbWJmaHJraW9xIn0.kYnR9lTYI_0xU9e2aZespA'
+PASSWORD_RESET_EMAIL_TEMPLATE = 'password_reset\password_reset_email.html'
+PASSWORD_RESET_SUBJECT = 'Mystranger | Password Reset'
+
+

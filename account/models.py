@@ -103,11 +103,11 @@ def _post_save_receiver(sender, instance, **kwargs):
 	chat = FriendList.objects.get_or_create(user=instance)
 
 
-# class AccountToken(models.Model):
-#     user = models.OneToOneField(Account , on_delete=models.CASCADE)
-#     auth_token = models.CharField(max_length=100 )
-#     is_verified = models.BooleanField(default=False)
-#     created_at = models.DateTimeField(auto_now_add=True)
+class AccountToken(models.Model):
+    user = models.OneToOneField(Account , on_delete=models.CASCADE)
+    auth_token = models.CharField(max_length=100 )
+    is_verified = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return self.user.email
+    def __str__(self):
+        return self.user.email

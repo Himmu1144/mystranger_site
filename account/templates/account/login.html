@@ -31,7 +31,10 @@
 		height: 100vh;
 	}
 
-	
+	.reset-pass{
+		margin-top:2px;
+		color : #009cda;
+	}
 
 	.main-containi{
 		/* border: 5px solid darkblue; */
@@ -318,6 +321,13 @@
 
 
 <div class="container-fluid main-containi">
+	{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <form class="form-signin form" method="post">{% csrf_token %}
 	<div class="svgContainer">
 		<div>
@@ -428,7 +438,7 @@
 	<div class="inputGroup inputGroup1">
 		<label for="inputEmail" id="inputEmailLabel">Email</label>
 		<input type="email" name="email" id="inputEmail" maxlength="254" />
-		<p class="helper helper1">email@domain.com</p>
+		<p class="helper helper1">email@university.edu</p>
 	</div>
 	<div class="inputGroup inputGroup2">
 		<label for="inputPassword" id="inputPasswordLabel">Password</label>
@@ -455,14 +465,17 @@
 	<div class="inputGroup inputGroup3">
 		<button type="submit" id="login">Log in</button>
 	</div>	
+	<div class="d-flex flex-column">
+		<a class="m-auto reset-pass" href="{% url 'password_reset' %}">Reset password</a>
+	</div>
 </form>
-{% if unverified %}
+{% comment %} {% if unverified %}
 <p>{{unverified}}</p>
 {% endif %}
 
 {% if token_status %}
       <p>{{token_status}}</p>
-    {% endif %}
+    {% endif %} {% endcomment %}
 {% comment %} <div class="d-flex flex-column">
 	<a class="m-auto" href="#">Reset password</a>
 </div> {% endcomment %}

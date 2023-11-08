@@ -13,6 +13,10 @@ from friend.friend_request_status import FriendRequestStatus
 from django.contrib.auth.hashers import make_password
 from mystranger.settings import accesstoken
 import json
+from django.core.mail import send_mail
+import uuid
+from account.models import AccountToken
+from django.contrib import messages
 
 
 def register_view(request, *args, **kwargs):
@@ -51,12 +55,18 @@ def register_view(request, *args, **kwargs):
                 university = fetch_or_create_uni(name, lat, lon)
                 university.add_user(account)
 
-            login(request, account)
-            destination = kwargs.get('next')
-            if destination:
-                return redirect(destination)
-            else:
-                return redirect('home')
+            auth_token = str(uuid.uuid4())
+            account_token = AccountToken.objects.create(user = account, auth_token = auth_token)
+            account_token.save()
+            send_email_view(request, email, auth_token)
+            print('email has been sent!')
+            # login(request, account)
+            # destination = kwargs.get('next')
+            # if destination:
+            #     return redirect(destination)
+            # else:
+            #     return redirect('home')
+            return redirect('account:token')
         else:
             context['registration_form'] = form
 
@@ -65,6 +75,9 @@ def register_view(request, *args, **kwargs):
         context['registration_form'] = form
 
     return render(request, 'account/register.html', context)
+
+def tokenSend(request):
+    return render(request, 'account/token_send.html')
 
 
 def logout_view(request):
@@ -86,12 +99,18 @@ def login_view(request, *args, **kwargs):
             password = request.POST.get('password')
             user = authenticate(email=email, password=password)
             if user:
-                login(request, user)
-                destination = kwargs.get('next')
-                if destination:
-                    return redirect(destination)
-                else:
-                    return redirect('home')
+                user_token = AccountToken.objects.filter(user = user).first()
+                if user_token is not None:
+                    if user_token.is_verified:
+                        login(request, user)
+                        destination = kwargs.get('next')
+                        if destination:
+                            return redirect(destination)
+                        else:
+                            return redirect('home')
+                    else:
+                        messages.warning(request, 'Please Verify Your Account First!')
+                        return render(request, 'account/login.html', context)
         else:
             context['login_form'] = form
 
@@ -204,29 +223,29 @@ def edit_account_view(request, *args, **kwargs):
 
     return render(request, "account/edit_account.html", context)
 
-def edit_pass_view(request, *args, **kwargs):
-    if not request.user.is_authenticated:
-        return redirect("login")
-    user_id = kwargs.get("user_id")
-    account = Account.objects.get(pk=user_id)
-    if account.pk != request.user.pk:
-        return HttpResponse("You cannot edit someone elses profile.")
+# def edit_pass_view(request, *args, **kwargs):
+#     if not request.user.is_authenticated:
+#         return redirect("login")
+#     user_id = kwargs.get("user_id")
+#     account = Account.objects.get(pk=user_id)
+#     if account.pk != request.user.pk:
+#         return HttpResponse("You cannot edit someone elses profile.")
     
-    context = {}
-    if request.POST:
-        pass1 = request.POST.get('pass1')
-        pass2 = request.POST.get('pass2')
-        if pass1 != pass2:
-            context['error'] = "password field and conform password field doesn't match"
-            return render(request, "account/edit_account_pass.html",context)
-        elif pass1 == pass2:
-            account.password = make_password(pass1)
-            account.save()
-            context['success'] = "Password Has been Changed."
-            return render(request, "account/edit_account_pass.html",context)
+#     context = {}
+#     if request.POST:
+#         pass1 = request.POST.get('pass1')
+#         pass2 = request.POST.get('pass2')
+#         if pass1 != pass2:
+#             context['error'] = "password field and conform password field doesn't match"
+#             return render(request, "account/edit_account_pass.html",context)
+#         elif pass1 == pass2:
+#             account.password = make_password(pass1)
+#             account.save()
+#             context['success'] = "Password Has been Changed."
+#             return render(request, "account/edit_account_pass.html",context)
 
     
-    return render(request, "account/edit_account_pass.html",context)
+#     return render(request, "account/edit_account_pass.html",context)
 
 
 # This is basically almost exactly the same as friends/friend_list_view
@@ -328,3 +347,36 @@ def fetch_or_create_uniprofile(name, Lat, Lon, uniName):
         university.nearbyList.add(*nearby_list)
         university.save()
     return university
+
+
+def send_email_view(request, email, token):
+    subject = 'Your accounts need to be verified'
+    # message = f'Hi paste the link to verify your account http://mystranger.in/account/verify/{token}'
+    message = f'Hi paste the link to verify your account http://127.0.0.1:8000/account/verify/{token}'
+    from_email = 'info@mystranger.in'
+    recipient_list = ['himmu1144@gmail.com']
+    send_mail(subject, message, from_email, recipient_list)
+
+    # email_from = settings.EMAIL_HOST_USER
+    # recipient_list = [email]
+    # send_mail(subject, message , email_from ,recipient_list )
+
+def verify(request , auth_token):
+    try:
+        token_obj = AccountToken.objects.filter(auth_token = auth_token).first()
+        context = {}
+        if token_obj:
+            if token_obj.is_verified:
+                messages.success(request, 'Your account is already verified.')
+                return redirect('login')
+                
+            token_obj.is_verified = True
+            token_obj.save()
+            messages.success(request, 'Your account has been verified.')
+            return redirect('login')
+            
+        else:
+            return HttpResponse('Invalid Token')
+    except Exception as e:
+        print(e)
+        return redirect('home')

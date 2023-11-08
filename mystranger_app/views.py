@@ -15,6 +15,9 @@ def new_chat_text_view(request):
         return redirect("login")
     return render(request,'new_chat_text.html')
 
+def error_404_view(request, exception):
+    return render(request, 'error_404.html')
+
 def feedback_view(request):
 
     if not request.user.is_authenticated:
