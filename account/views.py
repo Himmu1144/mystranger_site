@@ -282,6 +282,7 @@ def account_search_view(request, *args, **kwargs):
                         accounts.append(
                             (account, auth_user_friend_list.is_mutual_friend(account)))
                     context['accounts'] = accounts
+
                 else:
                     for account in search_results:
                         accounts.append((account, False))

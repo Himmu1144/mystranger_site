@@ -698,7 +698,7 @@ def fetching_waiting_list_count(university_name,origin,auth_user):
                 # right now if a user with uni_prof is here then it can only connect with others by fetching the other user but other users can't fetch him so if he is in the waiting list then he is not going to get connected with anyone and that's how it is , although we can fix that by adding all_nearby_users_from_profiles but we are not going to do that.
 
                 for universiti in nearby_universities:
-                    all_nearby_users |= universiti.users.all()
+                    all_nearby_users |= universiti.users.filter(is_verified = True)
                 
                 # all_nearby_users = list(all_nearby_users)
                 all_nearby_users_list = []
@@ -733,7 +733,7 @@ def fetching_waiting_list_count(university_name,origin,auth_user):
                 print("These are the nearby universities list - ",nearby_universities)
 
                 for universiti in nearby_universities:
-                    all_nearby_users |= universiti.users.all()
+                    all_nearby_users |= universiti.users.filter(is_verified = True)
                 
                 all_nearby_users_list = []
                 for obj in all_nearby_users:
