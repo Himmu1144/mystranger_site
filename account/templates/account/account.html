@@ -296,6 +296,7 @@
 					<span class="message-btn-text m-auto pl-2">Message</span>
 				</div>
 			{% endif %}
+			{% if is_self %}
 			<div class="card m-2 px-4 pb-4">
 				<!-- Friend requests -->
 		  		<div class="d-flex flex-column pt-4">
@@ -306,6 +307,8 @@
 					</a>
 				</div>
 			</div>
+			{% endif %}
+
 			
 		</div>
 		{% endif %}
