@@ -110,7 +110,8 @@
 
 .errors{
     /* border: 2px solid red; */
-    margin-left: 21em;
+    margin-top:4px;
+    {% comment %} margin-left: 21em; {% endcomment %}
 }
 
 #not_my_uni{
@@ -166,6 +167,14 @@
   font-size:10px;
 }
 
+.errors{
+  max-width:300px
+}
+
+.errors p{
+  margin-bottom: 2px; 
+}
+
 </style>
 
 <div class="container-fluid main-cont">
@@ -183,6 +192,8 @@
               <input type="text" name="lon" id="lon" placeholder="lon" hidden>
               <input type="checkbox" name="notrust" id="notrust" hidden>
               <input type="text" name="universityName" id="universityName" hidden>
+              <input type="text" name="universityAddress" id="uniAddress" hidden>
+              {% comment %} <h6 ></h6> {% endcomment %}
 
               <input type="password" name="password1" id="inputPassword1" class="radius form-control" placeholder="Password"
                 required>
@@ -206,12 +217,29 @@
             </form>
           </div>
         </div>
+        {% comment %} <p>your password is bullshit </p> {% endcomment %}
+        
+<div class="errors">
+          
+  {% for field in registration_form %}
+    {% for error in field.errors %}
+      <p style="color: red;">{{ error }}</p>
+    {% endfor %}
+  {% endfor %}
 
+  {% if registration_form.non_field_errors %}
+    <p style="color: red;">{{registration_form.non_field_errors}}</p>
+  {% endif %}
+
+</div>
+    
       </div>
+      
+      
     </div>
     <div class='box2'>
       <div class="box2-upper">
-      <h6 id="uniName"></h6>
+      <h6 style="max-width:321px;" id="uniName"></h6>
       <div class="dropdown">
         <div class="dropdown-toggle" id="reg-info" style="display:none;" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"> <i class="fa-solid fa-circle-info"></i>
         </div>
@@ -222,30 +250,16 @@
         
       </div>
     </div>
-    <h6 id="uniAddress"></h6>
+    
     <div id="map" style="height: 292px; width: 350px;"></div>
-  </div>
     <button style="display: none;" id="not_my_uni" onclick="notMyUni()">Not My University</button>
+  </div>
+    
     
     </div>
+    {% comment %} <p>Note: If you are facing any trouble regarding registeration than please fill this <button>form</button>. we are going to resolve it within an hour.</p> {% endcomment %}
   </div>
-  <div class="errors">
-    
-  {% for field in registration_form %}
-              <p>
-                {% for error in field.errors %}
-              <p style="color: red">{{ error }}</p>
-              {% endfor %}
-              </p>
-              {% endfor %}
-              {% if registration_form.non_field_errors %}
-              <div style="color: red">
-                <p>{{registration_form.non_field_errors}}</p>
-              </div>
-
-              {% endif %}
-            </div>
-</div>
+  
 
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
 <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
@@ -312,6 +326,7 @@
       console.log('printing the search reesult', ev.result, window.notrust);
       document.getElementById('uniName').innerHTML = 'University Name : ' + ev.result['text']
       document.getElementById('universityName').value = ev.result['text']
+      document.getElementById('uniAddress').value = ev.result['place_name']
       document.getElementById('lon').value = ev.result['geometry']['coordinates'][0] 
       document.getElementById('lat').value = ev.result['geometry']['coordinates'][1]
       marker1.setLngLat([ev.result['geometry']['coordinates'][0], ev.result['geometry']['coordinates'][1]]);
@@ -326,6 +341,7 @@
   // Correctly decide between ws:// and wss://
   var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
   var ws_path = ws_scheme + '://' + window.location.host + "/register/"; // development
+  {% comment %} var ws_path = ws_scheme + '://' + window.location.host + ":8001/register/"; // production {% endcomment %}
 
   // console.log("Connecting to " + ws_path);
   chatSocket = new WebSocket(ws_path);
@@ -346,7 +362,7 @@
       console.log('hurrah ', data.universityName)
       document.getElementById('not_my_uni').style.display = 'none'
       document.getElementById('uniName').innerHTML = 'University Name : ' + data.universityName
-      document.getElementById('uniAddress').innerHTML = 'Address : ' + data.universityAddress
+      document.getElementById('uniAddress').value = data.universityAddress
       document.getElementById('universityName').value = data.universityName
       document.getElementById('lat').value = data.lat
       document.getElementById('lon').value = data.lon
@@ -357,6 +373,7 @@
     } else if (data.fetched_from == 1 && data.universityName != null && data.universityName != 'nope'){
       console.log('hurrah no trust ', data.universityName)
       document.getElementById('uniName').innerHTML = 'University Name : ' + data.universityName
+      document.getElementById('universityName').value = data.universityName
       document.getElementById('lat').value = data.lat
       document.getElementById('lon').value = data.lon
       showMap(data.lon, data.lat, 14)
@@ -373,7 +390,7 @@
       console.log('This university does not exist in the database.')
       document.getElementById('uniName').innerHTML = 'Unable to find your university'
       document.getElementById('universityName').value = ''
-      document.getElementById('uniAddress').innerHTML = ''
+      document.getElementById('uniAddress').value = ''
       showSearchBar()
     }
 
@@ -427,7 +444,7 @@
       showMap(77.2219388, 28.6517178, 2)
       document.getElementById('uniName').innerHTML = ''
       document.getElementById('universityName').value = ''
-      document.getElementById('uniAddress').innerHTML = ''
+      document.getElementById('uniAddress').value = ''
 
     }
   }

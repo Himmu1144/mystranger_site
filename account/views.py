@@ -50,8 +50,10 @@ def register_view(request, *args, **kwargs):
                 if notrust:
                     # This means that location is obtained from the user input and can't be trusted therefore we are gonna create a university profile
                     uniName = request.POST.get('universityName')
+                    uniaddress = request.POST.get('universityAddress')
+                    print(uniaddress)
                     university_profile = fetch_or_create_uniprofile(
-                        name, lat, lon, uniName)
+                        name, lat, lon, uniName, uniaddress)
                     university_profile.add_user(account) #here we are adding our unverified user into uni profile same goes for uni model
                 else:
                     university = fetch_or_create_uni(name, lat, lon)
@@ -344,13 +346,13 @@ def fetch_or_create_uni(name, Lat, Lon):
     return university
 
 
-def fetch_or_create_uniprofile(name, Lat, Lon, uniName):
+def fetch_or_create_uniprofile(name, Lat, Lon, uniName, uniaddress):
     try:
         university = UniversityProfile.objects.get(
             Q(name=name) & Q(lat=Lat) & Q(lon=Lon))
     except UniversityProfile.DoesNotExist:
         university = UniversityProfile(
-            name=name, lat=Lat, lon=Lon, universityName=uniName)
+            name=name, lat=Lat, lon=Lon, universityName=uniName, universityAddress = uniaddress)
         university.save()
         nearby_list = []
         universities = University.objects.all()

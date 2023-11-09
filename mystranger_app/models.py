@@ -154,6 +154,7 @@ def _post_save_receiver_for_profile(sender, instance, **kwargs):
         
         university = University(name=instance.name,lat=instance.lat,lon=instance.lon)
         university.universityName = instance.universityName
+        university.universityAddress = instance.universityAddress
         university.save()
         nearby_list = []
         universities = University.objects.all()
