@@ -632,17 +632,22 @@
    */
 	function startGeneralNotificationService() {
 		if ("{{request.user.is_authenticated}}" == "True") {
-			{% comment %} setInterval(refreshGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
+			setInterval(refreshGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getNewGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
-			setInterval(getUnreadMessageNotificationsCount, GENERAL_NOTIFICATION_INTERVAL) {% endcomment %}
+			setInterval(getUnreadMessageNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
+			/* setInterval(refreshActiveCount, GENERAL_NOTIFICATION_INTERVAL) */
 			
 		}
 	}
 
 	startGeneralNotificationService()
 
-
+	{% comment %} function refreshActiveCount(){
+		notificationSocket.send(JSON.stringify({
+			"command": "refresh_active_count",
+		}));
+	} {% endcomment %}
 	/*
 		Retrieve the number of unread notifications. (This is the red dot in the notifications icon)
 		Called every GENERAL_NOTIFICATION_INTERVAL

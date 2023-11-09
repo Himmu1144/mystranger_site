@@ -15,6 +15,7 @@ from chat.models import RoomChatMessage, PrivateChatRoom
 from notification.utils import LazyNotificationEncoder
 from notification.constants import *
 from notification.models import Notification
+# from notification.models import  ActiveUsers
 from chat.exceptions import ClientError
 
 
@@ -35,11 +36,21 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         """
         # print("NotificationConsumer: connect: " + str(self.scope["user"]))
         await self.accept()
+        # print('Adding +1 to count')
+        # count = await maintain_count(True)
+        # await self.send_json(
+        #     {
+        #         'active_count' : count
+        #     },
+        # )
 
     async def disconnect(self, code):
         """
         Called when the WebSocket closes for any reason.
         """
+        # print('Adding -1 to count')
+        # count = await maintain_count(False)
+
         # print("NotificationConsumer: disconnect")
 
     async def receive_json(self, content):
@@ -111,6 +122,9 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                     pass
             elif command == "mark_notifications_read":
                 await mark_notifications_read(self.scope["user"])
+            # elif command == 'refresh_active_count':
+            #     await self.send_refresh_active_count()
+
         except Exception as e:
             # print("EXCEPTION: receive_json: " + str(e))
             pass
@@ -122,6 +136,15 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 "progress_bar": shouldDisplay,
             },
         )
+
+    # async def send_refresh_active_count(self):
+
+    #     count = await fetch_active_count()
+    #     await self.send_json(
+    #         {
+    #             'active_count' : count
+    #         },
+    #     )
 
     async def send_general_notifications_payload(self, notifications, new_page_number):
         """
@@ -414,3 +437,35 @@ def get_unread_message_notification_count(user):
     else:
         raise ClientError("User must be authenticated to get notifications.")
     return None
+
+# @database_sync_to_async
+# def maintain_count(booli):
+#     try:
+#         count_obj = ActiveUsers.objects.get(pk=1)
+#         if booli:
+#             count_obj.count = count_obj.count + 1
+#             count_obj.save()
+#             count = count_obj.count
+#         else:
+#             count_obj.count = count_obj.count - 1
+#             count_obj.save()
+#             count = count_obj.count
+#     except ActiveUsers.DoesNotExist:
+#         count_obj = ActiveUsers.objects.create(pk=1)
+#         if booli:
+#             count_obj.count = count_obj.count + 1
+#             count_obj.save()
+#             count = count_obj.count
+#         else:
+#             count_obj.count = count_obj.count - 1
+#             count_obj.save()
+#             count = count_obj.count
+#     return count
+
+# @database_sync_to_async
+# def fetch_active_count():
+#     try:
+#         count_obj = ActiveUsers.objects.get(pk=1)
+#         return count_obj.count
+#     except ActiveUsers.DoesNotExist:
+#         print('Active users model does not exist!')

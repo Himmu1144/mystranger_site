@@ -678,6 +678,7 @@
       </span>
       {% endif %}
       <a class="navbar-brand" href="/">MyStranger</a>
+      <span class='ml-4' id="active-count" style="color:white;"></span>
     </div>
       <div class="nav-left">
         <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
@@ -1013,6 +1014,11 @@
       if (data.general_msg_type == 5) {
         updateGeneralNotificationDiv(data['notification'])
       }
+
+      {% comment %} if (data.active_count){
+        console.log('updating active count')
+        document.getElementById('active-count').innerHTML = data.active_count + '+' + ' online'
+      } {% endcomment %}
 
     }
 

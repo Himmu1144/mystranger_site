@@ -36,3 +36,10 @@ class Notification(models.Model):
 	def get_content_object_type(self):
 		return str(self.content_object.get_cname)
 
+
+# class ActiveUsers(models.Model):
+# 	count = models.IntegerField(default=0)
+
+# 	def __str__(self):
+# 		return str(self.count)
+
