@@ -326,7 +326,8 @@ def fetch_or_create_uni(name, Lat, Lon):
             Lat1 = uni.lat
             Lon1 = uni.lon
 
-            distance = calculate_distance(Lat, Lon, Lat1, Lon1)
+            # distance = calculate_distance(Lat, Lon, Lat1, Lon1)
+            distance = haversine_distance(Lat, Lon, Lat1, Lon1)
             if distance <= 60:
                 '''
                 This means that yes this uni lies with in 60 km of registration uni
