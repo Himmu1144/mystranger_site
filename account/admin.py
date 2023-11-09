@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from account.models import Account 
 from account.models import AccountToken
+from account.models import RegistrationError
 
 
 
@@ -18,3 +19,4 @@ class AccountAdmin(UserAdmin):
 
 admin.site.register(Account, AccountAdmin)
 admin.site.register(AccountToken)
+admin.site.register(RegistrationError)

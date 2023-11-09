@@ -112,3 +112,15 @@ class AccountToken(models.Model):
 
     def __str__(self):
         return self.user.email
+
+class RegistrationError(models.Model):
+
+    email = models.CharField(max_length=100 )
+    uni_name = models.CharField(max_length=100 )
+    uni_address = models.CharField(max_length=400 )
+    issue_faced = models.CharField(max_length=10000 )
+
+    def __str__(self):
+        return str(self.email)
+
+

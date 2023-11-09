@@ -175,8 +175,36 @@
   margin-bottom: 2px; 
 }
 
-</style>
+.btn:hover{
+  background-color: #343a40!important;
+  cursor: pointer;
+}
 
+.reg-notice p{
+  margin-bottom: 0px;
+}
+
+.reg-notice a{
+  color:#009cda;
+}
+
+.alert{
+  padding: 0.55rem 1.25rem;
+  font-family: 'Rubik', sans-serif;
+}
+
+.alert-dismissible .close {
+  padding: 0.55rem 1.25rem;
+}
+
+
+</style>
+<div class="alert alert-info alert-dismissible fade show reg-notice-top" role="alert">
+  <strong>Note:</strong> If you are facing any trouble regarding registeration than please fill this <a href="{% url "account:reg-error" %}">Form</a> | We are going to fix it within few hours or hopefully minutes.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
 <div class="container-fluid main-cont">
   <div class='rectangle'>
     <div class='box1'>
@@ -220,10 +248,17 @@
         {% comment %} <p>your password is bullshit </p> {% endcomment %}
         
 <div class="errors">
-          
+  <p id="email-error" style="color: #009cda;">Email must ends with either .edu or .edu.in or .ac.in</p>    
   {% for field in registration_form %}
     {% for error in field.errors %}
-      <p style="color: red;">{{ error }}</p>
+    {% if error == 'Email must ends with either .edu or .edu.in or .ac.in' %}
+      <script>
+        var emailError = document.getElementById('email-error')
+        emailError.style.color = 'red';
+      </script>
+    {% else %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
     {% endfor %}
   {% endfor %}
 
@@ -257,7 +292,9 @@
     
     
     </div>
-    {% comment %} <p>Note: If you are facing any trouble regarding registeration than please fill this <button>form</button>. we are going to resolve it within an hour.</p> {% endcomment %}
+    <div class="reg-notice">
+    
+  </div>
   </div>
   
 
@@ -307,7 +344,7 @@
       accessToken: mapboxgl.accessToken, // Set the access token
       mapboxgl: mapboxgl, // Set the mapbox-gl instance
       marker: false, // Do not use the default marker style
-      placeholder: 'Search for universities and colleges', // Placeholder text for the search bar
+      placeholder: 'Search Your University', // Placeholder text for the search bar
       // bbox: [79.0000, 5.0000, 82.0000, 10.0000], // Boundary for Berkeley
       types: 'poi',
       countries: 'IN',

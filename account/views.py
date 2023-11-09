@@ -17,6 +17,7 @@ import json
 from django.core.mail import send_mail
 import uuid
 from account.models import AccountToken
+from account.models import RegistrationError
 from django.contrib import messages
 
 
@@ -461,3 +462,18 @@ def nearby_uni(request):
     except Exception as e:
         print(e)
     return render(request, 'account/nearby_uni_list.html',context)
+
+def registration_error(request):
+    context = {}
+    if request.method=='POST':
+        user_email = request.POST.get('user-email')
+        user_university = request.POST.get('userUniversityName')
+        user_university_address = request.POST.get('userUniversityAddress')
+        issue_faced = request.POST.get('issue-message')
+
+        reg_error_obj = RegistrationError(email = user_email, uni_name = user_university, uni_address = user_university_address, issue_faced = issue_faced)
+        reg_error_obj.save()
+        context['success'] = 'Success'
+        return render(request, 'account/registration_error_form.html', context)
+        
+    return render(request, 'account/registration_error_form.html', context)
