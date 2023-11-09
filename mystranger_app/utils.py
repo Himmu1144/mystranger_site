@@ -1,4 +1,5 @@
-import math , random 
+import math , random
+from math import radians, sin, cos, sqrt, atan2 
 import requests
 
 def generateOTP() :
@@ -15,6 +16,7 @@ def generateOTP() :
  
     return OTP
 
+
 def calculate_distance(lat1, lon1, lat2, lon2):
     # OpenStreetMap API URL
     url = f"https://router.project-osrm.org/route/v1/driving/{lon1},{lat1};{lon2},{lat2}?overview=false"
@@ -29,4 +31,25 @@ def calculate_distance(lat1, lon1, lat2, lon2):
         return int(distance)
 
     return None
+
+
+
+def haversine_distance(lat1, lon1, lat2, lon2):
+    # Convert latitude and longitude from degrees to radians
+    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
+
+    # Haversine formula
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    # Radius of the Earth in kilometers (mean value)
+    radius = 6371.0
+
+    # Calculate the distance
+    distance = radius * c
+
+    return distance
+
 

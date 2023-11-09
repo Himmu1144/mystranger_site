@@ -7,7 +7,7 @@ from account.models import Account
 from mystranger_app.models import University, UniversityProfile , Flags
 from friend.models import FriendList, FriendRequest
 from django.db.models import Q
-from mystranger_app.utils import calculate_distance
+from mystranger_app.utils import calculate_distance, haversine_distance
 from friend.utils import get_friend_request_or_false
 from friend.friend_request_status import FriendRequestStatus
 from django.contrib.auth.hashers import make_password
@@ -19,6 +19,7 @@ import uuid
 from account.models import AccountToken
 from account.models import RegistrationError
 from django.contrib import messages
+
 
 
 def register_view(request, *args, **kwargs):
@@ -360,8 +361,16 @@ def fetch_or_create_uniprofile(name, Lat, Lon, uniName, uniaddress):
         for uni in universities:
             Lat1 = uni.lat
             Lon1 = uni.lon
-
-            distance = calculate_distance(Lat, Lon, Lat1, Lon1)
+            
+            # distance = calculate_distance(Lat, Lon, Lat1, Lon1)
+            # if distance:
+            #     if distance <= 60:
+            #         '''
+            #         This means that yes this uni lies with in 60 km of registration uni
+            #         '''
+            #         nearby_list.append(uni)
+            # else:
+            distance = haversine_distance(float(Lat), float(Lon), float(Lat1), float(Lon1))
             if distance <= 60:
                 '''
                 This means that yes this uni lies with in 60 km of registration uni
