@@ -79,7 +79,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             elif command == 'offer':
                 await self.channel_layer.group_send(content['group'],{
                 'type':'offer.message',
-                'offer':content['offer']
+                'offer':content['offer'],
+                'groupName' : content['group'],
             })
             elif command == 'answer':
                 await self.channel_layer.group_send(content['group'],{
@@ -541,7 +542,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def offer_message(self,event):
         await self.send_json({
             'command':'offer',
-            'offer':event['offer']
+            'offer':event['offer'],
+            'groupName' : event['groupName'],
         })
 
     async def answer_message(self,event):

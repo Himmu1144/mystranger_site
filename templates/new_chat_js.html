@@ -47,14 +47,44 @@
     //     }
     // }) {% endcomment %}
 
-    let init = async () => { 
-        localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:false})
-        
+    {% comment %} let init = async () => { 
+        localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true})
         document.getElementById("ours").srcObject = localStream;
         
+    } {% endcomment %}
+
+    
+let init = async () => { 
+    try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        console.log('Both audio and video access granted');
+    } catch (error) {
+        console.error('Error with audio and video access:', error);
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            console.log('Video access granted, but audio access denied');
+            document.getElementById('audio-error').style.display = 'block'
+            // You can display a message to the user indicating that audio is not available.
+        } catch (error) {
+            console.error('Error with video access:', error);
+            // Handle the case where both audio and video access failed.
+            // You may want to inform the user and take appropriate action.
+        }
     }
 
-    let createOffer = async () => {
+    if (localStream) {
+        document.getElementById("ours").srcObject = localStream;
+        // Now you can use localStream for your WebRTC connection.
+    }
+};
+
+    init()
+
+    let createOffer = async (groupName) => {
+
+        if (!localStream) {
+            await init();  // Ensure localStream is initialized if not already
+        }
 
         peerConnection = new RTCPeerConnection(servers)
 
@@ -80,7 +110,7 @@
                     command: "candidate",
                     candidate: event.candidate,
                     iscreated: window.user,
-                    group: window.group_name,
+                    group: groupName,
                 })
             );
         }
@@ -95,13 +125,13 @@
                 JSON.stringify({
                     command: "offer",
                     offer: offer,
-                    group: window.group_name,
+                    group: groupName,
                 })
             );
 
     }
 
-    let createAnswer = async (offer) => { 
+    let createAnswer = async (offer, groupName) => { 
 
         peerConnection = new RTCPeerConnection(servers)
 
@@ -127,7 +157,7 @@
                     command: "candidate",
                     candidate: event.candidate,
                     iscreated: window.user,
-                    group: window.group_name,
+                    group: groupName,
                 })
             );
         }
@@ -143,7 +173,7 @@
                 JSON.stringify({
                     command: "answer",
                     answer: answer,
-                    group: window.group_name,
+                    group: groupName,
                 })
             );
 
@@ -160,7 +190,7 @@ let addAnswer = async (answer) => {
 
 
 
-    init()
+
 
 
     
@@ -172,8 +202,8 @@ let addAnswer = async (answer) => {
 
     // Correctly decide between ws:// and wss://
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + "/chat/"; // development
-    {% comment %} var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat/"; // development {% endcomment %}
+    {% comment %} var ws_path = ws_scheme + '://' + window.location.host + "/chat/"; // development {% endcomment %}
+    var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat/"; // development
 
     // console.log("Connecting to " + ws_path);
     chatSocket = new WebSocket(ws_path);
@@ -200,11 +230,11 @@ let addAnswer = async (answer) => {
 
         if (data.status_user2) {
             window.user = 'user2'
-            console.log(window.user)
+            console.log("I am gonna receive the offer and create the answer",window.user)
         }
         if (data.status_user1) {
             window.user = 'user1'
-            console.log(window.user)
+            console.log('I am gonna create the offer',window.user)
         }
 
         if (data.grouped) {
@@ -245,8 +275,10 @@ let addAnswer = async (answer) => {
                     window.stranger_id = data.random_user_id
                     window.stranger_email = data.random_user_email
                     // createOffer()
-                    createOffer();
-                    // console.log('offer created')
+
+                    console.log('creating offer by - ', window.user)
+                    createOffer(data.grouped);
+                    console.log('offer created')
                 }
                 else {
                     window.self_name = data.random_user_name
@@ -285,15 +317,18 @@ let addAnswer = async (answer) => {
         } 
 
         if (data["command"] == "offer") {
-            console.log('offer recieved by ', window.user)
+            console.log('offer recieved by User2')
             if (window.user == 'user2') {
                 console.log('user2 ----------')
+                console.log('Got the offer baby')
                 // createanswer(data["offer"]);
-                createAnswer(data["offer"]);
+                createAnswer(data["offer"],data['groupName']);
                 console.log('answer created')
             }
         } else if (data["command"] == "answer") {
+            console.log('answer received by user1')
             if (window.user == 'user1') {
+                console.log('Got the answer baby and added it - ', window.user)
                 // rtcpeerconnection.setRemoteDescription(data["answer"]);
                 addAnswer(data['answer']);
                 console.log("answer set as remote");
