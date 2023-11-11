@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from account.models import Account
 from django.contrib.auth import authenticate
+from account.utils import extract_name
 
 
 class RegistrationForm(UserCreationForm):
@@ -46,10 +47,10 @@ class RegistrationForm(UserCreationForm):
     def save(self, commit=True):
         account = super(RegistrationForm, self).save(commit=False)
         email = self.cleaned_data['email'].lower()
-        name = email.split('@')[0].capitalize()
+        name = extract_name(email)
         
-        if '.' in name:
-            name = name.split('.')[0].capitalize()
+        # if '.' in name:
+        #     name = name.split('.')[0].capitalize()
         account.name = name
         account.terms = self.cleaned_data['terms']
         account.email = self.cleaned_data['email'].lower()
@@ -90,3 +91,6 @@ class AccountAuthenticationForm(forms.ModelForm):
             password = self.cleaned_data['password']
             if not authenticate(email=email,password=password):
                 raise forms.ValidationError("Invalid Credentials!")
+            
+
+

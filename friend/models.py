@@ -34,7 +34,7 @@ class FriendList(models.Model):
 			self.notifications.create(
 				target=self.user,
 				from_user=account,
-				redirect_url=f"{settings.BASE_URL}/account/{account.pk}/",
+				redirect_url=f"{settings.domain_name}/account/{account.pk}/",
 				verb=f"You are now friends with {account.name}.",
 				content_type=content_type,
 			)
@@ -81,7 +81,7 @@ class FriendList(models.Model):
 		friends_list.notifications.create(
 			target=removee,
 			from_user=self.user,
-			redirect_url=f"{settings.BASE_URL}/account/{self.user.pk}/",
+			redirect_url=f"{settings.domain_name}/account/{self.user.pk}/",
 			verb=f"You are no longer friends with {self.user.name}.",
 			content_type=content_type,
 		)
@@ -90,7 +90,7 @@ class FriendList(models.Model):
 		self.notifications.create(
 			target=self.user,
 			from_user=removee,
-			redirect_url=f"{settings.BASE_URL}/account/{removee.pk}/",
+			redirect_url=f"{settings.domain_name}/account/{removee.pk}/",
 			verb=f"You are no longer friends with {removee.name}.",
 			content_type=content_type,
 		)
@@ -145,7 +145,7 @@ class FriendRequest(models.Model):
 			# Update notification for RECEIVER
 			receiver_notification = Notification.objects.get(target=self.receiver, content_type=content_type, object_id=self.id)
 			receiver_notification.is_active = False
-			receiver_notification.redirect_url = f"{settings.BASE_URL}/account/{self.sender.pk}/"
+			receiver_notification.redirect_url = f"{settings.domain_name}/account/{self.sender.pk}/"
 			receiver_notification.verb = f"You accepted {self.sender.name}'s friend request."
 			receiver_notification.timestamp = timezone.now()
 			receiver_notification.save()
@@ -158,7 +158,7 @@ class FriendRequest(models.Model):
 				self.notifications.create(
 					target=self.sender,
 					from_user=self.receiver,
-					redirect_url=f"{settings.BASE_URL}/account/{self.receiver.pk}/",
+					redirect_url=f"{settings.domain_name}/account/{self.receiver.pk}/",
 					verb=f"{self.receiver.name} accepted your friend request.",
 					content_type=content_type,
 				)
@@ -184,7 +184,8 @@ class FriendRequest(models.Model):
 		# Update notification for RECEIVER
 		notification = Notification.objects.get(target=self.receiver, content_type=content_type, object_id=self.id)
 		notification.is_active = False
-		notification.redirect_url = f"{settings.BASE_URL}/account/{self.sender.pk}/"
+		notification.redirect_url = f"{settings.domain_name}/account/{self.sender.pk}/"
+		# notification.redirect_url = f"#"
 		notification.verb = f"You declined {self.sender.name}'s friend request."
 		notification.from_user = self.sender
 		notification.timestamp = timezone.now()
@@ -195,7 +196,7 @@ class FriendRequest(models.Model):
 			target=self.sender,
 			verb=f"{self.receiver.name} declined your friend request.",
 			from_user=self.receiver,
-			redirect_url=f"{settings.BASE_URL}/account/{self.receiver.pk}/",
+			redirect_url=f"#",
 			content_type=content_type,
 		)
 
@@ -218,7 +219,7 @@ class FriendRequest(models.Model):
 			target=self.sender,
 			verb=f"You cancelled the friend request to {self.receiver.name}.",
 			from_user=self.receiver,
-			redirect_url=f"{settings.BASE_URL}/account/{self.receiver.pk}/",
+			redirect_url=f"#",
 			content_type=content_type,
 		)
 
@@ -240,7 +241,7 @@ def create_notification(sender, instance, created, **kwargs):
 		instance.notifications.create(
 			target=instance.receiver,
 			from_user=instance.sender,
-			redirect_url=f"{settings.BASE_URL}/account/{instance.sender.pk}/",
+			redirect_url=f"{settings.domain_name}/account/{instance.sender.pk}/",
 			verb=f"{instance.sender.name} sent you a friend request.",
 			content_type=instance,
 		)

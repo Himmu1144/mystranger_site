@@ -144,7 +144,7 @@ def account_view(request, *args, **kwargs):
         context['name'] = account.name
         context['email'] = account.email
         context['origin'] = account.origin
-        context['universityName'] = account.universityName
+        # context['universityName'] = account.universityName
         context['gender'] = account.gender
 
         try:
@@ -223,7 +223,7 @@ def edit_account_view(request, *args, **kwargs):
             "email": account.email,
             "name": account.name,
             "origin": account.origin,
-            'universityName' : account.universityName,
+            # 'universityName' : account.universityName,
         }
 
         context['form'] = initial

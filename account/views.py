@@ -164,7 +164,7 @@ def account_view(request, *args, **kwargs):
         context['name'] = account.name
         context['email'] = account.email
         context['origin'] = account.origin
-        context['universityName'] = account.universityName
+        # context['universityName'] = account.universityName
         context['gender'] = account.gender
 
         try:
@@ -232,20 +232,28 @@ def edit_account_view(request, *args, **kwargs):
         if request.POST:
             # name = request.POST.get('name')
             origin = request.POST.get('my_dist')
-            universityName = request.POST.get('uniname')
+            # universityName = request.POST.get('uniname')
             # account.name = name
             account.origin = origin
-            account.universityName = universityName
+            # account.universityName = universityName
             account.save()
             return redirect("account:view", user_id=account.pk)
         else:
+            name = account.university_name
+            try:
+                uni = University.objects.get(name = name)
+                uni_name = uni.universityName
+            except University.DoesNotExist:
+                uni = UniversityProfile.objects.get(name= name)
+                uni_name = uni.universityName
+
 
             initial = {
                 "id": account.pk,
                 "email": account.email,
                 "name": account.name,
                 "origin": account.origin,
-                'universityName' : account.universityName,
+                'universityName' : uni_name,
             }
 
             context['form'] = initial
@@ -380,12 +388,16 @@ def fetch_or_create_uniprofile(name, Lat, Lon, uniName, uniaddress):
         university = UniversityProfile(
             name=name, lat=Lat, lon=Lon, universityName=uniName, universityAddress = uniaddress)
         university.save()
-        # nearby_list = []
-        # all_nearby_users = []
-        # universities = University.objects.all()
-        # for uni in universities:
-        #     Lat1 = uni.lat
-        #     Lon1 = uni.lon
+
+        ''' idiot we do need this to make site work for patient zero '''
+
+
+        nearby_list = []
+        all_nearby_users = []
+        universities = University.objects.all()
+        for uni in universities:
+            Lat1 = uni.lat
+            Lon1 = uni.lon
             
         #     # distance = calculate_distance(Lat, Lon, Lat1, Lon1)
         #     # if distance:
@@ -395,29 +407,29 @@ def fetch_or_create_uniprofile(name, Lat, Lon, uniName, uniaddress):
         #     #         '''
         #     #         nearby_list.append(uni)
         #     # else:
-        #     distance = haversine_distance(float(Lat), float(Lon), float(Lat1), float(Lon1))
-        #     if distance <= 60:
-        #         '''
-        #         This means that yes this uni lies with in 60 km of registration uni
-        #         '''
-        #         nearby_list.append(uni)
+            distance = haversine_distance(float(Lat), float(Lon), float(Lat1), float(Lon1))
+            if distance <= 60:
+                '''
+                This means that yes this uni lies with in 60 km of registration uni
+                '''
+                nearby_list.append(uni)
 
-        #         '''
-        #         This part can be done asyncronously because its not needed instantly , it can be done later.
-        #         '''
+                '''
+                This part can be done asyncronously because its not needed instantly , it can be done later.
+                '''
 
-        #         # print(uni.users.all())
-        #         # print(type(uni.users.all()))
-        #         uni_users = uni.users.all()
-        #         # print("users from - ",uni)
-        #         if uni_users:
-        #             for usr in uni_users:
-        #                 all_nearby_users.append(usr)
+                # print(uni.users.all())
+                # print(type(uni.users.all()))
+                uni_users = uni.users.all()
+                # print("users from - ",uni)
+                if uni_users:
+                    for usr in uni_users:
+                        all_nearby_users.append(usr)
 
-        # university.nearbyList.add(*nearby_list)
-        # university.allNearbyUsers.add(*all_nearby_users)
+        university.nearbyList.add(*nearby_list)
+        university.allNearbyUsers.add(*all_nearby_users)
         # print('allnearby users - ', all_nearby_users)
-        # university.save()
+        university.save()
     return university
 
 

@@ -142,7 +142,7 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
                 },
             )
         except Exception as e:
-            print(e)
+            print('This exception is from account consumer',e)
 
 
 '''
