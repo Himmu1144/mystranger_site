@@ -687,23 +687,26 @@ def fetching_waiting_list_count(university_name,origin,auth_user):
             print("set 1_2 -------", set1_2)
             set1 = set1_1.union(set1_2)
             print("set 1 -------", set1)
-            all_nearby_users = University.objects.none()
+            # all_nearby_users = University.objects.none()
             try:    
                 university = University.objects.get(name=university_name)
-                print('Uni exists so no profile dwelling')
-                nearby_universities = university.nearbyList.all()
-                print("These are the nearby universities list - ",nearby_universities)
+                all_nearby_users = university.allNearbyUsers.filter(is_verified = True)
+                print(all_nearby_users, 'These are the all nearby users')
+
+                # print('Uni exists so no profile dwelling')
+                # nearby_universities = university.nearbyList.all()
+                # print("These are the nearby universities list - ",nearby_universities)
 
                 # --------------------------------------------------------------------------------------------
                 # right now if a user with uni_prof is here then it can only connect with others by fetching the other user but other users can't fetch him so if he is in the waiting list then he is not going to get connected with anyone and that's how it is , although we can fix that by adding all_nearby_users_from_profiles but we are not going to do that.
 
-                for universiti in nearby_universities:
-                    all_nearby_users |= universiti.users.filter(is_verified = True)
+                # for universiti in nearby_universities:
+                #     all_nearby_users |= universiti.users.filter(is_verified = True)
                 
-                # all_nearby_users = list(all_nearby_users)
-                all_nearby_users_list = []
-                for obj in all_nearby_users:
-                    all_nearby_users_list.append(obj.email) 
+                # # all_nearby_users = list(all_nearby_users)
+                # all_nearby_users_list = []
+                # for obj in all_nearby_users:
+                #     all_nearby_users_list.append(obj.email) 
 
                 # for obj in all_nearby_users_list:
                 #     print(obj)
@@ -713,14 +716,14 @@ def fetching_waiting_list_count(university_name,origin,auth_user):
                 #         print('Sup false')
                 # if 'himanshu.20scse1010435@galgotiasuniversity.edu.in' in all_nearby_users_list:
                 #     print('yes you fuckin hell')
-                print("All nearby users -----", all_nearby_users_list)
+                # print("All nearby users -----", all_nearby_users_list)
 
                 nearby_waiting_list_users = waiting_list.users.all()
                 print('These are all the nearby waiting list users - ', nearby_waiting_list_users)
                 set2 = set()
                 for user in nearby_waiting_list_users:
                     print("user from nwlu - ", user.user.email, type(user.user.email))
-                    if user.user.email in all_nearby_users_list:
+                    if user.user in all_nearby_users:
                         print("Yes this brat is in the all_nearby_users",user.user)
                         set2.add(user)
             except University.DoesNotExist:
@@ -728,25 +731,27 @@ def fetching_waiting_list_count(university_name,origin,auth_user):
 
                 university_prof = UniversityProfile.objects.filter(Q(name=university_name) & Q(users=auth_user)).first()
                 print('The university profile is ---------', university_prof)
+                all_nearby_users = university_prof.allNearbyUsers.filter(is_verified = True)
+                print(all_nearby_users)
 
-                nearby_universities = university_prof.nearbyList.all()
-                print("These are the nearby universities list - ",nearby_universities)
+                # nearby_universities = university_prof.nearbyList.all()
+                # print("These are the nearby universities list - ",nearby_universities)
 
-                for universiti in nearby_universities:
-                    all_nearby_users |= universiti.users.filter(is_verified = True)
+                # for universiti in nearby_universities:
+                #     all_nearby_users |= universiti.users.filter(is_verified = True)
                 
-                all_nearby_users_list = []
-                for obj in all_nearby_users:
-                    all_nearby_users_list.append(obj.email) 
+                # all_nearby_users_list = []
+                # for obj in all_nearby_users:
+                #     all_nearby_users_list.append(obj.email) 
 
-                print("All nearby users -----", all_nearby_users_list)
+                # print("All nearby users -----", all_nearby_users_list)
 
                 nearby_waiting_list_users = waiting_list.users.all()
                 print('These are all the nearby waiting list users - ', nearby_waiting_list_users)
                 set2 = set()
                 
                 for user in nearby_waiting_list_users:
-                    if user.user.email in all_nearby_users_list:
+                    if user.user in all_nearby_users:
                         print("Yes this brat is in the all_nearby_users",user.user)
                         set2.add(user)
 

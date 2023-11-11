@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from mystranger_app.utils import calculate_distance
+from mystranger_app.utils import calculate_distance, haversine_distance
 
 
 '''
@@ -16,8 +16,10 @@ class University(models.Model):
     universityAddress = models.CharField(max_length=1000, blank=True)
     lat = models.FloatField(blank=False)
     lon = models.FloatField(blank=False)
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("users"), blank=True)
-    nearbyList = models.ManyToManyField('self', verbose_name=("nearby_universities"), blank=True) 
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("users"), related_name="users", blank=True)
+    nearbyList = models.ManyToManyField('self', verbose_name=("nearby_universities"), blank=True)
+    allNearbyUsers = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("nearby_uni_users"), related_name="all_nearby_users", blank=True) 
+
 
     def add_user(self, account):
         """
@@ -125,18 +127,23 @@ class UniversityProfile(models.Model):
     universityAddress = models.CharField(max_length=1000, blank=True)
     lat = models.FloatField(blank=False)
     lon = models.FloatField(blank=False)
-    users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("users"), blank=True)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("users"), related_name="profile_users", blank=True)
     nearbyList = models.ManyToManyField(University, verbose_name=("nearby_universities"), blank=True) 
+    allNearbyUsers = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("nearby_uni_users"), related_name="all_nearby_users_profile", blank=True) 
     verified = models.BooleanField(default=False)
 
 
 
     def add_user(self, account):
-        """
-        Add a new friend.
-        """
+        
         if not account in self.users.all():
             self.users.add(account)
+            self.save()
+
+    def add_user_anu(self, account):
+        
+        if not account in self.allNearbyUsers.all():
+            self.allNearbyUsers.add(account)
             self.save()
     
     def users_count(self):
@@ -156,36 +163,58 @@ def _post_save_receiver_for_profile(sender, instance, **kwargs):
         university.universityName = instance.universityName
         university.universityAddress = instance.universityAddress
         university.save()
-        nearby_list = []
-        universities = University.objects.all()
+
+        for prof in all_uni_prof:
+            prof_uesrs = prof.users.all() 
+            university.users.add(*prof_uesrs)
+        university.save()
+
+        # nearby_list = []
+        # universities = University.objects.all()
         
         # nearby_list = instance.nearbyList.all()
         # university.nearbyList.add(*nearby_list)
         # university.save()
 
         nearby_list = []
+        all_nearby_users = []
         universities = University.objects.all()
         for uni in universities:
             Lat1 = uni.lat
             Lon1 = uni.lon
 
-            distance = calculate_distance(instance.lat, instance.lon, Lat1, Lon1)
+            # distance = calculate_distance(instance.lat, instance.lon, Lat1, Lon1)
+            distance = haversine_distance(instance.lat, instance.lon, Lat1, Lon1)
             if distance <= 60:
                 '''
                 This means that yes this uni lies with in 60 km of registration uni
                 '''
                 nearby_list.append(uni)
 
+                uni_users = uni.users.all()
+                # print('These are the uni users', uni_users)
+                print("users from - ",uni)
+                if uni_users:
+                    for usr in uni_users:
+                        print('This is the usr - ', usr)
+                        all_nearby_users.append(usr)
+
         university.nearbyList.add(*nearby_list)
+        university.allNearbyUsers.add(*all_nearby_users)
         university.save()
 
         for uni in nearby_list:
             uni.nearbyList.add(university)
+            users = list(university.users.all())
+            print("the usiours -", users)
+            uni.allNearbyUsers.add(*users)
             uni.save()
         
-        for prof in all_uni_prof:
-            prof_uesrs = prof.users.all() 
-            university.users.add(*prof_uesrs)
+       
+
+        '''
+        Now we also gotta migrate all nearby users as well
+        '''
 
         '''
         This below code gives an error becuase we can't delete all the profs in a profs post save therefore we have to find some another way to delete all profs when one prof is verified and converted into university model

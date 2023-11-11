@@ -19,6 +19,7 @@
     }
 
 .home-container{
+    {% comment %} position: relative; {% endcomment %}
     /* border: 2px solid red; */
     display: flex;
     /* justify-content: center; */
@@ -112,6 +113,28 @@
     border: 2px solid red;
 }
 
+
+.alert{
+    padding: 0.55rem 1.25rem;
+    font-family: 'Rubik', sans-serif;
+    font-size:12px;
+    z-index: -1;
+    position: absolute;
+    top:53px;
+  }
+
+  
+  .alert-dismissible .close {
+    padding: 0.55rem 1.25rem;
+    margin-left: 1em;
+  }
+
+  {% comment %} .msg-div{
+    width: 98%;
+  } {% endcomment %}
+
+
+
     /* Media query for tablet width 768px */
     @media only screen and (min-width: 768px) and (max-width: 1023px) { 
 
@@ -191,9 +214,18 @@
         </div>
     </div>
 </div> {% endcomment %}
-
+{% if unverified_uni %}
+    <div class="alert alert-info alert-dismissible fade show reg-notice-top alert-after-login" role="alert">
+        <div class="msg-div">
+        <strong>Note:</strong> <span> We are currently verifying that whether this educational domain "@{{prof_email}}" is associated with this university "{{prof_name}}" or not. | This may take few hours. |   During this time period the site may not work properly. | You will stop receiving this message once it's been verified. </span>
+    </div>
+        {% comment %} <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> {% endcomment %}
+      </div>
+      {% endif %}
 <div class="home-container">
-
+    
     <div class="center-box">
         <div class="box-left">
         <h3>From Strangers to Friends</h3>

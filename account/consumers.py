@@ -75,12 +75,12 @@ class RegisterConsumer(AsyncJsonWebsocketConsumer):
                 '''
 
                 universities_database = {
-                    "gn.amity.edu": ["Amity University, Greater Noida", 28.54322285, 77.33274829733952,'Amity Address'],
-                    "galgotiasuniversity.edu.in": ["Galgotias University", 28.3671232, 77.54045993787369,'Galgotia Address'],
-                    "bennett.edu.in": ["Bennett University", 28.450610849999997, 77.58391181955102, 'bennet Address'],
-                    "sharda.ac.in": ["Sharda University", 28.4734073, 77.4829339, 'sharda Address'],
-                    "niu.edu.in": ["Noida International University", 28.37390315, 77.54131056418103, 'niu address'],
-                    "cu.edu.in": ["Chandigarh University", 30.7680079, 76.57566052483162, 'cu address'],
+                    "fake_domain.edu": ["Amity University, Greater Noida", 28.54322285, 77.33274829733952,'Amity Address'],
+                    # "galgotiasuniversity.edu.in": ["Galgotias University", 28.3671232, 77.54045993787369,'Galgotia Address'],
+                    # "bennett.edu.in": ["Bennett University", 28.450610849999997, 77.58391181955102, 'bennet Address'],
+                    # "sharda.ac.in": ["Sharda University", 28.4734073, 77.4829339, 'sharda Address'],
+                    # "niu.edu.in": ["Noida International University", 28.37390315, 77.54131056418103, 'niu address'],
+                    # "cu.edu.in": ["Chandigarh University", 30.7680079, 76.57566052483162, 'cu address'],
                 }
 
                 

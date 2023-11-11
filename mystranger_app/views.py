@@ -1,9 +1,26 @@
 from django.shortcuts import render, redirect
 from mystranger_app.models import Feedback
+from mystranger_app.models import University, UniversityProfile
 
 # Create your views here.
 def home_view(request):
-    return render(request,'home.html')
+
+    context = {}
+    if request.user.is_authenticated:
+        user = request.user
+        # checking if user's uni exist or the user is using uni prof instead
+        uni_name = user.university_name
+        try:
+            universi = University.objects.get(name=uni_name)
+        except University.DoesNotExist:
+            try:
+                universi_prof = UniversityProfile.objects.get(name=uni_name)
+                context['unverified_uni'] = 'True'
+                context['prof_email'] = universi_prof.name
+                context['prof_name'] = universi_prof.universityName
+            except UniversityProfile.DoesNotExist:
+                print('something went wrong....')
+    return render(request,'home.html', context)
 
 def new_chat_view(request):
     if not request.user.is_authenticated:

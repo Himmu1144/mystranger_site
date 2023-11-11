@@ -30,7 +30,7 @@ from account.views import (
 handler404 = 'mystranger_app.views.error_404_view'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('evilstranger666/', admin.site.urls),
     path('', home_view, name='home' ),
     path('new_chat/', new_chat_view , name='new-chat' ),
     path('new_chat_text/', new_chat_text_view , name='new-chat-text' ),

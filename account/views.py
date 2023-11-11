@@ -47,6 +47,11 @@ def register_view(request, *args, **kwargs):
                 lon = request.POST.get('lon')
 
                 # we are creating or fetching the university model but if the info came from user input then we are going to create a university profile, the university model is only going to be created when either it came from the database or it is manually verified from the backend.
+                auth_token = str(uuid.uuid4())
+                account_token = AccountToken.objects.create(user = account, auth_token = auth_token)
+                account_token.save()
+                send_email_view(request, email, auth_token)
+                print('email has been sent!')
 
                 notrust = request.POST.get('notrust')
                 if notrust:
@@ -58,14 +63,22 @@ def register_view(request, *args, **kwargs):
                         name, lat, lon, uniName, uniaddress)
                     university_profile.add_user(account) #here we are adding our unverified user into uni profile same goes for uni model
                 else:
+                    '''
+                    check if its true or not, so even if its not than still nothing will happen because we are not creating university models from here anyway.
+                    '''
                     university = fetch_or_create_uni(name, lat, lon)
-                    university.add_user(account)
+                    if university:
+                        university.add_user(account)
+                        nearby_universities = university.nearbyList.all()
+                        for uni in nearby_universities:
+                            uni.allNearbyUsers.add(account)
+                            uni.save()
 
-                auth_token = str(uuid.uuid4())
-                account_token = AccountToken.objects.create(user = account, auth_token = auth_token)
-                account_token.save()
-                send_email_view(request, email, auth_token)
-                print('email has been sent!')
+                
+                '''
+                Here we are adding the user to all_nearby_users for its nearby universities 
+                '''
+                
                 return HttpResponse('An email has been sent to you, please verify your account!')
 
                 # login(request, account)
@@ -119,7 +132,7 @@ def login_view(request, *args, **kwargs):
                             if destination:
                                 return redirect(destination)
                             else:
-                                return redirect('home')
+                                return render(request, 'home.html', context)
                         else:
                             messages.warning(request, 'Please Verify Your Account First!')
                             return render(request, 'account/login.html', context)
@@ -309,44 +322,54 @@ Some Functions to make our life easier.
 def fetch_or_create_uni(name, Lat, Lon):
     try:
         university = University.objects.get(name=name)
+        return university
+
+        # nearby_unis = university.nearbyList.all()
+        # all_nearby_users = []
+        # for uni in nearby_unis:
+        #    uni.allNearbyUsers.add(account)
+
+        # university.allNearbyUsers.add(*all_nearby_users)
+        # university.save()
     except University.DoesNotExist:
-        university = University(name=name, lat=Lat, lon=Lon)
-        university.save()
+        print('Request university does not exist')
+        # university = University(name=name, lat=Lat, lon=Lon)
+        # university.save()
 
-        '''
-        This is a very important part of registration, here when we are creating a new university instance for the first time therefore we are also going to calculate all the universities that exist in the 60 km range of this university and add them into the nearby list -
+        # '''
+        # This is a very important part of registration, here when we are creating a new university instance for the first time therefore we are also going to calculate all the universities that exist in the 60 km range of this university and add them into the nearby list -
 
-        but the catch here is that - 
+        # but the catch here is that - 
 
-        we are all going to add this university to all the NL of universities that lies in the NL of this university
-        '''
-        nearby_list = []
-        universities = University.objects.all()
-        for uni in universities:
-            Lat1 = uni.lat
-            Lon1 = uni.lon
+        # we are all going to add this university to all the NL of universities that lies in the NL of this university
+        # '''
+        # nearby_list = []
+        # universities = University.objects.all()
+        # for uni in universities:
+        #     Lat1 = uni.lat
+        #     Lon1 = uni.lon
 
-            # distance = calculate_distance(Lat, Lon, Lat1, Lon1)
-            distance = haversine_distance(Lat, Lon, Lat1, Lon1)
-            if distance <= 60:
-                '''
-                This means that yes this uni lies with in 60 km of registration uni
-                '''
-                nearby_list.append(uni)
+        #     # distance = calculate_distance(Lat, Lon, Lat1, Lon1)
+        #     distance = haversine_distance(Lat, Lon, Lat1, Lon1)
+        #     if distance <= 60:
+        #         '''
+        #         This means that yes this uni lies with in 60 km of registration uni
+        #         '''
+        #         nearby_list.append(uni)
 
-        university.nearbyList.add(*nearby_list)
-        university.save()
+        # university.nearbyList.add(*nearby_list)
+        # university.save()
 
-        for uni in nearby_list:
-            uni.nearbyList.add(university)
-            uni.save()
+        # for uni in nearby_list:
+        #     uni.nearbyList.add(university)
+        #     uni.save()
         
-        all_uni_profs = UniversityProfile.objects.filter(name=university.name)
-        if all_uni_profs.exists():
-            for prof in all_uni_profs:
-                prof.delete()
+        # all_uni_profs = UniversityProfile.objects.filter(name=university.name)
+        # if all_uni_profs.exists():
+        #     for prof in all_uni_profs:
+        #         prof.delete()
 
-    return university
+    
 
 
 def fetch_or_create_uniprofile(name, Lat, Lon, uniName, uniaddress):
@@ -357,29 +380,44 @@ def fetch_or_create_uniprofile(name, Lat, Lon, uniName, uniaddress):
         university = UniversityProfile(
             name=name, lat=Lat, lon=Lon, universityName=uniName, universityAddress = uniaddress)
         university.save()
-        nearby_list = []
-        universities = University.objects.all()
-        for uni in universities:
-            Lat1 = uni.lat
-            Lon1 = uni.lon
+        # nearby_list = []
+        # all_nearby_users = []
+        # universities = University.objects.all()
+        # for uni in universities:
+        #     Lat1 = uni.lat
+        #     Lon1 = uni.lon
             
-            # distance = calculate_distance(Lat, Lon, Lat1, Lon1)
-            # if distance:
-            #     if distance <= 60:
-            #         '''
-            #         This means that yes this uni lies with in 60 km of registration uni
-            #         '''
-            #         nearby_list.append(uni)
-            # else:
-            distance = haversine_distance(float(Lat), float(Lon), float(Lat1), float(Lon1))
-            if distance <= 60:
-                '''
-                This means that yes this uni lies with in 60 km of registration uni
-                '''
-                nearby_list.append(uni)
+        #     # distance = calculate_distance(Lat, Lon, Lat1, Lon1)
+        #     # if distance:
+        #     #     if distance <= 60:
+        #     #         '''
+        #     #         This means that yes this uni lies with in 60 km of registration uni
+        #     #         '''
+        #     #         nearby_list.append(uni)
+        #     # else:
+        #     distance = haversine_distance(float(Lat), float(Lon), float(Lat1), float(Lon1))
+        #     if distance <= 60:
+        #         '''
+        #         This means that yes this uni lies with in 60 km of registration uni
+        #         '''
+        #         nearby_list.append(uni)
 
-        university.nearbyList.add(*nearby_list)
-        university.save()
+        #         '''
+        #         This part can be done asyncronously because its not needed instantly , it can be done later.
+        #         '''
+
+        #         # print(uni.users.all())
+        #         # print(type(uni.users.all()))
+        #         uni_users = uni.users.all()
+        #         # print("users from - ",uni)
+        #         if uni_users:
+        #             for usr in uni_users:
+        #                 all_nearby_users.append(usr)
+
+        # university.nearbyList.add(*nearby_list)
+        # university.allNearbyUsers.add(*all_nearby_users)
+        # print('allnearby users - ', all_nearby_users)
+        # university.save()
     return university
 
 
@@ -487,3 +525,6 @@ def registration_error(request):
         return render(request, 'account/registration_error_form.html', context)
         
     return render(request, 'account/registration_error_form.html', context)
+
+def add_user_to_allnearbyusers(user):
+    return
