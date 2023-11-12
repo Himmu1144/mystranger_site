@@ -37,9 +37,31 @@ class Notification(models.Model):
 		return str(self.content_object.get_cname)
 
 
-# class ActiveUsers(models.Model):
-# 	count = models.IntegerField(default=0)
+class ActiveUsers(models.Model):
+	count = models.IntegerField(default=0)
 
-# 	def __str__(self):
-# 		return str(self.count)
+	def __str__(self):
+		return str(self.count)
+	
+class ActiveVideoUsers(models.Model):
+	users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("video_users"), related_name="video_users", blank=True)
+
+	def add_user(self, account):
+		"""
+		Add a count/user
+		"""
+		if not account in self.users.all():
+			self.users.add(account)
+			self.save()
+
+	def remove_user(self,account):
+		'''
+		Removing a user 
+		'''
+		if account in self.users.all():
+			self.users.remove(account)
+			self.save()
+
+	def __str__(self):
+		return 'Active Video/Text Users'
 

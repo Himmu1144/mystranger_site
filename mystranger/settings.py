@@ -182,7 +182,7 @@ EMAIL_HOST = 'smtpout.secureserver.net'  # GoDaddy SMTP server
 EMAIL_PORT = 587  # This is the SMTP port for GoDaddy
 EMAIL_USE_TLS = True  # Use TLS (Transport Layer Security)
 EMAIL_HOST_USER = 'info@mystranger.in'  # Your GoDaddy email
-EMAIL_HOST_PASSWORD = 'evilstranger666'  # Your GoDaddy email password
+EMAIL_HOST_PASSWORD = '@MSIN-666'  # Your GoDaddy email password
 DEFAULT_FROM_EMAIL = 'info@mystranger.in'  # Set the default "from" address
 
 

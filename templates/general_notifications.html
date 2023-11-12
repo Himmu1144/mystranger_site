@@ -636,18 +636,23 @@
 			setInterval(getNewGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getUnreadMessageNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
-			/* setInterval(refreshActiveCount, GENERAL_NOTIFICATION_INTERVAL) */
+			setInterval(refreshActiveCount, GENERAL_NOTIFICATION_INTERVAL)
+			{% comment %} setInterval(video_count, GENERAL_NOTIFICATION_INTERVAL) {% endcomment %}
 			
 		}
 	}
 
 	startGeneralNotificationService()
 
-	{% comment %} function refreshActiveCount(){
+	function refreshActiveCount(){
 		notificationSocket.send(JSON.stringify({
 			"command": "refresh_active_count",
 		}));
-	} {% endcomment %}
+	} 
+
+	
+
+
 	/*
 		Retrieve the number of unread notifications. (This is the red dot in the notifications icon)
 		Called every GENERAL_NOTIFICATION_INTERVAL
@@ -779,6 +784,8 @@
 
 	function generalRedirect(url) {
 		window.location.href = url
+		{% comment %} window.open(url,'_self') {% endcomment %}
+		console.log('redirecting the notification')
 	}
 
 	function assignGeneralDiv1Id(notification) {

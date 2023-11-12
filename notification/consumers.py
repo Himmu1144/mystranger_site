@@ -15,7 +15,8 @@ from chat.models import RoomChatMessage, PrivateChatRoom
 from notification.utils import LazyNotificationEncoder
 from notification.constants import *
 from notification.models import Notification
-# from notification.models import  ActiveUsers
+from notification.models import  ActiveUsers, ActiveVideoUsers
+from mystranger_app.models import University, UniversityProfile
 from chat.exceptions import ClientError
 
 
@@ -36,22 +37,22 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         """
         # print("NotificationConsumer: connect: " + str(self.scope["user"]))
         await self.accept()
-        # print('Adding +1 to count')
-        # count = await maintain_count(True)
-        # await self.send_json(
-        #     {
-        #         'active_count' : count
-        #     },
-        # )
+        
+        
 
     async def disconnect(self, code):
         """
         Called when the WebSocket closes for any reason.
         """
-        # print('Adding -1 to count')
-        # count = await maintain_count(False)
+        print('Adding -1 to count')
+        count = await maintain_count(False)
+        '''
+        These are though going to be called even when user is not in the video or text page but they are not going to affect anything because the user is only going to get remove if it existed in the list at first place therefore in unneccessary calling its just going to get ignored.
+        '''
+        user_removed_to_video_count = await add_or_remove_user_to_video_count(self.scope['user'], False)
+        user_removed_to_text_count = await add_or_remove_user_to_text_count(self.scope['user'], False)
 
-        # print("NotificationConsumer: disconnect")
+        print("NotificationConsumer: disconnect")
 
     async def receive_json(self, content):
         """
@@ -122,8 +123,28 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                     pass
             elif command == "mark_notifications_read":
                 await mark_notifications_read(self.scope["user"])
-            # elif command == 'refresh_active_count':
-            #     await self.send_refresh_active_count()
+            elif command == 'add_active_users_count':
+                print('Adding +1 to count')
+                count = await maintain_count(True)
+                await self.send_json(
+                    {
+                        'active_count' : count
+                    },
+                )
+            elif command == 'add_video_count':
+                print('adding user to video count')
+                user_added_to_video_count = await add_or_remove_user_to_video_count(self.scope['user'], True)
+            elif command == 'add_text_count':
+                print('adding user to text count')
+                user_added_to_text_count = await add_or_remove_user_to_text_count(self.scope['user'], True)
+            elif command == 'refresh_active_count':
+                await self.send_refresh_active_count()
+            elif command == 'get_video_count':
+                # print('called to fetch the count')
+                await self.send_video_count()
+            elif command == 'get_text_count':
+                print('called to fetch the count')
+                await self.send_text_count()
 
         except Exception as e:
             # print("EXCEPTION: receive_json: " + str(e))
@@ -137,14 +158,34 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             },
         )
 
-    # async def send_refresh_active_count(self):
+    async def send_refresh_active_count(self):
 
-    #     count = await fetch_active_count()
-    #     await self.send_json(
-    #         {
-    #             'active_count' : count
-    #         },
-    #     )
+        count = await fetch_active_count()
+        await self.send_json(
+            {
+                'active_count' : count
+            },
+        )
+
+    async def send_video_count(self):
+        
+        count = await create_video_count(self.scope['user'])
+        print('get video count is -', count)
+        await self.send_json(
+            {
+                'video_count' : count
+            },
+        )
+
+    async def send_text_count(self):
+        
+        count = await create_text_count(self.scope['user'])
+        print('get text count is -', count)
+        await self.send_json(
+            {
+                'text_count' : count
+            },
+        )
 
     async def send_general_notifications_payload(self, notifications, new_page_number):
         """
@@ -438,34 +479,117 @@ def get_unread_message_notification_count(user):
         raise ClientError("User must be authenticated to get notifications.")
     return None
 
-# @database_sync_to_async
-# def maintain_count(booli):
-#     try:
-#         count_obj = ActiveUsers.objects.get(pk=1)
-#         if booli:
-#             count_obj.count = count_obj.count + 1
-#             count_obj.save()
-#             count = count_obj.count
-#         else:
-#             count_obj.count = count_obj.count - 1
-#             count_obj.save()
-#             count = count_obj.count
-#     except ActiveUsers.DoesNotExist:
-#         count_obj = ActiveUsers.objects.create(pk=1)
-#         if booli:
-#             count_obj.count = count_obj.count + 1
-#             count_obj.save()
-#             count = count_obj.count
-#         else:
-#             count_obj.count = count_obj.count - 1
-#             count_obj.save()
-#             count = count_obj.count
-#     return count
+@database_sync_to_async
+def maintain_count(booli):
+    try:
+        count_obj = ActiveUsers.objects.get(pk=1)
+        if booli:
+            count_obj.count = count_obj.count + 1
+            count_obj.save()
+            count = count_obj.count
+        else:
+            count_obj.count = count_obj.count - 1
+            count_obj.save()
+            count = count_obj.count
+    except ActiveUsers.DoesNotExist:
+        count_obj = ActiveUsers.objects.create(pk=1)
+        if booli:
+            count_obj.count = count_obj.count + 1
+            count_obj.save()
+            count = count_obj.count
+        else:
+            count_obj.count = count_obj.count - 1
+            count_obj.save()
+            count = count_obj.count
+    return count
 
-# @database_sync_to_async
-# def fetch_active_count():
-#     try:
-#         count_obj = ActiveUsers.objects.get(pk=1)
-#         return count_obj.count
-#     except ActiveUsers.DoesNotExist:
-#         print('Active users model does not exist!')
+@database_sync_to_async
+def add_or_remove_user_to_video_count(user, booli):
+    try:
+        active_video_count = ActiveVideoUsers.objects.get(pk=1)
+        if booli:
+            active_video_count.add_user(user)
+        else:
+            active_video_count.remove_user(user)
+    except ActiveVideoUsers.DoesNotExist:
+        active_video_count = ActiveVideoUsers.objects.create(pk=1)
+        if booli:
+            active_video_count.add_user(user)
+        else:
+            active_video_count.remove_user(user)
+
+@database_sync_to_async
+def add_or_remove_user_to_text_count(user, booli):
+    try:
+        active_video_count = ActiveVideoUsers.objects.get(pk=2)
+        if booli:
+            active_video_count.add_user(user)
+        else:
+            active_video_count.remove_user(user)
+    except ActiveVideoUsers.DoesNotExist:
+        active_video_count = ActiveVideoUsers.objects.create(pk=2)
+        if booli:
+            active_video_count.add_user(user)
+        else:
+            active_video_count.remove_user(user)
+
+@database_sync_to_async
+def create_video_count(user):
+    uni_name = user.university_name
+    try:
+        count = 0
+        universi = University.objects.get(name=uni_name)
+        active_video_obj = ActiveVideoUsers.objects.get(pk=1)
+        active_users = active_video_obj.users.all()
+        for user in active_users:
+            if user in universi.allNearbyUsers.all():
+                count += 1
+        return count
+    except University.DoesNotExist:
+        try:
+            count = 0
+            universi_prof = UniversityProfile.objects.get(name=uni_name)
+            active_video_obj = ActiveVideoUsers.objects.get(pk=1)
+            active_users = active_video_obj.users.all()
+            for user in active_users:
+                if user in universi_prof.allNearbyUsers.all():
+                    count += 1
+            return count
+           
+        except UniversityProfile.DoesNotExist:
+            print('something went wrong....')
+
+@database_sync_to_async
+def create_text_count(user):
+    uni_name = user.university_name
+    try:
+        count = 0
+        universi = University.objects.get(name=uni_name)
+        active_video_obj = ActiveVideoUsers.objects.get(pk=2)
+        active_users = active_video_obj.users.all()
+        for user in active_users:
+            if user in universi.allNearbyUsers.all():
+                count += 1
+        return count
+    except University.DoesNotExist:
+        try:
+            count = 0
+            universi_prof = UniversityProfile.objects.get(name=uni_name)
+            active_video_obj = ActiveVideoUsers.objects.get(pk=2)
+            active_users = active_video_obj.users.all()
+            for user in active_users:
+                if user in universi_prof.allNearbyUsers.all():
+                    count += 1
+            return count
+           
+        except UniversityProfile.DoesNotExist:
+            print('something went wrong....')
+
+
+@database_sync_to_async
+def fetch_active_count():
+    try:
+        count_obj = ActiveUsers.objects.get(pk=1)
+        return count_obj.count
+    except ActiveUsers.DoesNotExist:
+        print('Active users model does not exist!')

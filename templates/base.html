@@ -682,7 +682,7 @@ input:focus, textarea:focus, select:focus {
       </span>
       {% endif %}
       <a class="navbar-brand" href="/">MyStranger</a>
-      <span class='ml-4' id="active-count" style="color:white;"></span>
+      <span class='ml-4' id="active-count" style="color:white; font-size:14px; font"></span>
     </div>
       <div class="nav-left">
         <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
@@ -1019,10 +1019,18 @@ input:focus, textarea:focus, select:focus {
         updateGeneralNotificationDiv(data['notification'])
       }
 
-      {% comment %} if (data.active_count){
+      if (data.active_count){
         console.log('updating active count')
         document.getElementById('active-count').innerHTML = data.active_count + '+' + ' online'
-      } {% endcomment %}
+      } 
+      if (data.video_count){
+        console.log('updating video count')
+        document.getElementById('video-count').innerHTML = data.video_count + '+' + ' online (on video)'
+      } 
+      if (data.text_count){
+        console.log('updating text count')
+        document.getElementById('text-count').innerHTML = data.text_count + '+' + ' online (on text)'
+      } 
 
     }
 
@@ -1036,6 +1044,10 @@ input:focus, textarea:focus, select:focus {
       getFirstGeneralNotificationsPage()
       getUnreadGeneralNotificationsCount()
       getUnreadMessageNotificationsCount()
+      callAddcounts()
+      startVideoCount()
+      startTextCount()
+      
     }
 
     notificationSocket.onerror = function (e) {
@@ -1086,6 +1098,79 @@ input:focus, textarea:focus, select:focus {
       var result = md.render(str);
       return result
     }
+
+    function callAddcounts(){
+
+      // this one for allactiveusers
+        notificationSocket.send(JSON.stringify({
+          "command": "add_active_users_count",
+        }));
+
+        current_url = window.location.href;
+        if (current_url == 'http://127.0.0.1:8000/new_chat/'){
+          // this one for video active users
+          if("{{request.user.is_authenticated}}"){
+            notificationSocket.send(JSON.stringify({
+              "command": "add_video_count",
+            }));
+          }
+          
+        }
+
+        
+        if (current_url == 'http://127.0.0.1:8000/new_chat_text/'){
+          // this one for video active users
+          if("{{request.user.is_authenticated}}"){
+            notificationSocket.send(JSON.stringify({
+              "command": "add_text_count",
+            }));
+          }
+          
+        }
+      }
+      
+    
+    function startVideoCount(){
+      // Check whether we are on video page or not 
+      current_url = window.location.href;
+      if (current_url == 'http://127.0.0.1:8000/new_chat/'){
+        //console.log('yes baby start fetching count for video')
+        // Now we can make a req to fetch the video count
+        
+        setInterval(callvideoscript, 4000)
+        
+        }
+      }
+      
+      function callvideoscript(){
+        console.log('called to fetch count')
+        if("{{request.user.is_authenticated}}"){
+          notificationSocket.send(JSON.stringify({
+          "command": "get_video_count",
+          }));
+        }
+      }
+
+    function startTextCount(){
+      // Check whether we are on video page or not 
+      current_url = window.location.href;
+      if (current_url == 'http://127.0.0.1:8000/new_chat_text/'){
+        //console.log('yes baby start fetching count for video')
+        // Now we can make a req to fetch the video count
+        
+        setInterval(calltextscript, 4000)
+        
+        }
+      }
+      
+      function calltextscript(){
+        console.log('called to fetch count')
+        if("{{request.user.is_authenticated}}"){
+          notificationSocket.send(JSON.stringify({
+          "command": "get_text_count",
+          }));
+        }
+      }
 
 
   </script>
