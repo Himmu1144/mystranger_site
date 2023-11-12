@@ -1043,11 +1043,9 @@
 	}
 
 	function handleUserInfoPayload(user_info) {
-		if (user_info['uni_name'] == ""){
-			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName'].slice(0,12) + '...' 
-		} else{
-			document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uni_name'].slice(0,25) + '...' 
-		}
+		
+		document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName'].slice(0,12) + '...' 
+		
 		document.getElementById("id_user_info_container").href = "{% url 'account:view' user_id=4586463456756486676 %}".replace("4586463456756486676", user_info['id'])
 	}
 

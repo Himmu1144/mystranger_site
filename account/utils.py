@@ -8,7 +8,7 @@ class LazyAccountEncoder(Serializer):
         dump_object.update({'email': str(obj.email)})
         dump_object.update({'name': str(obj.name)})
         dump_object.update({'uniName': str(obj.university_name)})
-        dump_object.update({'uni_name': str(obj.universityName)})
+        # dump_object.update({'uni_name': str(obj.universityName)})
         return dump_object
     
 
