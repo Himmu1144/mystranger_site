@@ -45,12 +45,16 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         Called when the WebSocket closes for any reason.
         """
         print('Adding -1 to count')
-        count = await maintain_count(False)
+        user = self.scope['user']
+        if user.is_authenticated:
+            count = await maintain_count(False, user)
         '''
         These are though going to be called even when user is not in the video or text page but they are not going to affect anything because the user is only going to get remove if it existed in the list at first place therefore in unneccessary calling its just going to get ignored.
         '''
-        user_removed_to_video_count = await add_or_remove_user_to_video_count(self.scope['user'], False)
-        user_removed_to_text_count = await add_or_remove_user_to_text_count(self.scope['user'], False)
+        user = self.scope['user']
+        if user.is_authenticated:
+            user_removed_to_video_count = await add_or_remove_user_to_video_count(self.scope['user'], False)
+            user_removed_to_text_count = await add_or_remove_user_to_text_count(self.scope['user'], False)
 
         print("NotificationConsumer: disconnect")
 
@@ -124,8 +128,8 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             elif command == "mark_notifications_read":
                 await mark_notifications_read(self.scope["user"])
             elif command == 'add_active_users_count':
-                print('Adding +1 to count')
-                count = await maintain_count(True)
+                # print('Adding +1 to count')
+                count = await maintain_count(True,self.scope['user'])
                 await self.send_json(
                     {
                         'active_count' : count
@@ -133,17 +137,21 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 )
             elif command == 'add_video_count':
                 print('adding user to video count')
-                user_added_to_video_count = await add_or_remove_user_to_video_count(self.scope['user'], True)
+                user = self.scope['user']
+                if user.is_authenticated:
+                    user_added_to_video_count = await add_or_remove_user_to_video_count(self.scope['user'], True)
             elif command == 'add_text_count':
-                print('adding user to text count')
-                user_added_to_text_count = await add_or_remove_user_to_text_count(self.scope['user'], True)
+                user = self.scope['user']
+                if user.is_authenticated:
+                    print('adding user to text count')
+                    user_added_to_text_count = await add_or_remove_user_to_text_count(self.scope['user'], True)
             elif command == 'refresh_active_count':
                 await self.send_refresh_active_count()
             elif command == 'get_video_count':
                 # print('called to fetch the count')
                 await self.send_video_count()
             elif command == 'get_text_count':
-                print('called to fetch the count')
+                # print('called to fetch the count')
                 await self.send_text_count()
 
         except Exception as e:
@@ -168,24 +176,30 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         )
 
     async def send_video_count(self):
-        
-        count = await create_video_count(self.scope['user'])
-        print('get video count is -', count)
-        await self.send_json(
-            {
-                'video_count' : count
-            },
-        )
+
+
+        user = self.scope['user']
+        if user.is_authenticated:
+            count = await create_video_count(self.scope['user'])
+            # print('get video count is -', count)
+            await self.send_json(
+                {
+                    'video_count' : count
+                },
+            )
 
     async def send_text_count(self):
-        
-        count = await create_text_count(self.scope['user'])
-        print('get text count is -', count)
-        await self.send_json(
-            {
-                'text_count' : count
-            },
-        )
+
+
+        user = self.scope['user']
+        if user.is_authenticated:
+            count = await create_text_count(self.scope['user'])
+            # print('get text count is -', count)
+            await self.send_json(
+                {
+                    'text_count' : count
+                },
+            )
 
     async def send_general_notifications_payload(self, notifications, new_page_number):
         """
@@ -480,27 +494,23 @@ def get_unread_message_notification_count(user):
     return None
 
 @database_sync_to_async
-def maintain_count(booli):
+def maintain_count(booli, user):
     try:
         count_obj = ActiveUsers.objects.get(pk=1)
         if booli:
-            count_obj.count = count_obj.count + 1
-            count_obj.save()
-            count = count_obj.count
+            count_obj.add_user(user)
+            count = count_obj.users.all().count()
         else:
-            count_obj.count = count_obj.count - 1
-            count_obj.save()
-            count = count_obj.count
+            count_obj.remove_user(user)
+            count = count_obj.users.all().count()
     except ActiveUsers.DoesNotExist:
         count_obj = ActiveUsers.objects.create(pk=1)
         if booli:
-            count_obj.count = count_obj.count + 1
-            count_obj.save()
-            count = count_obj.count
+            count_obj.add_user(user)
+            count = count_obj.users.all().count()
         else:
-            count_obj.count = count_obj.count - 1
-            count_obj.save()
-            count = count_obj.count
+            count_obj.remove_user(user)
+            count = count_obj.users.all().count()
     return count
 
 @database_sync_to_async
@@ -590,6 +600,6 @@ def create_text_count(user):
 def fetch_active_count():
     try:
         count_obj = ActiveUsers.objects.get(pk=1)
-        return count_obj.count
+        return count_obj.users.all().count()
     except ActiveUsers.DoesNotExist:
         print('Active users model does not exist!')

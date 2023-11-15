@@ -17,6 +17,18 @@ body {
 }
 
 
+.text_count{
+    /* float: inline-end;  */
+    position: absolute;
+    right: 2px;
+    font-size: 14px; 
+    color: #007bff; 
+    padding: 1px; 
+    /* margin-right: 2px; */
+
+}
+
+
     .right-column {
         border: 2px solid #707070;
         padding: 0px;
@@ -446,7 +458,7 @@ body {
                 </div>
             </div>
             <div class="status-txt" id="id_chatroom_loading_spinner" role="status" style="display: block; ">
-                <div style=""> <span id="bar" style="">looking for someone you can chat with....</span> <span  id="text-count" class="d-none" style="float: inline-end; font-size: 14px; color: #007bff; padding: 1px; margin-right: 2px;"></span></div>
+                <div style=""> <span id="bar" style="">looking for someone you can chat with....</span> <span  id="text-count" class="text_count" style=""></span></div>
                 
             </div>
             <div class="d-flex flex-column" id="id_chat_log_container">

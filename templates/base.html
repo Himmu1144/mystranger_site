@@ -682,7 +682,7 @@ input:focus, textarea:focus, select:focus {
       </span>
       {% endif %}
       <a class="navbar-brand" href="/">MyStranger</a>
-      <span class='ml-4' id="active-count" style="color:white; font-size:14px; display:none;"></span>
+      <span class='ml-4' id="active-count" style="color:white; font-size:14px;"></span>
     </div>
       <div class="nav-left">
         <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
@@ -1102,9 +1102,12 @@ input:focus, textarea:focus, select:focus {
     function callAddcounts(){
 
       // this one for allactiveusers
+      if("{{request.user.is_authenticated}}"){
+
         notificationSocket.send(JSON.stringify({
           "command": "add_active_users_count",
-        }));
+        })); 
+      }
 
         current_url = window.location.href;
         if (current_url == 'http://127.0.0.1:8000/new_chat/'){
