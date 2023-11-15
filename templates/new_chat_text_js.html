@@ -290,8 +290,25 @@
         }
     };
 
-
     document.getElementById('id_chat_message_submit').onclick = function (e) {
+        const messageInputDom = document.getElementById('id_chat_message_input');
+        const message = messageInputDom.value;
+        var trimmedValue = message.trim();
+        if (trimmedValue === ''){
+            console.log('fucker this is an empty msg....')
+        } else{
+        chatSocket.send(JSON.stringify({
+            "command": "send",
+            "message": message,
+            "user_id": window.self_id,
+            "group_name": window.group_name,
+        }));
+
+        messageInputDom.value = '';
+    }
+    };
+
+    {% comment %} document.getElementById('id_chat_message_submit').onclick = function (e) {
         const messageInputDom = document.getElementById('id_chat_message_input');
         const message = messageInputDom.value;
         chatSocket.send(JSON.stringify({
@@ -302,7 +319,7 @@
         }));
 
         messageInputDom.value = '';
-    };
+    }; {% endcomment %}
 
     // Here we are writing the code for skip button so that we can skip the chat using the skip button.
     // ------------------------------------------------------------------------------------------------

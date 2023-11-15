@@ -16,9 +16,13 @@ body {
     flex: 1;
 }
 
+.box2{
+    align-items: center;
+}
+
 .video_count{
     /* float: inline-end;  */
-    position: absolute;
+    /* position: absolute; */
     right: 2px;
     font-size: 14px; 
     color: #007bff; 
@@ -393,6 +397,11 @@ body {
 /* Media query for tablet width 320px */
 @media only screen and (min-width: 300px) and (max-width: 500px) { 
 
+    .video_count{
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
     .cont-row{
         display: flex;
         flex-direction: column;
@@ -559,8 +568,10 @@ body {
                 <div class="box1">
                     <p><strong id="strangerName">Stranger</strong></p>
                     <span id="typing" class="typo d-none">typing...</span>
+                    
                 </div>
                 <div class="d-flex box2">
+                </span> <span  id="video-count" class="mr-2 video_count"></span>
                     <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
                                 width="32px" alt="" srcset=""></span></button>
                     <button class="d-none" id="cancel_req_btn"><i class="fa-solid fa-xmark "
@@ -607,7 +618,12 @@ body {
                     color: red;
                     font-size: 12px;
                 ">Audio access denied! please check your browser or device settings.</span>
-                <div style="position: relative;"> <span id="bar" style="">looking for someone you can chat with....</span> <span  id="video-count" class="video_count"></span></div>
+                <span id="video-error" style="
+                    display: none;
+                    color: red;
+                    font-size: 12px;
+                ">Video access denied! please check your browser or device settings.</span>
+                <div style="position: relative;"> <span id="bar" style="">looking for someone you can chat with....</div>
                 {% comment %} <span id='bar'>looking for someone you can chat with....</span> {% endcomment %}
                 
             </div>

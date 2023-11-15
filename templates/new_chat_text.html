@@ -17,9 +17,13 @@ body {
 }
 
 
+.box2{
+    align-items: center;
+}
+
 .text_count{
     /* float: inline-end;  */
-    position: absolute;
+    /* position: absolute; */
     right: 2px;
     font-size: 14px; 
     color: #007bff; 
@@ -389,6 +393,16 @@ body {
 }
 
 
+/* Media query for tablet width 320px */
+@media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+    .text_count{
+        font-size: 10px!important;
+        margin-top: 2px !important;
+    }
+
+}
+
 </style>
 
 <div class="main-container">
@@ -417,6 +431,7 @@ body {
                     <span id="typing" class="typo d-none">typing...</span>
                 </div>
                 <div class="d-flex box2">
+                </span> <span  id="text-count" class="text_count" style=""></span>
                     <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
                                 width="32px" alt="" srcset=""></span></button>
                     <button class="d-none" id="cancel_req_btn"><i class="fa-solid fa-xmark "
@@ -458,7 +473,7 @@ body {
                 </div>
             </div>
             <div class="status-txt" id="id_chatroom_loading_spinner" role="status" style="display: block; ">
-                <div style=""> <span id="bar" style="">looking for someone you can chat with....</span> <span  id="text-count" class="text_count" style=""></span></div>
+                <div style=""> <span id="bar" style="">looking for someone you can chat with....</div>
                 
             </div>
             <div class="d-flex flex-column" id="id_chat_log_container">

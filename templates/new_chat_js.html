@@ -86,6 +86,7 @@
                 // You can display a message to the user indicating that audio is not available.
             } catch (error) {
                 console.error('Error with video access:', error);
+                document.getElementById('video-error').style.display = 'block'
                 // Handle the case where both audio and video access failed.
                 // You may want to inform the user and take appropriate action.
             }
@@ -630,6 +631,10 @@ let addAnswer = async (answer,icecandidates) => {
     document.getElementById('id_chat_message_submit').onclick = function (e) {
         const messageInputDom = document.getElementById('id_chat_message_input');
         const message = messageInputDom.value;
+        var trimmedValue = message.trim();
+        if (trimmedValue === ''){
+            console.log('fucker this is an empty msg....')
+        } else{
         chatSocket.send(JSON.stringify({
             "command": "send",
             "message": message,
@@ -638,6 +643,7 @@ let addAnswer = async (answer,icecandidates) => {
         }));
 
         messageInputDom.value = '';
+    }
     };
 
     // Here we are writing the code for skip button so that we can skip the chat using the skip button.
