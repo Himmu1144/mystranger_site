@@ -203,7 +203,7 @@
 
 </style>
 <div class="alert alert-info alert-dismissible fade show reg-notice-top" role="alert">
-  <strong>Note:</strong> If you are facing any trouble regarding registeration than please fill this <a href="{% url "account:reg-error" %}">Form</a> | We are going to fix it within few hours or hopefully minutes.
+  <strong>Note:</strong> If you are facing any trouble regarding registration than please fill this <a href="{% url "account:reg-error" %}">Form</a> | We are going to fix it within few hours or hopefully minutes.
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -240,7 +240,7 @@
                 </span>
             </div>
                 <div class="terms-cons">
-                <input type="checkbox" name="terms" id="terms-conditions" required><span class="ml-2">I Accept the <a href="#">Terms & Conditions</a></span>
+                <input type="checkbox" name="terms" id="terms-conditions" required><span class="ml-2">I Accept the <a href="{% url "terms-conditions" %}">Terms & Conditions</a></span>
             </div>
 
               <button class="btn btn-md btn-outline-dark btn-block mt-3" type="submit">Register</button>

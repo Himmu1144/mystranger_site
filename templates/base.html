@@ -584,9 +584,9 @@ input:focus, textarea:focus, select:focus {
                 </div>
                 Help & support <i class="fas fa-angle-right"></i>
               </a>
-            </li>
+            </li> 
             <li>
-              <a href="#">
+              <a href="{% url "about-us" %}">
                 <div class="icon">
                   <span class="fas fa-user"></span>
                 </div>
@@ -596,7 +596,7 @@ input:focus, textarea:focus, select:focus {
             <li>
               <a href="{% url "feedback" %}">
                 <div class="icon">
-                  <span class="fas fa-comment-alt"></span>
+                  <span class="fa-solid fa-bug"></span>
                 </div>
                 Found a bug \ Feedback 
               </a>
@@ -606,7 +606,7 @@ input:focus, textarea:focus, select:focus {
           <ul class="setting-drop">
             <li class="arrow back-setting-btn"><span class="fas fa-arrow-left"></span>Settings & privacy
             </li>
-            <li>
+            {% comment %} <li>
               <a href="#">
                 <div class="icon">
                   <span class="fas fa-user"></span>
@@ -629,35 +629,35 @@ input:focus, textarea:focus, select:focus {
                 </div>
                 Activity log
               </a>
-            </li>
+            </li> {% endcomment %}
             <li>
-              <a href="#">
+              <a href="{% url "privacy-policy" %}">
                 <div class="icon">
                   <span class="fas fa-globe-asia"></span>
                 </div>
-                Languages
+                Privacy Policy
               </a>
             </li>
             <li>
-              <a href="#">
+              <a href="{% url "delete-account" %}">
                 <div class="icon">
-                  <span class="fas fa-sign-out-alt"></span>
+                  <span class="fa-solid fa-trash"></span>
                 </div>
-                Log out
+                Delete Account
               </a>
             </li>
           </ul>
           <!-- Help & support Menu-items -->
           <ul class="help-drop">
             <li class="arrow back-help-btn"><span class="fas fa-arrow-left"></span>Help & support</li>
-            <li>
+            {% comment %}<li>
               <a href="#">
                 <div class="icon">
                   <span class="fas fa-question-circle"></span>
                 </div>
                 Help centre
               </a>
-            </li>
+             </li>
             <li>
               <a href="#">
                 <div class="icon">
@@ -673,11 +673,11 @@ input:focus, textarea:focus, select:focus {
                 </div>
                 Send feedback
               </a>
-            </li>
+            </li> {% endcomment %}
             <li>
-              <a href="#">
+              <a href="{% url "feedback" %}">
                 <div class="icon">
-                  <span class="fas fa-exclamation-circle"></span>
+                  <span class="fa-solid fa-exclamation-circle"></span>
                 </div>
                 Report problem
               </a>
@@ -770,7 +770,7 @@ input:focus, textarea:focus, select:focus {
                 </a>
               </li>
               <li>
-                <a href="#">
+                <a href="{% url "about-us" %}">
                   <div class="icon">
                     <span class="fas fa-user"></span>
                   </div>
@@ -780,7 +780,7 @@ input:focus, textarea:focus, select:focus {
               <li>
                 <a href="{% url "feedback" %}">
                   <div class="icon">
-                    <span class="fas fa-comment-alt"></span>
+                    <span class="fa-solid fa-bug"></span>
                   </div>
                   Found a bug \ Feedback 
                 </a>
@@ -790,7 +790,7 @@ input:focus, textarea:focus, select:focus {
             <ul class="setting-drop setting-drop2">
               <li class="arrow back-setting-btn back-setting-btn2"><span class="fas fa-arrow-left"></span>Settings & privacy
               </li>
-              <li>
+              {% comment %} <li>
                 <a href="#">
                   <div class="icon">
                     <span class="fas fa-user"></span>
@@ -813,28 +813,28 @@ input:focus, textarea:focus, select:focus {
                   </div>
                   Activity log
                 </a>
-              </li>
+              </li> {% endcomment %}
               <li>
-                <a href="#">
+                <a href="{% url "privacy-policy" %}">
                   <div class="icon">
                     <span class="fas fa-globe-asia"></span>
                   </div>
-                  Languages
+                  Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#">
+                <a href="{% url "delete-account" %}">
                   <div class="icon">
-                    <span class="fas fa-sign-out-alt"></span>
+                    <span class="fa-solid fa-trash"></span>
                   </div>
-                  Log out
+                  Delete Account
                 </a>
               </li>
             </ul>
             <!-- Help & support Menu-items -->
             <ul class="help-drop help-drop2">
               <li class="arrow back-help-btn back-help-btn2"><span class="fas fa-arrow-left"></span>Help & support</li>
-              <li>
+              {% comment %} <li>
                 <a href="#">
                   <div class="icon">
                     <span class="fas fa-question-circle"></span>
@@ -857,9 +857,9 @@ input:focus, textarea:focus, select:focus {
                   </div>
                   Send feedback
                 </a>
-              </li>
-              <li>
-                <a href="#">
+              </li>{% endcomment %}
+              <li> 
+                <a href="{% url "feedback" %}">
                   <div class="icon">
                     <span class="fas fa-exclamation-circle"></span>
                   </div>
@@ -909,7 +909,7 @@ input:focus, textarea:focus, select:focus {
       setTimeout(() => {
         help_drop.style.display = "block";
       }, 100);
-    });
+    }); 
     setting_btn.onclick = (() => {
       menu_bar.style.marginLeft = "0px";
       setting_drop.style.display = "none";
@@ -917,7 +917,7 @@ input:focus, textarea:focus, select:focus {
     help_btn.onclick = (() => {
       help_drop.style.display = "none";
       menu_bar.style.marginLeft = "0px";
-    });
+    }); 
 
     const drop_btn2 = document.querySelector(".drop-btn2 span");
     const tooltip2 = document.querySelector(".tooltip2");
@@ -949,7 +949,7 @@ input:focus, textarea:focus, select:focus {
       menu_bar2.style.marginLeft = "0px";
       setting_drop2.style.display = "none";
     });
-    help_btn.onclick = (() => {
+    help_btn2.onclick = (() => {
       help_drop2.style.display = "none";
       menu_bar2.style.marginLeft = "0px";
     });
@@ -1116,6 +1116,7 @@ input:focus, textarea:focus, select:focus {
 
         current_url = window.location.href;
         if (current_url == 'http://127.0.0.1:8000/new_chat/'){
+        //if (current_url == 'https://mystranger.in/new_chat/'){
           // this one for video active users
           if("{{request.user.is_authenticated}}"){
             notificationSocket.send(JSON.stringify({
@@ -1127,6 +1128,7 @@ input:focus, textarea:focus, select:focus {
 
         
         if (current_url == 'http://127.0.0.1:8000/new_chat_text/'){
+        //if (current_url == 'https://mystranger.in/new_chat_text/'){
           // this one for video active users
           if("{{request.user.is_authenticated}}"){
             notificationSocket.send(JSON.stringify({
@@ -1142,6 +1144,7 @@ input:focus, textarea:focus, select:focus {
       // Check whether we are on video page or not 
       current_url = window.location.href;
       if (current_url == 'http://127.0.0.1:8000/new_chat/'){
+      //if (current_url == 'https://mystranger.in/new_chat/'){
         //console.log('yes baby start fetching count for video')
         // Now we can make a req to fetch the video count
         
@@ -1163,6 +1166,7 @@ input:focus, textarea:focus, select:focus {
       // Check whether we are on video page or not 
       current_url = window.location.href;
       if (current_url == 'http://127.0.0.1:8000/new_chat_text/'){
+      //if (current_url == 'https://mystranger.in/new_chat_text/'){
         //console.log('yes baby start fetching count for video')
         // Now we can make a req to fetch the video count
         

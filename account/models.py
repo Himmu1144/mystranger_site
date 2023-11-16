@@ -123,4 +123,13 @@ class RegistrationError(models.Model):
     def __str__(self):
         return str(self.email)
 
+class deleted_account(models.Model):
+
+    email = models.CharField(max_length=150, blank=False)
+    name = models.CharField(max_length=100)
+    reason = models.CharField(max_length=10000)
+
+    def __str__(self):
+        return str(self.email)
+
 

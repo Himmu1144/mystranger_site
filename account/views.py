@@ -79,8 +79,8 @@ def register_view(request, *args, **kwargs):
                 Here we are adding the user to all_nearby_users for its nearby universities 
                 '''
                 
-                return HttpResponse('An email has been sent to you, please verify your account!')
-
+                # return HttpResponse('An email has been sent to you, please verify your account!')
+                return render(request,'account/token_send.html')
                 # login(request, account)
                 # destination = kwargs.get('next')
                 # if destination:

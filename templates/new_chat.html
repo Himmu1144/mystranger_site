@@ -335,7 +335,7 @@ body {
         align-items: center;
     }
 
-    .dropdown-menu{
+    .dropdown-menu-flag{
         width: 300px;
         /* transform: translate3d(-211.5px, 47.5px, 0px); */
         transform: translate3d(14px, 49.5px, 0px) !important;
@@ -531,7 +531,7 @@ body {
 }
 
 .chat-log{
-    max-height: 30vh;
+    max-height: 100%;
 }
 
 .flagy{
@@ -582,7 +582,7 @@ body {
                             <span class="img2"><img src="{% static 'images/report.svg' %}" width="22px" alt="" srcset=""></span>
                         </button>
 
-                        <form class="dropdown-menu p-4 flagy" id="flag-form" action="{% url "chat:flag" %}" method='post'>
+                        <form class="dropdown-menu dropdown-menu-flag  p-4 flagy" id="flag-form" action="{% url "chat:flag" %}" method='post'>
                             {% csrf_token %}
                             <div class="mb-3">
                                 <label for="flag-reason" class="form-label">Reason To Flag - </label>

@@ -27,6 +27,7 @@ from account.views import (
     account_search_view,
 )
 
+
 handler404 = 'mystranger_app.views.error_404_view'
 
 urlpatterns = [
@@ -36,6 +37,10 @@ urlpatterns = [
     path('new_chat_text/', new_chat_text_view , name='new-chat-text' ),
     path('search/', account_search_view, name="search"),
     path('feedback/', feedback_view, name="feedback"),
+    path('privacy_policy/', privacy_policy_view, name="privacy-policy"),
+    path('delete_account/', delete_account_view, name="delete-account"),
+    path('aboutus/', aboutus_view, name="about-us"),
+    path('terms/', terms_view, name="terms-conditions"),
     
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),

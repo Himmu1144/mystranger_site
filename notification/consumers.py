@@ -179,8 +179,11 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 
 
         user = self.scope['user']
+
         if user.is_authenticated:
             count = await create_video_count(self.scope['user'])
+            if count == 1 or count==None:
+                count = 1
             # print('get video count is -', count)
             await self.send_json(
                 {
@@ -194,6 +197,8 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         user = self.scope['user']
         if user.is_authenticated:
             count = await create_text_count(self.scope['user'])
+            if count == 1 or count==None:
+                count = 1
             # print('get text count is -', count)
             await self.send_json(
                 {
