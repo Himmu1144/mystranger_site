@@ -82,5 +82,5 @@ class ActiveVideoUsers(models.Model):
 			self.save()
 
 	def __str__(self):
-		return 'Active Video/Text Users'
+		return 'Active Video/Text Users - ' + str(self.pk)
 

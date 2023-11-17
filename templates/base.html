@@ -551,7 +551,7 @@ input:focus, textarea:focus, select:focus {
         <div class="drop-btn">
           <span><i class="fa-solid fa-bars p-2"></i></span>
         </div>
-        <!-- <div class="tooltip"></div> -->
+        <div class="tooltip"></div>
         <div class="wrapper" id="wrapper-btn2">
           <ul class="menu-bar">
             <li>
@@ -735,7 +735,7 @@ input:focus, textarea:focus, select:focus {
           <div class="drop-btn drop-btn2">
             <span><i class="fa-solid fa-bars p-2"></i></span>
           </div>
-          <!-- <div class="tooltip"></div> -->
+          <div class="tooltip2"></div>
           <div class="wrapper wrapper2" id="wrapper-btn">
             <ul class="menu-bar menu-bar2">
               <li>
@@ -894,10 +894,10 @@ input:focus, textarea:focus, select:focus {
     const help_item = document.querySelector(".help-item");
     const setting_btn = document.querySelector(".back-setting-btn");
     const help_btn = document.querySelector(".back-help-btn");
-    drop_btn.onclick = (() => {
+     drop_btn.onclick = (() => {
       menu_wrapper.classList.toggle("show");
       tooltip.classList.toggle("show");
-    });
+    }); 
     setting_item.onclick = (() => {
       menu_bar.style.marginLeft = "-321px";
       setTimeout(() => {
@@ -932,7 +932,7 @@ input:focus, textarea:focus, select:focus {
     drop_btn2.onclick = (() => {
       menu_wrapper2.classList.toggle("show");
       tooltip2.classList.toggle("show");
-    });
+    }); 
     setting_item2.onclick = (() => {
       menu_bar2.style.marginLeft = "-400px";
       setTimeout(() => {
@@ -1116,7 +1116,7 @@ input:focus, textarea:focus, select:focus {
 
         current_url = window.location.href;
         if (current_url == 'http://127.0.0.1:8000/new_chat/'){
-        //if (current_url == 'https://mystranger.in/new_chat/'){
+        //if (current_url == 'https://mystranger.in/new_chat/' || current_url == 'https://mystranger.in/new_chat/'){
           // this one for video active users
           if("{{request.user.is_authenticated}}"){
             notificationSocket.send(JSON.stringify({
@@ -1128,7 +1128,7 @@ input:focus, textarea:focus, select:focus {
 
         
         if (current_url == 'http://127.0.0.1:8000/new_chat_text/'){
-        //if (current_url == 'https://mystranger.in/new_chat_text/'){
+        //if (current_url == 'https://www.mystranger.in/new_chat_text/' || current_url == 'https://mystranger.in/new_chat_text/'){
           // this one for video active users
           if("{{request.user.is_authenticated}}"){
             notificationSocket.send(JSON.stringify({
@@ -1144,7 +1144,7 @@ input:focus, textarea:focus, select:focus {
       // Check whether we are on video page or not 
       current_url = window.location.href;
       if (current_url == 'http://127.0.0.1:8000/new_chat/'){
-      //if (current_url == 'https://mystranger.in/new_chat/'){
+      //if (current_url == 'https://mystranger.in/new_chat/' || current_url == 'https://mystranger.in/new_chat/'){
         //console.log('yes baby start fetching count for video')
         // Now we can make a req to fetch the video count
         
@@ -1166,7 +1166,7 @@ input:focus, textarea:focus, select:focus {
       // Check whether we are on video page or not 
       current_url = window.location.href;
       if (current_url == 'http://127.0.0.1:8000/new_chat_text/'){
-      //if (current_url == 'https://mystranger.in/new_chat_text/'){
+      //if (current_url == 'https://mystranger.in/new_chat_text/' || current_url == 'https://mystranger.in/new_chat_text/'){
         //console.log('yes baby start fetching count for video')
         // Now we can make a req to fetch the video count
         
