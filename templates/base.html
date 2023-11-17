@@ -1143,9 +1143,10 @@ input:focus, textarea:focus, select:focus {
     function startVideoCount(){
       // Check whether we are on video page or not 
       current_url = window.location.href;
+      console.log(current_url)
       if (current_url == 'http://127.0.0.1:8000/new_chat/'){
       //if (current_url == 'https://mystranger.in/new_chat/' || current_url == 'https://mystranger.in/new_chat/'){
-        //console.log('yes baby start fetching count for video')
+        console.log('yes baby start fetching count for video')
         // Now we can make a req to fetch the video count
         
         setInterval(callvideoscript, 4000)

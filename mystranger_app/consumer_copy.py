@@ -79,11 +79,14 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             elif command == 'offer':
                 await self.channel_layer.group_send(content['group'],{
                 'type':'offer.message',
-                'offer':content['offer']
+                'offer':content['offer'],
+                'icecandidates':content['icecandidates'],
+                'groupName' : content['group'],
             })
             elif command == 'answer':
                 await self.channel_layer.group_send(content['group'],{
                 'type':'answer.message',
+                'icecandidates':content['icecandidates'],
                 'answer':content['answer']
             })
             elif(content['command'] == 'candidate'):
@@ -541,12 +544,15 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def offer_message(self,event):
         await self.send_json({
             'command':'offer',
-            'offer':event['offer']
+            'offer':event['offer'],
+            'icecandidates' : event['icecandidates'],
+            'groupName' : event['groupName'],
         })
 
     async def answer_message(self,event):
         await self.send_json({
             'command':'answer',
+            'icecandidates' : event['icecandidates'],
             'answer':event['answer']
         })
 
