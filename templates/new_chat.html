@@ -61,6 +61,32 @@ body {
     justify-content: space-between;
 }
 
+
+/* Custom CSS to hide the dropdown arrow */
+.dropdown-toggle::after {
+    display: none;
+}
+
+.add-fr-menu{
+    position: absolute;
+    top: 3.5em;
+    right: 2px;
+    z-index: 1000;
+    /* display: none; */
+    float: left;
+    width:4.5rem;
+    min-width: 8rem;
+    padding: 0.5rem 0.5rem;
+    margin: 0.125rem 0 0;
+    color: #212529;
+    border:1px solid;
+    border-radius: 0.25rem;
+}
+
+.add-fr-menu p{
+    font-size:14px
+}
+
 .right-column {
     height: 98%;
     width: auto;
@@ -572,8 +598,17 @@ body {
                 </div>
                 <div class="d-flex box2">
                 </span> <span  id="video-count" class="mr-2 video_count"></span>
-                    <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
-                                width="32px" alt="" srcset=""></span></button>
+                <div class="d-flex align-items-center" style="appearance:none;" id="reg-info" style=""> <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
+                    width="32px" alt="" srcset=""></span></button>
+                </div>
+
+                <div class="reg-menu add-fr-menu" style="display:none;">
+                    <p>Add friend</p>
+                    
+                  </div>
+                    
+                    {% comment %} <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
+                                width="32px" alt="" srcset=""></span></button> {% endcomment %}
                     <button class="d-none" id="cancel_req_btn"><i class="fa-solid fa-xmark "
                             style="color:red;"></i></button>
                    
@@ -659,6 +694,24 @@ body {
 
 {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
 <script>
+
+
+    const hoverDiv = document.getElementById('reg-info');
+	hoverDiv.addEventListener("mouseover", () => {
+		// Handle mouseover (hover)
+		const hovermenu = document.querySelector('.reg-menu')
+		hovermenu.style.display = 'block';
+		  
+		console.log("Mouse over the element.");
+	  });
+	
+	  hoverDiv.addEventListener("mouseout", () => {
+		  // Handle mouseout (leave hover)
+		  const hovermenu = document.querySelector('.reg-menu')
+		  hovermenu.style.display = 'none';
+		  console.log("Mouse left the element.");
+	  });
+	
 
 $(document).ready(function() {
     $("#flag-form").on("submit", function(event) {

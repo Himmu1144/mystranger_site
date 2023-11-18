@@ -38,6 +38,48 @@
 		margin-top: 4em;
 	}
 
+	#reg-info{
+		margin-left: 0.5em;
+		padding : 3px;
+	  }
+	  
+	  #reg-info:hover{
+	  
+	  }
+
+	  /* Custom CSS to hide the dropdown arrow */
+.dropdown-toggle::after {
+    display: none;
+}
+
+	  .dropdown-menu{
+		font-size: 12px; */
+    position: absolute;
+    top: 67%;
+    left: 26%;
+    z-index: 1000;
+    display: none;
+    /* float: left; */
+    width: 20rem;
+    min-width: 10rem;
+    padding: 0.5rem 0.5rem;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 0.25rem;
+	  }
+
+	  .dropdown-menu p{
+		margin-top: 0;
+    margin-bottom: 0px;
+	font-size:12px;
+	  }
+
 	/* Media query for tablet width 768px */
   @media only screen and (min-width: 768px) and (max-width: 1023px) { 
 
@@ -71,7 +113,17 @@
 					
                     <h6>{{form.universityName}}</h6>
 
-					<p class="mt-4 mb-1 field-heading">Distance</p>
+					<div class="d-flex align-items-center mt-3">
+					<p class=" mb-1 field-heading">Distance</p>
+					<div class="dropdown-toggle d-flex align-items-center" style="appearance:none;" id="reg-info" style="" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"> <i style="font-size:14px;" class="fa-solid fa-circle-info"></i>
+					</div>
+				</div>
+					
+					<div class="dropdown-menu reg-menu" style="display:none;">
+					  <p>In <strong>origin</strong> you can only connect with students from your university (those with the same domain as you ({{form.domain}})) </p>
+					  <p>Whereas in  <strong>Nearby</strong> you can connect with students whose university lies within 60km of yours including the students from your university too.</p>
+					</div>
+
 					{% if form.origin %}
 					<div>
 					<input type="radio" name="my_dist" value="True" checked> Origin
@@ -92,10 +144,34 @@
 
 		  	</div>
 		  </div>
+
+
 		</div>
 	</div>
 </div>
 
+<script>
 
+	const hoverDiv = document.getElementById('reg-info');
+	hoverDiv.addEventListener("mouseover", () => {
+		// Handle mouseover (hover)
+		const hovermenu = document.querySelector('.reg-menu')
+		hovermenu.style.display = 'block';
+		  
+		console.log("Mouse over the element.");
+	  });
+	
+	  hoverDiv.addEventListener("mouseout", () => {
+		  // Handle mouseout (leave hover)
+		  const hovermenu = document.querySelector('.reg-menu')
+		  hovermenu.style.display = 'none';
+		  console.log("Mouse left the element.");
+	  });
+	
+
+</script>
+
+{% comment %} origin allows you to connect only with those student which has the same domain as you - @galgotiasuniversity.edu.in , whereas nearby allows you to connect with all the students that lies within 60km of your university including the students from your unicersity {% endcomment %}
+     
 
 {% endblock body %}

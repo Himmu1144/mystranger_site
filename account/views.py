@@ -247,13 +247,15 @@ def edit_account_view(request, *args, **kwargs):
                 uni = UniversityProfile.objects.get(name= name)
                 uni_name = uni.universityName
 
-
+            email = account.email
+            domain = email.split('@')[-1:][0]
             initial = {
                 "id": account.pk,
                 "email": account.email,
                 "name": account.name,
                 "origin": account.origin,
                 'universityName' : uni_name,
+                'domain' : domain,
             }
 
             context['form'] = initial

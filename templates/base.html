@@ -418,6 +418,11 @@ input:focus, textarea:focus, select:focus {
       display: none;
     }
 
+    #active-count{
+      font-size: 11px;
+      margin-left:0px!important;
+    }
+
     .nav-msg2{
       height: 40px;
     width: 40px;
@@ -457,6 +462,10 @@ input:focus, textarea:focus, select:focus {
       width: 315px;
       right: 0px;
     }
+
+    .navbar{
+      padding: 0.5rem 0rem;
+  }
 
     .navbar-brand{
       font-size: 18px;
@@ -585,14 +594,14 @@ input:focus, textarea:focus, select:focus {
                 Help & support <i class="fas fa-angle-right"></i>
               </a>
             </li> 
-            <li>
+            {% comment %} <li>
               <a href="{% url "about-us" %}">
                 <div class="icon">
                   <span class="fas fa-user"></span>
                 </div>
                 About us
               </a>
-            </li>
+            </li> {% endcomment %}
             <li>
               <a href="{% url "feedback" %}">
                 <div class="icon">
@@ -769,14 +778,14 @@ input:focus, textarea:focus, select:focus {
                   Help & support <i class="fas fa-angle-right"></i>
                 </a>
               </li>
-              <li>
+              {% comment %} <li>
                 <a href="{% url "about-us" %}">
                   <div class="icon">
                     <span class="fas fa-user"></span>
                   </div>
                   About us
                 </a>
-              </li>
+              </li> {% endcomment %}
               <li>
                 <a href="{% url "feedback" %}">
                   <div class="icon">

@@ -10,7 +10,7 @@
 
     body{
         background-color: #F9F9F9;
-        font-family: 'Rubik', sans-serif;
+        {% comment %} font-family: 'Rubik', sans-serif; {% endcomment %}
         /* height: 100vh; */
         /* border: 2px solid blue; */
         display: flex;
@@ -24,10 +24,16 @@
     display: flex;
     /* justify-content: center; */
     /* flex: 1; */
-    height: calc(100vh - 58px);
+    height: calc(100vh - 53px);
     justify-content: space-between;
     flex-direction: column;
     align-items: center;
+}
+
+
+.info-container{
+    position: absolute;
+    z-index: -1;
 }
 
 .box-left h3{
@@ -70,6 +76,15 @@
     margin-top: 2.5em;
 }
 
+.notice-traffic{
+    width:63vw;
+}
+
+.notice-traffic p{
+    margin-bottom:0px;
+    font-size:14px;
+}
+
 .home-btn1 {
     font-size: 14px;
     width: 75px;
@@ -108,11 +123,31 @@
 
 .info-section{
     /* height: 100vh; */
-    height: calc(100vh - 58px);
+    height: calc(100vh - 53px);
     /* width: 100vw; */
-    border: 2px solid red;
+    {% comment %} border: 2px solid red; {% endcomment %}
+    {% comment %} display:flex;
+    align-items:center; {% endcomment %}
+    {% comment %} flex-direction:column; {% endcomment %}
 }
 
+.bo-left{
+    width:50%;
+}
+.bo-left form textarea{
+    width:65%;
+    border-radius:12px;
+}
+
+.bo-right{
+    width:50%;
+}
+
+.info-bo-container{
+    display:flex;
+    margin: auto;
+    width: 80%;
+}
 
 .alert{
     padding: 0.55rem 1.25rem;
@@ -133,6 +168,17 @@
     width: 98%;
   } {% endcomment %}
 
+
+  .top-sec{
+    margin-top:3em;
+    width: 95%;
+    flex-direction: row-reverse;
+  }
+
+  .map-img img{
+    border-radius: 16px !important;
+    box-shadow: 0 0 27px rgba(0, 0, 0, 0.13); /* Adjust the shadow color and size */
+  }
 
 
     /* Media query for tablet width 768px */
@@ -227,7 +273,7 @@
 <div class="home-container">
     
     <div class="center-box">
-        <div class="box-left">
+        <div class="box-left mt-1">
         <h3>From Strangers to Friends</h3>
         <p class="sub-head">Connect with random nearby college
             Students anonymously</p>
@@ -237,6 +283,7 @@
             {% if request.user.is_authenticated %}
                 <a href="{% url 'new-chat-text' %}"><button type="button" class="btn btn-dark home-btn1">Text</button></a>
                 <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-outline-dark home-btn2 ">Video</button></a>
+                <p class="mt-1 text-secondary" style="font-size:12px;">~connect anonymously </p>
             {% else %}
             <a href="#"><button type="button" class="btn btn-dark home-btn1" onclick="login_req()">Text</button></a>
             <a href="#"><button type="button" class="btn btn-outline-dark home-btn2 " onclick="login_req()">Video</button></a>
@@ -251,7 +298,7 @@
         {% comment %} <img src="{% static 'images/2.2_tr_super_modified.png' %}" alt="" srcset=""> {% endcomment %}
     </div>
     </div>
-
+    <div class="notice-traffic text-secondary"><p>Note : Since mystranger.in is launched recently it is recommended to use the site at around 12pm - 2pm (afternoon) & 10pm - 12am (night) for best experience.</p></div>
     <div class="bottom-box">
         <a href="#info-sec" class="bottom-box" style="text-decoration: none; color: #343a40;">
             <p>scroll down for more</p>
@@ -261,10 +308,49 @@
     
 
 </div>
-{% comment %} 
-<section class="info-section" id="info-sec">
-    <p>here i can add anything </p>
-</section> {% endcomment %}
+ 
+<div class="info-section" id="info-sec" style="position: relative;">
+    
+    <div class="info-container" style="">
+
+        <!-- About 1 - Bootstrap Brain Component -->
+<section class="d-flex justify-content-center">
+    {% comment %} <div class="container" style="margin:0px"> {% endcomment %}
+      <div class="row gy-3 gy-md-4 gy-lg-0 align-items-lg-center top-sec justify-content-center">
+        <div class="col-12 col-lg-6 col-xl-3 map-img">
+          <img class="img-fluid rounded" loading="lazy" src="{% static "images/radius-map.png" %}" alt="">
+        </div>
+        <div class="col-12 col-lg-6 col-xl-8" style="height: 100%;">
+          <div class="row justify-content-xl-center">
+            <div class="col-12 col-xl-11">
+              
+            <h6 class="mt-2">~Exclusively for College Students</h6>
+              <strong><p class="fs-4 mb-3 mt-1" style="">MyStranger.in allows you to anonmously connect with random Nearby college students , as well as the students of your own university.</p></strong>
+        
+              <p class="mb-5">As long as the stranger's university lies within 60km of your university you can connect with them. Both The Stranger and You are going to be anonymous to each other. Only your name is going to be show but there is no way for stranger to trace back you from your name. Thus your identity is going to remain anonymous until you add the other stranger as your friend.</p>
+
+              <hr style="border-top:1px solid black;">
+
+              <p>- Whole MyStranger Team is also made up of college students  </p>
+                <p>so please be easy on us and if you face any kind of trouble , whether there is a bug or something you don't like than please inform us at <a style="color:#009cda" href="{% url "feedback" %}">This Form</a> or send a mail at info@mystranger.in, We are going to fix the issue as soon as we can. so please enjoy the site and share it with your friends.</p>
+
+             
+            </div>
+          </div>
+        </div>
+      </div>
+    {% comment %} </div> {% endcomment %}
+  </section>
+
+    </div>
+
+    {% comment %} <div class="bottom-box">
+        <a href="#info-sec" class="bottom-box" style="text-decoration: none; color: #343a40;">
+            <p>Top</p>
+            <img src="{% static 'images/mouse.svg' %}" alt="" srcset=""> </a>
+    </div> {% endcomment %}
+
+</div> 
 
 <script>
     function login_req() {
