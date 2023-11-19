@@ -119,6 +119,7 @@ class RegistrationError(models.Model):
     uni_name = models.CharField(max_length=100 )
     uni_address = models.CharField(max_length=400 )
     issue_faced = models.CharField(max_length=10000 )
+    is_resolved = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.email)
@@ -128,6 +129,7 @@ class deleted_account(models.Model):
     email = models.CharField(max_length=150, blank=False)
     name = models.CharField(max_length=100)
     reason = models.CharField(max_length=10000)
+    is_resolved = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.email)

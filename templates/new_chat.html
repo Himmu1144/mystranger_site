@@ -602,10 +602,13 @@ body {
                     width="32px" alt="" srcset=""></span></button>
                 </div>
 
+                {% comment %} {% if not request.user_agent.is_mobile %} {% endcomment %}
                 <div class="reg-menu add-fr-menu" style="display:none;">
                     <p>Add friend</p>
                     
-                  </div>
+                </div>
+
+              {% comment %} {% endif %} {% endcomment %}
                     
                     {% comment %} <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
                                 width="32px" alt="" srcset=""></span></button> {% endcomment %}
@@ -695,6 +698,7 @@ body {
 {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
 <script>
 
+    {% if not request.user_agent.is_mobile %}
 
     const hoverDiv = document.getElementById('reg-info');
 	hoverDiv.addEventListener("mouseover", () => {
@@ -711,7 +715,7 @@ body {
 		  hovermenu.style.display = 'none';
 		  console.log("Mouse left the element.");
 	  });
-	
+      {% endif %}
 
 $(document).ready(function() {
     $("#flag-form").on("submit", function(event) {

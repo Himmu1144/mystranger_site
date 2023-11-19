@@ -80,7 +80,7 @@ class WaitingArea(models.Model):
         return is_user_removed 
 
     def __str__(self):
-        return 'waiting list'
+        return f'waiting list {self.pk}'
     
 
 class GroupConnect(models.Model):
@@ -101,6 +101,7 @@ class Flags(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Flags', verbose_name="Flagged", on_delete=models.CASCADE)
     Flagger = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Flagged_by',verbose_name="Flagged_by", on_delete=models.CASCADE)
     reason = models.CharField(max_length=3000)
+    is_resolved = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.user.name} - {self.id}'
@@ -109,6 +110,7 @@ class Feedback(models.Model):
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='Feedback', verbose_name="user", on_delete=models.CASCADE)
     message = models.CharField(max_length=9000)
+    is_resolved = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.user.name} - {self.id}'

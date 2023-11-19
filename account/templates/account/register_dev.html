@@ -201,9 +201,53 @@
 }
 
 
+/* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+	.alert{
+    padding: 0.55rem 0.5rem;
+    font-family: 'Rubik', sans-serif;
+    font-size: 12px;
+}
+  
+.rectangle{
+  flex-direction:column-reverse;
+}
+
+#map{
+  height: 250px!important;
+    width: 300px!important;
+    
+}
+
+.main-cont{
+  margin-top: 0em;
+}
+
+.box2 {
+  width: 100%;
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.box1{
+  width: 100%;
+  margin-top: 1em;
+  justify-content: center;
+}
+
+.reg-menu{
+  left: unset; 
+  right: 0px!important;
+}
+
+  }
+
+
 </style>
 <div class="alert alert-info alert-dismissible fade show reg-notice-top" role="alert">
-  <strong>Note:</strong> If you are facing any trouble regarding registeration than please fill this <a href="{% url "account:reg-error" %}">Form</a> | We are going to fix it within few hours or hopefully minutes.
+  <strong>Note:</strong> If you are facing any trouble regarding registration than please fill this <a href="{% url "account:reg-error" %}">Form</a> | We are going to fix it within few hours or hopefully minutes.
   <button type="button" class="close" data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
@@ -240,7 +284,7 @@
                 </span>
             </div>
                 <div class="terms-cons">
-                <input type="checkbox" name="terms" id="terms-conditions" required><span class="ml-2">I Accept the <a href="#">Terms & Conditions</a></span>
+                <input type="checkbox" name="terms" id="terms-conditions" required><span class="ml-2">I Accept the <a href="{% url "terms-conditions" %}">Terms & Conditions</a></span>
             </div>
 
               <button class="btn btn-md btn-outline-dark btn-block mt-3" type="submit">Register</button>
@@ -327,7 +371,8 @@
       console.log("Mouse left the element.");
   });
 
-  mapboxgl.accessToken = 'pk.eyJ1IjoiYW5tb2xqbyIsImEiOiJjbG43bnFnaHowenF3Mm9xbWJmaHJraW9xIn0.kYnR9lTYI_0xU9e2aZespA';
+  {% comment %} mapboxgl.accessToken = 'pk.eyJ1IjoiYW5tb2xqbyIsImEiOiJjbHA1YXNuc2YwM2Y3MmltcmkxZ3Q3dmJzIn0.k02GZsmg9l9zISroM2Xq5Q'; {% endcomment %}
+  mapboxgl.accessToken = 'pk.eyJ1IjoiYW5tb2xqbyIsImEiOiJjbHA1YXhtankxbG82MmlzNjNhOGF3eXVlIn0.YWf4RG7oAfyk1sgkb3cpRQ';
     
 
     var map = new mapboxgl.Map({
@@ -373,14 +418,17 @@
       console.log('Updated all the values')
     });
   
+  // Here we are handling the socket connection and also what happens when socket disconnects.
+  // -----------------------------------------------------------------------------------------
+
   console.log("Setting up the WebSocket - ")
 
   // Correctly decide between ws:// and wss://
   var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
- 
-  var ws_path = ws_scheme + '://' + window.location.host + ":8001/register/"; // production
+  var ws_path = ws_scheme + '://' + window.location.host + "/register/"; // development
+  {% comment %} var ws_path = ws_scheme + '://' + window.location.host + ":8001/register/"; // production {% endcomment %}
 
-  
+  // console.log("Connecting to " + ws_path);
   chatSocket = new WebSocket(ws_path);
 
   // Handle incoming messages
@@ -418,9 +466,11 @@
       var notrust = document.getElementById('notrust')
       notrust.checked = true
 
-    
+      // This means that the result is fetched from uni_profile which can be wrong , therefore we are going to give user a btn saying not my uni, so that if its not users uni then after clicking that button we are going to show him the search so that he can select his uni
+        
     } else if (data.universityName == 'nope') {
 
+      // This means that the university doesn't exist thus we gotta show the search tot ake the input
 
       console.log('This university does not exist in the database.')
       document.getElementById('uniName').innerHTML = 'Unable to find your university'
@@ -432,6 +482,8 @@
    
   }
 
+  // basic event listeners for our websocket
+  // ------------------------------------------------------------------------
 
   chatSocket.addEventListener("open", function (e) {
     console.log("ChatSocket OPEN")
@@ -461,6 +513,7 @@
 
   const email = document.getElementById('inputEmail');
 
+  // Function to be executed when the first field has complete input
   function onInputChange() {
     
     console.log('calling email input')
@@ -511,7 +564,7 @@
     document.getElementById('reg-info').style.display = 'flex'
 
     if (map.hasControl(geocoder)) {
-      
+      // Remove the geocoder control from the map
       map.removeControl(geocoder);
   }
     map.addControl(geocoder);
@@ -521,7 +574,7 @@
 
     var inputVal = document.querySelector('.mapboxgl-ctrl-geocoder--input').value
     
-  
+    {% comment %} console.log('The input value - ', inputVal) {% endcomment %}
     // Split the input value by comma, remove spaces, and trim any leading/trailing spaces
     const parts = inputVal.split(',').map(part => part.trim());
 
@@ -546,6 +599,8 @@
       document.getElementById('universityName').value = "unknown"
       document.getElementById('uniName').innerHTML = ""
       document.getElementById('reg-info').style.display = 'none'
+      var notrust = document.getElementById('notrust')
+      notrust.checked = true
       
 
       var suggetions = document.querySelector('.suggestions')
