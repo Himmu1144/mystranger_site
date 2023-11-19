@@ -463,8 +463,20 @@ input:focus, textarea:focus, select:focus {
       right: 0px;
     }
 
+
+    #id_general_notifications_count{
+      font-size:13px;
+    }
+
+    
+    #id_msg_notifications_count{
+      font-size:13px;
+    }
+
+   
+
     .navbar{
-      padding: 0.5rem 0rem;
+      padding: 0.5rem 1.1rem;
   }
 
     .navbar-brand{
@@ -537,10 +549,20 @@ input:focus, textarea:focus, select:focus {
     overflow-x: hidden;
 }
 
-
+.notif-menu{
+  top:113%!important;
+  width: 19rem!important;
+  right : -100%!important;
+}
 
 .bar-left .wrapper ul {
     width: 315px; 
+  }
+
+  .account-nav{
+    padding-bottom: 0px!important;
+    text-decoration: none;
+    padding-top: 0px!important;
   }
 
   }
@@ -563,19 +585,16 @@ input:focus, textarea:focus, select:focus {
         <div class="tooltip"></div>
         <div class="wrapper" id="wrapper-btn2">
           <ul class="menu-bar">
+            
             <li>
-              <!-- <a href="#">
-                <div class="icon">
-                  <span class="fas fa-home"></span>
-                </div>
-                Home
-              </a> -->
-              <a class="p-2 dropleft" style='text-decoration:none;' href="{% url 'logout' %}">
+              
+              <a class=" p-2 nav-msg account-nav" style='text-decoration:none;'
+          href="{% url 'account:view' user_id=request.user.id %}">
               
                 <div class="icon">
-                  <span class="fas fa-sign-out-alt"></span>
+                  <span class="fa-solid fa-user"></span>
                 </div>
-                Log out
+                Account
               </a>
             </li>
             <li class="setting-item">
@@ -608,6 +627,16 @@ input:focus, textarea:focus, select:focus {
                   <span class="fa-solid fa-bug"></span>
                 </div>
                 Found a bug \ Feedback 
+              </a>
+            </li>
+            <li>
+              
+              <a class="p-2 dropleft" style='text-decoration:none;' href="{% url 'logout' %}">
+              
+                <div class="icon">
+                  <span class="fas fa-sign-out-alt"></span>
+                </div>
+                Log out
               </a>
             </li>
           </ul>
@@ -729,7 +758,7 @@ input:focus, textarea:focus, select:focus {
             <span id="id_general_notifications_count" class="notify-badge msg-notif"></span>
             <span style='color:white;'
               class="d-flex material-icons notif-icon notifications-material-icon m-auto align-items-center">notifications</span>
-            <div class="dropdown-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle"
+            <div class="dropdown-menu notif-menu scrollable-menu" aria-labelledby="id_notification_dropdown_toggle"
               id="id_general_notifications_container">
             </div>
           </div>

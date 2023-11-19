@@ -24,7 +24,7 @@
     display: flex;
     /* justify-content: center; */
     /* flex: 1; */
-    height: calc(100vh - 53px);
+    height: 100vh;
     justify-content: space-between;
     flex-direction: column;
     align-items: center;
@@ -32,8 +32,8 @@
 
 
 .info-container{
-    position: absolute;
-    z-index: -1;
+    {% comment %} position: absolute;
+    z-index: -1; {% endcomment %}
 }
 
 .box-left h3{
@@ -52,7 +52,7 @@
     /* border: 2px solid blue; */
     width: 63vw;
     /* height: 76vh; */
-    margin-top: 5.4em;
+    margin-top: 7em;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -81,7 +81,7 @@
 }
 
 .notice-traffic p{
-    margin-bottom:0px;
+    margin-bottom:8px;
     font-size:14px;
 }
 
@@ -112,7 +112,9 @@
 }
 
 .navbar{
-    position: sticky;
+    position: fixed;
+    z-index:100;
+    width:100%;
     top: 0;
 }
 
@@ -123,8 +125,10 @@
 
 .info-section{
     /* height: 100vh; */
-    height: calc(100vh - 53px);
+    height: 100vh;
     /* width: 100vw; */
+    display:flex;
+    align-items:center;
     {% comment %} border: 2px solid red; {% endcomment %}
     {% comment %} display:flex;
     align-items:center; {% endcomment %}
@@ -170,7 +174,7 @@
 
 
   .top-sec{
-    margin-top:3em;
+    {% comment %} margin-top:3em; {% endcomment %}
     width: 95%;
     flex-direction: row-reverse;
   }
@@ -225,8 +229,22 @@
         display: none;
     }
 
+
+    .home-container{
+        height:100vh;
+    }
+
+    #info-sec{
+        height:unset;
+    }
+
+    .info-container{
+        margin-top: 5em;
+    }
+
     .center-box{
-        width: 71vw
+        width: 71vw;
+        margin-top:5em;
     }
 
     .box-left h3 {
@@ -238,6 +256,34 @@
     width: 200px;
 }
 
+
+.notice-traffic{
+    width: 63vw;
+  margin-bottom: 2em;
+  margin-right: 20px;
+  }
+
+  .notice-traffic p{
+    font-size:11px!important;
+  }
+
+
+  .map-img{
+    display: flex;
+    justify-content: center;
+  }
+
+  .map-img img{
+    width:85%;
+  }
+
+  .info-heading{
+    font-size: 1.1rem!important;
+  }
+
+  .info-sub-heading{
+    font-size: 15px!important;
+  }
 
 }
 
@@ -273,7 +319,7 @@
 <div class="home-container">
     
     <div class="center-box">
-        <div class="box-left mt-1">
+        <div class="box-left mt-4">
         <h3>From Strangers to Friends</h3>
         <p class="sub-head">Connect with random nearby college
             Students anonymously</p>
@@ -309,7 +355,7 @@
 
 </div>
  
-<div class="info-section" id="info-sec" style="position: relative;">
+<div class="info-section" id="info-sec" style="">
     
     <div class="info-container" style="">
 
@@ -325,14 +371,14 @@
             <div class="col-12 col-xl-11">
               
             <h6 class="mt-2">~Exclusively for College Students</h6>
-              <strong><p class="fs-4 mb-3 mt-1" style="">MyStranger.in allows you to anonmously connect with random Nearby college students , as well as the students of your own university.</p></strong>
+              <strong><p class="fs-4 mb-3 mt-1 info-heading" style="">MyStranger.in allows you to anonmously connect with random Nearby college students , as well as the students of your own university.</p></strong>
         
-              <p class="mb-5">As long as the stranger's university lies within 60km of your university you can connect with them. Both The Stranger and You are going to be anonymous to each other. Only your name is going to be show but there is no way for stranger to trace back you from your name. Thus your identity is going to remain anonymous until you add the other stranger as your friend.</p>
+              <p class="mb-5 info-sub-heading">As long as the stranger's university lies within 60km of your university you can connect with them. Both The Stranger and You are going to be anonymous to each other. Only your name is going to be show but there is no way for stranger to trace back you from your name. Thus your identity is going to remain anonymous until you add the other stranger as your friend.</p>
 
               <hr style="border-top:1px solid black;">
 
               <p>- Whole MyStranger Team is also made up of college students  </p>
-                <p>so please be easy on us and if you face any kind of trouble , whether there is a bug or something you don't like than please inform us at <a style="color:#009cda" href="{% url "feedback" %}">This Form</a> or send a mail at info@mystranger.in, We are going to fix the issue as soon as we can. so please enjoy the site and share it with your friends.</p>
+                <p class="info-sub-heading">so please be easy on us and if you face any kind of trouble , whether there is a bug or something you don't like than please inform us at <a style="color:#009cda" href="{% url "feedback" %}">This Form</a> or send a mail at info@mystranger.in, We are going to fix the issue as soon as we can. so please enjoy the site and share it with your friends.</p>
 
              
             </div>

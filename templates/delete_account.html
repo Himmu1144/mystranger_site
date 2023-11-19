@@ -1111,6 +1111,33 @@
     } 
 </style>
 
+<style>
+
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+	#messagebox{
+    padding: 5px;
+    margin-top: 1em;
+  }
+
+  .main-heading{
+    text-align:center!important;
+  }
+
+  #warning{
+    margin-top:0px!important;
+  }
+
+  .final-btn{
+    height: 3.5rem!important;
+  }
+  
+
+  }
+
+</style>
+
 <body class="overflow-hidden">
 
     <section>
@@ -1132,7 +1159,7 @@
                     placeholder="write your reason... "></textarea>
                     
                 <button type="submit"
-                    class=" bg-red-600 hover:bg-red-800 h-9 text-white font-bold my-3 mx-6 rounded drop-shadow-xl">
+                    class=" bg-red-600 hover:bg-red-800 h-9 text-white font-bold my-3 mx-6 rounded drop-shadow-xl final-btn">
                     Deactivate
                 </button>
             </div>
@@ -1148,7 +1175,7 @@
           </button>
           </div>
         {% endif %}
-            <h1 class="flex justify-center text-primary1 font-sans text-4xl text-left  font-bold">We will miss
+            <h1 class="flex justify-center text-primary1 font-sans text-4xl text-left main-heading  font-bold">We will miss
                 you...💔
             </h1>
             <div class="px-9">
