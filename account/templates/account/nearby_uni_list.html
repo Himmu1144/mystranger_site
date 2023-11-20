@@ -64,7 +64,9 @@
 <div class="nearby-container">
     <div class="card card-main">
         <div class="card-header">
+            <div>
         <strong style="font-size: 20px;">{{user_uni}}</strong>
+        <p class="text-secondary" style="font-size:13px; margin-bottom:0px;">{{user_uni_domain}}</p></div>
         <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark ">{{user_uni_num}} {% if user_uni_num == 1 %}Student{% else %}Students{% endif %} </button></a>
         </div>
         <!-- <div class="card-body heading-top">
@@ -77,8 +79,9 @@
         {% for delta in nearby_lst %}
         <div class="card">
             <div class="card-body">
-          
-                <p>{{delta.university}}</p>
+                <div>
+                <p style="margin-bottom:4px;">{{delta.university}}</p>
+                <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">domain : {{delta.domain}}</p></div>
                 {% if delta.students == 1 %}
                     <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark">{{delta.students}} Student</button></a>
                 {% else %}
