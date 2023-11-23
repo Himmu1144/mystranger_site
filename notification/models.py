@@ -60,7 +60,7 @@ class ActiveUsers(models.Model):
 		return 'All Fuckin Active Users'
 
 	def __str__(self):
-		return str(self.count)
+		return str(self.users.all().count())
 	
 class ActiveVideoUsers(models.Model):
 	users = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=("video_users"), related_name="video_users", blank=True)

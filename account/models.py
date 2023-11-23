@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from friend.models import FriendList
+from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
 
@@ -37,6 +38,7 @@ class MyAccountManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
+    
 
     def create_superuser(self, email, name,university_name, password):
         user = self.create_user(

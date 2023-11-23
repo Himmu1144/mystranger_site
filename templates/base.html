@@ -586,7 +586,7 @@ input:focus, textarea:focus, select:focus {
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-flex">
     <div class="container-fluid">
-      <div class="left-icon">
+      <div class="left-icon d-flex align-items-center">
         {% if request.user.is_authenticated %}
       <span class="bar-left bar" id="bar-btn2">
         <div class="drop-btn">
@@ -734,8 +734,13 @@ input:focus, textarea:focus, select:focus {
         </div>
       </span>
       {% endif %}
+      
       <a class="navbar-brand" href="/">MyStranger</a>
-      <span class='ml-4' id="active-count" style="color:white; font-size:14px;"></span>
+      <div>
+      <span class='ml-4' id="active-count" style="color:white; font-size:12px; margin-top:2px;"></span>
+      <span class='' id="total-count" style="color:white; font-size:11px; margin-left:4px; margin-top:2px;"></span>
+    </div>
+      
     </div>
       <div class="nav-left">
         <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
@@ -1074,7 +1079,11 @@ input:focus, textarea:focus, select:focus {
 
       if (data.active_count){
         console.log('updating active count')
-        document.getElementById('active-count').innerHTML = data.active_count + '+' + ' online'
+        document.getElementById('active-count').innerHTML = data.active_count + '+' + ' online '
+      } 
+      if (data.total_regs_count){
+        console.log('updating total count')
+        document.getElementById('total-count').innerHTML = " | Total Users - " + data.total_regs_count 
       } 
       if (data.video_count){
         console.log('updating video count')
@@ -1155,6 +1164,22 @@ input:focus, textarea:focus, select:focus {
     function callAddcounts(){
 
       // this one for allactiveusers
+      if("{{request.user.is_authenticated}}"){
+
+        notificationSocket.send(JSON.stringify({
+          "command": "add_active_users_count",
+        })); 
+      }
+
+      // this one for allactiveusers
+      if("{{request.user.is_authenticated}}"){
+
+        console.log('why the fuck i am not getting called')
+        notificationSocket.send(JSON.stringify({
+          "command": "show_total_regs",
+        })); 
+      }
+
       if("{{request.user.is_authenticated}}"){
 
         notificationSocket.send(JSON.stringify({

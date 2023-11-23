@@ -18,6 +18,7 @@ from notification.models import Notification
 from notification.models import  ActiveUsers, ActiveVideoUsers
 from mystranger_app.models import University, UniversityProfile
 from chat.exceptions import ClientError
+from account.models import Account
 
 
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
@@ -153,6 +154,10 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             elif command == 'get_text_count':
                 # print('called to fetch the count')
                 await self.send_text_count()
+            elif command == 'show_total_regs':
+                # print('called to fetch the count')
+                print('the fuck i am getting called')
+                await self.send_total_count()
 
         except Exception as e:
             # print("EXCEPTION: receive_json: " + str(e))
@@ -174,6 +179,23 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 'active_count' : count
             },
         )
+
+    async def send_total_count(self):
+
+        user = self.scope['user']
+        if user.is_authenticated:
+            try:
+                total_count = await fetch_total_regs()
+                # print(total_count)
+                await self.send_json(
+                {
+                    'total_regs_count' : total_count
+                },
+            )
+
+            except Exception as e:
+                print('fuck - ',str(e))
+        
 
     async def send_video_count(self):
 
@@ -608,3 +630,12 @@ def fetch_active_count():
         return count_obj.users.all().count()
     except ActiveUsers.DoesNotExist:
         print('Active users model does not exist!')
+
+@database_sync_to_async
+def fetch_total_regs():
+    try: 
+        count = Account.objects.filter(is_verified = True).count()
+        return count
+    except Account.DoesNotExist:
+        print('Exception in total regs count - ')
+        return None

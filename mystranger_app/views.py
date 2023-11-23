@@ -15,6 +15,7 @@ def home_view(request):
         user = request.user
         # checking if user's uni exist or the user is using uni prof instead
         uni_name = user.university_name
+
         try:
             universi = University.objects.get(name=uni_name)
         except University.DoesNotExist:
@@ -23,6 +24,7 @@ def home_view(request):
                 context['unverified_uni'] = 'True'
                 context['prof_email'] = universi_prof.name
                 context['prof_name'] = universi_prof.universityName
+                context['total_users'] = total_users
             except UniversityProfile.DoesNotExist:
                 print('something went wrong....')
     return render(request,'home.html', context)
