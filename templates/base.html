@@ -40,7 +40,7 @@
     crossorigin="anonymous"></script>
   <script>hljs.initHighlightingOnLoad();</script>
 
-  {% comment %} <!-- Google tag (gtag.js) -->
+  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GFJDWDEYM6"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -48,7 +48,7 @@
   gtag('js', new Date());
 
   gtag('config', 'G-GFJDWDEYM6');
-</script> {% endcomment %}
+</script>
 
   <style type="text/css">
 
@@ -466,6 +466,10 @@ input:focus, textarea:focus, select:focus {
       margin-left:8px!important;
     }
 
+    #total-count{
+      display:none;
+    }
+
     #wrapper-btn2{
       left: 2px;
     /* display: flex; */
@@ -734,13 +738,11 @@ input:focus, textarea:focus, select:focus {
         </div>
       </span>
       {% endif %}
-      
       <a class="navbar-brand" href="/">MyStranger</a>
-      <div>
-      <span class='ml-4' id="active-count" style="color:white; font-size:12px; margin-top:2px;"></span>
+      <span class='ml-4' id="active-count" style="color:white; font-size:12px; margin-top:2px"></span>
+      {% if request.user.is_authenticated %}
       <span class='' id="total-count" style="color:white; font-size:11px; margin-left:4px; margin-top:2px;"></span>
-    </div>
-      
+      {% endif %}
     </div>
       <div class="nav-left">
         <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
@@ -1024,7 +1026,7 @@ input:focus, textarea:focus, select:focus {
   <script type="text/javascript">
     // Correctly decide between ws:// and wss://
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    {% comment %} var ws_path = ws_scheme + '://' + window.location.host + ":8001/"; // PRODUCTION {% endcomment %}
+    //var ws_path = ws_scheme + '://' + window.location.host + ":8001/"; // PRODUCTION
     var ws_path = ws_scheme + '://' + window.location.host + "/";
     // console.log("Connecting to " + ws_path);
     var notificationSocket = new WebSocket(ws_path);
@@ -1079,12 +1081,14 @@ input:focus, textarea:focus, select:focus {
 
       if (data.active_count){
         console.log('updating active count')
-        document.getElementById('active-count').innerHTML = data.active_count + '+' + ' online '
+        document.getElementById('active-count').innerHTML = data.active_count + '+' + ' online'
       } 
+
       if (data.total_regs_count){
         console.log('updating total count')
         document.getElementById('total-count').innerHTML = " | Total Users - " + data.total_regs_count 
       } 
+
       if (data.video_count){
         console.log('updating video count')
         document.getElementById('video-count').innerHTML = data.video_count + '+' + ' online (on video)'
@@ -1171,20 +1175,11 @@ input:focus, textarea:focus, select:focus {
         })); 
       }
 
-      // this one for allactiveusers
-      if("{{request.user.is_authenticated}}"){
-
-        console.log('why the fuck i am not getting called')
-        notificationSocket.send(JSON.stringify({
-          "command": "show_total_regs",
-        })); 
-      }
-
-      if("{{request.user.is_authenticated}}"){
-
-        notificationSocket.send(JSON.stringify({
-          "command": "add_active_users_count",
-        })); 
+       // this one for allactiveusers
+       if("{{request.user.is_authenticated}}"){
+          notificationSocket.send(JSON.stringify({
+            "command": "show_total_regs",
+          })); 
       }
 
         current_url = window.location.href;

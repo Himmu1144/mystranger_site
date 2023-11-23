@@ -156,7 +156,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 await self.send_text_count()
             elif command == 'show_total_regs':
                 # print('called to fetch the count')
-                print('the fuck i am getting called')
+                # print('the fuck i am getting called')
                 await self.send_total_count()
 
         except Exception as e:
@@ -182,6 +182,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 
     async def send_total_count(self):
 
+        # print('am i really?')
         user = self.scope['user']
         if user.is_authenticated:
             try:
@@ -196,7 +197,6 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             except Exception as e:
                 print('fuck - ',str(e))
         
-
     async def send_video_count(self):
 
 
