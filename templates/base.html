@@ -42,13 +42,13 @@
 
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-GFJDWDEYM6"></script>
-<script>
+<!-- <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'G-GFJDWDEYM6');
-</script>
+</script> -->
 
   <style type="text/css">
 
@@ -458,6 +458,15 @@ input:focus, textarea:focus, select:focus {
 
   }
 
+   /* Media query for tablet width 320px */
+   @media only screen and (min-width: 360px) and (max-width: 500px) { 
+
+    #total-count-phone{
+      display:inline!important;
+    }
+
+   }
+
   /* Media query for tablet width 320px */
   @media only screen and (min-width: 300px) and (max-width: 500px) { 
 
@@ -468,7 +477,14 @@ input:focus, textarea:focus, select:focus {
 
     #total-count{
       display:none;
-    }
+    } 
+
+    /* .home-container{
+      border:2px solid red;
+      height: 100%;
+    } */
+
+
 
     #wrapper-btn2{
       left: 2px;
@@ -579,10 +595,13 @@ input:focus, textarea:focus, select:focus {
     padding-top: 0px!important;
   }
 
+  
+
   }
     
     
   </style>
+
 
 </head>
 
@@ -739,9 +758,12 @@ input:focus, textarea:focus, select:focus {
       </span>
       {% endif %}
       <a class="navbar-brand" href="/">MyStranger</a>
+      
       <span class='ml-4' id="active-count" style="color:white; font-size:12px; margin-top:2px"></span>
       {% if request.user.is_authenticated %}
       <span class='' id="total-count" style="color:white; font-size:11px; margin-left:4px; margin-top:2px;"></span>
+      <span class='' id="total-count-phone" style="display: none; color:white; font-size:9px; margin-left:4px; margin-top:2px;"></span>
+    
       {% endif %}
     </div>
       <div class="nav-left">
@@ -1084,9 +1106,14 @@ input:focus, textarea:focus, select:focus {
         document.getElementById('active-count').innerHTML = data.active_count + '+' + ' online'
       } 
 
+      
       if (data.total_regs_count){
         console.log('updating total count')
-        document.getElementById('total-count').innerHTML = " | Total Users - " + data.total_regs_count 
+        
+            document.getElementById('total-count-phone').innerHTML = "| " + data.total_regs_count + " Users"
+          
+            document.getElementById('total-count').innerHTML = " | Total Users - " + data.total_regs_count 
+        
       } 
 
       if (data.video_count){
