@@ -26,8 +26,8 @@
 	}
 
 	.right-column p {
-		margin-bottom: 0px;
-		font-size: 18px;
+		margin-bottom: 3px;
+		font-size: 16px;
 	}
 
 	.cont-row {
@@ -167,8 +167,9 @@
 		margin-left: 5px;
 		margin-right: 5px;
 		white-space: normal;
-		-ms-word-break: break-all;
-		word-break: break-all;
+		{% comment %} -ms-word-break: break-all;
+		word-break: break-all; {% endcomment %}
+		word-break: break-word;
 	}
 
 	.message-container {
@@ -293,6 +294,7 @@
 		min-height: 45px;
 		padding-left: 4px;
 		border-radius: 8px;
+		max-width:400px;
 	}
 
 	.inside_msg_cont1{
@@ -302,6 +304,7 @@
 		min-height: 45px;
 		padding-left: 4px;
 		border-radius: 8px;
+		max-width:400px;
 	}
 
 	.inside_msg_cont1::before{
@@ -404,10 +407,17 @@
 	}
 	.main-container{
 		/* height: 90vh; */
-		height: calc(100vh - 58px);
+		height: calc(100svh - 53px);
 		flex: unset;
 	}
 
+	.inside_msg_cont{
+		max-width: 260px;
+	}
+
+	.inside_msg_cont1{
+		max-width: 260px;
+	}
 
 	.cont-row{
 		position: relative;
@@ -446,12 +456,12 @@
 	}
 
 	.video-textarea{
-		height: 40px;
+		height: 46px;
 	}
 
 	.send-btn{
 		font-size: 18px;
-		top: 11px;
+		top: 14px;
 	}
 
 	.top-cont-left{
@@ -464,7 +474,7 @@
 	}
 
 	.bottom-header{
-		margin-bottom:4px;
+		margin-bottom:12px;
 	}
 
   }
@@ -769,8 +779,8 @@
 		// Correctly decide between ws:// and wss://
 		
 		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-		var ws_path = ws_scheme + '://' + window.location.host + "/mchat/" + roomId + "/"; // development
-		{% comment %} var ws_path = ws_scheme + '://' + window.location.host + ":8001/mchat/" + roomId + "/"; // production {% endcomment %}
+		{% comment %} var ws_path = ws_scheme + '://' + window.location.host + "/mchat/" + roomId + "/";  {% endcomment %}
+		var ws_path = ws_scheme + '://' + window.location.host + ":8001/mchat/" + roomId + "/"; // production
 
 
 		// console.log("Connecting to " + ws_path);
@@ -1382,8 +1392,8 @@
 	
 
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-	var ws2_path = ws_scheme + '://' + window.location.host + "/mchat-notif/"; // development
-	{% comment %} var ws2_path = ws_scheme + '://' + window.location.host + ":8001/mchat-notif/"; // production {% endcomment %}
+	{% comment %} var ws2_path = ws_scheme + '://' + window.location.host + "/mchat-notif/"; // development {% endcomment %}
+	var ws2_path = ws_scheme + '://' + window.location.host + ":8001/mchat-notif/"; // production
 
 
 	// console.log("Connecting to " + ws_path);

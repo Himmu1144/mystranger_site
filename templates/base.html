@@ -6,6 +6,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="{% static "images/msico.ico" %}" type="image/x-icon">
  
   {% comment %} <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"> {% endcomment %}
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -403,7 +404,7 @@
 }
 
 .search-bar{
-  margin-right: 2em;
+  margin-right: 3em;
 }
 
 .nav-msg2{
@@ -786,7 +787,9 @@ input:focus, textarea:focus, select:focus {
           <div class="d-flex notifications-icon-container rounded-circle align-items-center main-msg-notif" onclick="setMsgNotificationsAsRead()">
             <span id="id_msg_notifications_count" class="notify-badge msg-notif" style="
               right: 10px !important;"></span>
-            <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a>
+              <div class="d-flex flex-direction-row mr-4 ml-2">
+            <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'pika' %}">pika</a>
+            <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a></div>
             <a class="text-light p-2 nav-msg2" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}"><i class="fa-solid fa-message" style="color: #ffffff;"></i></a>
           </div>
         </div>

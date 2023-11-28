@@ -39,8 +39,8 @@ body {
     }
 
     .right-column p {
-        margin-bottom: 0px;
-        font-size: 18px;
+        margin-bottom: 3px;
+        font-size: 15px;
     }
 
     .cont-row {
@@ -209,8 +209,9 @@ body {
         margin-left: 5px;
         margin-right: 5px;
         white-space: normal;
-        -ms-word-break: break-all;
-        word-break: break-all;
+        {% comment %} -ms-word-break: break-all;
+        word-break: break-all; {% endcomment %}
+        word-break: break-word;
     }
 
     .message-container {
@@ -226,7 +227,7 @@ body {
         /* color: white; */
         min-height: 43px;
         min-width: 90px;
-        max-width: 70%;
+        max-width: 40%;
         /* background: #343a40; */
         /* background: #f9f8f8; */
         background: #f0f2f2;
@@ -244,7 +245,7 @@ body {
         /* color: white; */
         min-height: 43px;
         min-width: 90px;
-        max-width: 70%;
+        max-width: 40%;
         /* background: #343a40; */
         /* background: #daf5ff;  */
         /* background: #fafafa;  The best up until now */
@@ -396,14 +397,27 @@ body {
 /* Media query for tablet width 320px */
 @media only screen and (min-width: 300px) and (max-width: 500px) { 
 
+    body{
+        height:100svh;
+    }
+
     .text_count{
         font-size: 10px!important;
         margin-top: 2px !important;
     }
 
+    .msg-style{
+        max-width: 70%;
+    }
+
+    .msg-style2{
+        max-width: 70%;
+    }
+   
+
    
 .chat-log{
-    max-height: 67vh;
+    max-height: 64vh;
 }
 
 .status-txt span {
@@ -418,7 +432,7 @@ body {
 
     
 .bottom-header {
-    margin-bottom: 2em!important;
+    margin-bottom: 12px!important;
 }
 
 .send-btn{

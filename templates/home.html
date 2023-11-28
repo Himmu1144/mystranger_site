@@ -351,6 +351,10 @@
         </button> {% endcomment %}
       </div>
       {% endif %}
+
+{% if request.user.is_authenticated %}
+
+{% endif %}
 <div class="home-container">
     
     <div class="center-box">
@@ -369,7 +373,7 @@
             <a href="#"><button type="button" class="btn btn-dark home-btn1" onclick="login_req()">Text</button></a>
             <a href="#"><button type="button" class="btn btn-outline-dark home-btn2 " onclick="login_req()">Video</button></a>
             <p class="mt-1" id="login-req-txt" style="font-size:14px; display: none;">login required </p>
-            {% endif %}
+            {% endif %}  
             
         </div>
     </div>

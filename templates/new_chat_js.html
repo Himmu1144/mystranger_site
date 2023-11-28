@@ -21,12 +21,26 @@
     }
 
     // Contains the stun server URL we will be using.
-    let iceServers = {
+    {% comment %} let iceServers = {
         iceServers: [
             { urls: "stun:stun.services.mozilla.com" },
             { urls: "stun:stun.l.google.com:19302" },
         ],
+    }; {% endcomment %}
+
+    let iceServers = {
+        iceServers: [
+            {
+                urls: ['stun:stun1.1.google.com:19302', 'stun:stun2.1.google.com:19302']
+            },
+            {
+                urls: 'turn:relay1.expressturn.com:3478',
+                username: 'ef0UZL2TY4FC54X48J',
+                credential: 'aq0vk71QmQp21uWr'
+            }
+        ],
     };
+    
 
     // let iceCandidateQueue = [];
 
@@ -61,9 +75,7 @@
 }
 
 init() {% endcomment %}
-
-
-{% comment %}     
+    
 function init() {
     return navigator.mediaDevices.getUserMedia(constraints)
     .then(s => {
@@ -91,7 +103,7 @@ function init() {
         });
     });
 }
-init() {% endcomment %}
+init()
 
     // Here we are handling the socket connection and also what happens when socket disconnects.
     // -----------------------------------------------------------------------------------------
@@ -115,13 +127,13 @@ init() {% endcomment %}
         // Decode the JSON
         console.log("Got websocket message.");
         var data = JSON.parse(message.data);
-        console.log(data)
+        
 
         
         if (data.my_id) {
             // Settting up the self_id so that it can be used further on.
             window.self_id = data.my_id
-            console.log('My_Id : ' + window.self_id)
+            
         }
 
         // seprating code for user1 and user2
@@ -142,12 +154,12 @@ init() {% endcomment %}
             console.log(data)
             commandCount++;
 
-            console.log('The value of grouped count is - ', commandCount)
+            {% comment %} console.log('The value of grouped count is - ', commandCount) {% endcomment %}
             if (commandCount === 1){
 
                 statusUpdate(data.response)
                 console.log(data.response)
-                console.log('group_name : ' + data.grouped)
+                
                 window.group_name = data.grouped
 
 
@@ -188,12 +200,12 @@ init() {% endcomment %}
                 document.getElementById('flag_user_id').value = window.stranger_id;
                 document.getElementById('flag_user_name').value = window.stranger;
                 {% comment %} document.getElementById('flagged_by').value = window.; {% endcomment %}
-                console.log('The strangers id is - ', window.stranger_id)
+                
 
                 const loadingSpinner = document.querySelector('.loading-spinner');
                 loadingSpinner.style.display = 'none';
             } else {
-                console.log("This is the second time of grouped message so we will ignore it")
+                {% comment %} console.log("This is the second time of grouped message so we will ignore it") {% endcomment %}
             }
 
         }
@@ -244,7 +256,7 @@ init() {% endcomment %}
             
 
             leaveCount++;
-            console.log('The value of leave count is - ', leaveCount)
+            {% comment %} console.log('The value of leave count is - ', leaveCount) {% endcomment %}
             
             if (leaveCount === 1){
                  remote_video.srcObject = undefined;
@@ -276,7 +288,7 @@ init() {% endcomment %}
                 //     statusUpdate(response)
                 // }
 
-                console.log(data.leave)
+                
                 statusUpdate(response)
 
 
@@ -295,7 +307,7 @@ init() {% endcomment %}
                 send_icon = document.getElementById('id_chat_message_submit')
                 send_icon.classList.add("d-none");
             } else{
-                console.log("This is the second time of leave message so we will ignore it")
+                {% comment %} console.log("This is the second time of leave message so we will ignore it") {% endcomment %}
             }
         }
 
@@ -365,7 +377,7 @@ init() {% endcomment %}
         const message = messageInputDom.value;
         var trimmedValue = message.trim();
         if (trimmedValue === ''){
-            console.log('fucker this is an empty msg....')
+            {% comment %} console.log('fucker this is an empty msg....') {% endcomment %}
         } else{
         chatSocket.send(JSON.stringify({
             "command": "send",
@@ -398,11 +410,11 @@ init() {% endcomment %}
         const skip = document.getElementById('skip').innerHTML;
 
         if (skip == 'Skip') {
-            console.log('skip button is clicked!')
+            {% comment %} console.log('skip button is clicked!') {% endcomment %}
             document.getElementById('skip').innerHTML = 'really?'
         }
         else if (skip == 'really?') {
-            console.log('really button is clicked!')
+            {% comment %} console.log('really button is clicked!') {% endcomment %}
             if (window.group_name) {
                 group_name = window.group_name
             }
@@ -555,7 +567,7 @@ init() {% endcomment %}
         newMessageDiv.appendChild(div1)
 
         if (isNewMessage) {
-            console.log('yup adding below ig')
+            {% comment %} console.log('yup adding below ig') {% endcomment %}
             chatLog.insertBefore(newMessageDiv, chatLog.firstChild)
         }
 
@@ -583,15 +595,7 @@ init() {% endcomment %}
             createofferva()
         }
 
-    } 
-
-{% comment %} 
-    let createOffer = async (groupName) => {
-
-        await init();  // Ensure localStream is initialized if not already
-        createofferva();
-
-    } {% endcomment %}
+    }
 
      function createofferva(){
         rtcpeerconnection = new RTCPeerConnection(iceServers)
@@ -602,7 +606,7 @@ init() {% endcomment %}
                 });
                 rtcpeerconnection.createOffer().then((offer) => {
                     rtcpeerconnection.setLocalDescription(offer);
-                    console.log('Sending offer to consumer - ', offer)
+                    {% comment %} console.log('Sending offer to consumer - ', offer) {% endcomment %}
                     chatSocket.send(
                         JSON.stringify({
                             command: "offer",

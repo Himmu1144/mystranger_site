@@ -24,7 +24,6 @@ def home_view(request):
                 context['unverified_uni'] = 'True'
                 context['prof_email'] = universi_prof.name
                 context['prof_name'] = universi_prof.universityName
-                context['total_users'] = total_users
             except UniversityProfile.DoesNotExist:
                 print('something went wrong....')
     return render(request,'home.html', context)
