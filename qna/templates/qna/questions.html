@@ -1,1 +1,618 @@
-<h1>Questions are gonna show here</h1>
+{% extends "base.html" %}
+{% block body %}
+{% load humanize %}
+
+
+<style>
+
+    .nearby-container{
+        {% comment %} border: 2px solid green; {% endcomment %}
+        width: 60vw;
+        margin: auto;
+        margin-top: 2em;
+
+    }
+
+    .card-main{
+        width: 100%;
+        border: 2px solid #e3e3e3;
+        border-radius:4px;
+        
+    }
+    .container{
+        max-height: 80vh;
+        overflow-y: scroll;
+    }
+
+    .card-header{
+        display: flex;
+        justify-content: space-between;
+        height: 80px;
+        align-items: center;
+        /* margin-bottom: 2em; */
+    }
+    
+    /* .heading-top{
+        border: 1px solid#d5cfcf; 
+        font-size: 18px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    } */
+
+    .card-body{
+        border-bottom: 1px solid #d5cfcf;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .nearby-num:hover{
+        cursor: default;
+    }
+
+    .btn:hover{
+        background-color: #343a40!important;
+        cursor: default;
+    }
+
+    .btn-answer{
+        border-radius : 100px;
+        width: 100px;
+        height: 35px;
+        margin-left:10px;
+    }
+
+    .btn-answer:hover{
+        background-color:white!important;
+        color:black;
+    }
+
+    .btn-answer span {
+        font-size:13px
+    }
+
+    .quora-textarea{
+        height: 36px;
+        border-radius: 100px;
+        padding: 6px;
+        font-size:13px;
+        padding-left: 1em;
+    }
+
+    .answer-form{
+        display:flex;
+        align-items: center;
+        width: 70%;
+        margin:auto;
+        margin-top:1em;
+        margin-bottom:1em;
+    }
+
+    {% comment %} .btn-answer:focus,
+.btn-answer:active {
+    outline: none !important;
+    box-shadow: none !important;
+} {% endcomment %}
+
+    /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+	.nearby-container{
+        width:unset;
+    }
+
+  }
+
+</style>
+<p style="text-align:center;" class="mb-0" ><a class="mt-4" href="{% url 'qna:create-post' %}">Create question</a></p>
+<div class="nearby-container">
+
+    <div class="container">
+        {% for question in question_top2_answers %}
+        <div class="card card-main mb-4">
+            <div class="card-header">
+                <div>
+                    <p class="text-secondary" style="font-size:13px; margin-bottom:0px;">{{question.0.owner.name}} | {{question.0.owner.university_name}} | {{question.0.timestamp|naturaltime}}</p>
+                    <strong style="font-size: 20px;">{{question.0.question}}</strong>
+                </div>
+                <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark "> report </button></a>
+            </div>
+            <!-- <div class="card-body heading-top">
+            
+                <p>Nearby Universities</p>
+                <p>Users</p>  
+            
+            </div> -->
+           
+            <div class="card">
+                {% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
+                    
+                    {% if not question.0.answers.all %}
+                        <p class="p-4" >Be the first to answer {{question.0.owner.name}}'s question</p>
+                    {% else %}
+                        {% comment %} {% for answer in question.answers.all %} {% endcomment %}
+                        {% load mptt_tags %}
+                        
+                            {% recursetree question.1 %}
+
+                            <div class="card" id="card-{{node.id}}">
+                                <div class="card-body" style="flex-direction: column;">
+
+                                
+                                {% comment %} {% if node.level ==0 %}{% endif %} {% endcomment %}
+
+                                
+                                <p class="text-secondary" style="font-size:12px; margin-bottom:0px;"><span>{{node.user.name}} | {{node.user.university_name}}</span> 
+                                    {% if request.user.id == node.user.id %}
+                                    <span><button class="btn btn-sm btn-outline-dark ml-4" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')">delete</button></span>
+                                    {% endif %}
+                                
+                                    | {{node.publish|naturaltime}}
+
+                                </p>
+
+
+                                {% comment %} <p style="margin-bottom:0px; margin-top:2px;" >{{node.content}}</p> {% endcomment %}
+
+                                {% if node.content|length > 250 %}
+                                {% with first_part=node.content|slice:":250" second_part=node.content|slice:"250:" %}
+                                    <span id="partial-paragraph">{{ first_part }}
+
+                                    <span class="secondary-text mb-2" style="width:80px; border:none; background:none; color:#009cda; font-size:12px;" type="button"  id="contentcont-{{node.pk}}" onclick="myreadmorefunc('contentcont-{{node.pk}}')" data-bs-toggle="collapse" data-bs-target="#content-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                        ... read more
+                                    </span>
+                                
+
+                                    <span class="collapse" id="content-{{node.pk}}">
+
+                                       
+                                        {{ second_part }}
+                                        
+                                    </span>
+
+                                </span>
+                                
+                                    
+                                {% endwith %}
+                            {% else %}
+                                <div id="full-paragraph">{{ node.content }}</div>
+                            {% endif %}
+                            
+                            {% if request.user not in node.likes.all %}
+
+                                <span id="like-{{node.pk}}" ><button class="btn btn-sm btn-outline-dark ml-4" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart" style="color: #009cda;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                            {% else %}
+                            
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class="btn btn-sm btn-outline-dark ml-4" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart" style="color: #009cda;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                            
+                                <span id="unlike2-{{node.pk}}" style="" ><button class="btn btn-sm btn-outline-dark ml-4" onclick="myunlikefunc('{{node.pk}}', 'unlike2-{{node.pk}}')"><i class="fa-solid fa-heart" style="color: #009cda;"></i> <span id="count-unlike2-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                            {% endif %}
+
+                            <span id="unlike-{{node.pk}}" style="display:none;" ><button class="btn btn-sm btn-outline-dark ml-4" onclick="myunlikefunc('{{node.pk}}','unlike-{{node.pk}}')"><i class="fa-solid fa-heart" style="color: #009cda;"></i> <span id="count-unlike-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+
+                                {% if node.level < 2 %}
+                                <span><button class="secondary-text" style="width:50px; border:none; background:none;" type="button" data-bs-toggle="collapse" data-bs-target="#reply-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    reply
+                                </button></span>
+                           
+                            <div class="collapse" id="reply-{{node.pk}}">
+                                
+                                <form class="answer-form" id="repform-{{node.id}}" onsubmit="submitForm(event, 'repform-{{node.id}}', 'null', 'reply-{{node.pk}}' , 'id_chat_message_input_answer-{{node.id}}' )" action="" method='post'> {% csrf_token %}
+                                    <input hidden  type="text" name='question-id' id="question-{{question.0.id}}" value="{{question.0.id}}">
+                                        <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
+                                        <textarea class="flex-grow-1 quora-textarea reply-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
+                                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
+                                    </form>
+                                
+                            </div> 
+                                 
+                                {% endif %}
+
+
+                                {% if not node.is_leaf_node %}
+
+                                <button class="secondary-text mb-2" style="width:80px; border:none; background:none; color:#009cda; font-size:12px;" type="button" data-bs-toggle="collapse" data-bs-target="#replies-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    view replies
+                                </button>
+
+                                <div class="collapse" id="replies-{{node.pk}}">
+
+                                    <div class="children pl-2 pl-md-5">
+                                    {{ children }}
+                                    
+                                    </div>
+
+                                </div>
+                                {% endif %}
+                        
+                                
+                </div>
+                
+            </div>
+            
+            {% comment %} <div class="card">
+                <div class="card-body" style="flex-direction: column;"> {% endcomment %}
+
+
+
+                            {% endrecursetree %}
+                            
+                        {% comment %} {% endfor %} {% endcomment %}
+                    {% endif %}
+
+                     {% comment %} <div>
+                        <form style="border:2px solid" class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
+                            <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
+                            <textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input"></textarea>
+                            <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>Add answer</span></button>
+                        </form>
+                    </div>   {% endcomment %}
+
+
+                    <!-- <div> -->
+                    {% comment %} <p style="margin-bottom:4px;">it's such a shitty university u r not gonna believe what happened to .......</p> {% endcomment %}
+                    {% comment %} <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">shreya | amity university</p></div> {% endcomment %}
+                    {% comment %} <a href="{% url "qna:minichat" user_id=question.pk %}" class="" style="font-size:14px; text-align: center; margin-bottom:0px;">see answers</a> {% endcomment %}
+
+                    {% comment %} <a href="" class="" style="font-size:14px; text-align: center; margin-bottom:0px;">see answers</a> {% endcomment %}
+
+
+                    </div>
+
+                    <div id="elemental-{{question.0.pk}}">
+                        <form class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
+                            <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
+                            <textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
+                            <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>Add answer</span></button>
+                        </form>
+                    </div>  
+
+            {% comment %} <div class="card"> {% endcomment %}
+
+                {% if question.2 %}
+
+                    <button class="secondary-text mb-2" style="width:80px; border:none; background:none; color:#009cda; font-size:12px;" type="button" data-bs-toggle="collapse" data-bs-target="#question-{{question.0.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                        see answers
+                    </button> 
+
+                    <div class="collapse" id="question-{{question.0.pk}}">
+
+                        <div class="card">
+                            {% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
+                            
+
+                            {% load mptt_tags %}
+                        
+                            {% recursetree question.2 %}
+
+                            <div class="card" id="card-{{node.id}}">
+                                <div class="card-body" style="flex-direction: column;">
+
+                                
+                                {% comment %} {% if node.level ==0 %}{% endif %} {% endcomment %}
+
+                                
+                                {% comment %} <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">{{node.user.name}}</p> {% endcomment %}
+
+                                <p class="text-secondary" style="font-size:12px; margin-bottom:0px;"><span>{{node.user.name}} | {{node.user.university_name}}</span> 
+                                    {% if request.user.id == node.user.id %}
+                                    <span><button class="btn btn-sm btn-outline-dark ml-4" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')">delete</button></span>
+                                    {% endif %}
+
+                                    | {{node.publish|naturaltime}}
+                                
+                                </p>
+
+
+                                <p style="margin-bottom:0px; margin-top:2px;" >{{node.content}}</p>
+
+                                {% if request.user not in node.likes.all %}
+
+                                <span id="like-{{node.pk}}" ><button class="btn btn-sm btn-outline-dark ml-4" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart" style="color: #009cda;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                            {% else %}
+                            
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class="btn btn-sm btn-outline-dark ml-4" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart" style="color: #009cda;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                            
+                                <span id="unlike2-{{node.pk}}" style="" ><button class="btn btn-sm btn-outline-dark ml-4" onclick="myunlikefunc('{{node.pk}}', 'unlike2-{{node.pk}}')"><i class="fa-solid fa-heart" style="color: #009cda;"></i> <span id="count-unlike2-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                            {% endif %}
+
+                            <span id="unlike-{{node.pk}}" style="display:none;" ><button class="btn btn-sm btn-outline-dark ml-4" onclick="myunlikefunc('{{node.pk}}','unlike-{{node.pk}}')"><i class="fa-solid fa-heart" style="color: #009cda;"></i> <span id="count-unlike-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
+
+                                
+
+
+                                {% comment %} {% if node.level < 3 %}
+                                <button class="secondary-text" style="width:50px; border:none; background:none;" type="button" data-bs-toggle="collapse" data-bs-target="#{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    reply
+                                </button>
+                            </p>
+                            <div class="collapse" id="{{node.pk}}">
+                                
+                                <form class="answer-form" action="" method='post'> {% csrf_token %}
+                                    <input hidden  type="text" name='question-id' id="question-{{question.id}}" value="{{question.id}}">
+                                        <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
+                                        <textarea class="flex-grow-1 quora-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer"></textarea>
+                                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
+                                </form>
+                                
+                            </div> 
+                                <hr> 
+                                {% endif %} {% endcomment %}
+
+
+                                {% if node.level < 2 %}
+                                <span><button class="secondary-text" style="width:50px; border:none; background:none;" type="button" data-bs-toggle="collapse" data-bs-target="#reply-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    reply
+                                </button></span>
+                           
+                            <div class="collapse" id="reply-{{node.pk}}">
+                                
+                                <form class="answer-form" id="repform-{{node.id}}" onsubmit="submitForm(event, 'repform-{{node.id}}', 'null', 'reply-{{node.pk}}', 'id_chat_message_input_answer-{{node.id}}')" action="" method='post'> {% csrf_token %}
+                                    <input hidden  type="text" name='question-id' id="question-{{question.0.id}}" value="{{question.0.id}}">
+                                        <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
+                                        <textarea class="flex-grow-1 quora-textarea reply-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
+                                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
+                                    </form>
+                                
+                            </div> 
+                                 
+                                {% endif %}
+
+                                {% if not node.is_leaf_node %}
+
+                                <button class="secondary-text mb-2" style="width:80px; border:none; background:none; color:#009cda; font-size:12px;" type="button" data-bs-toggle="collapse" data-bs-target="#replies-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
+                                    view replies
+                                </button>
+
+                                <div class="collapse" id="replies-{{node.pk}}">
+
+                                    <div class="children pl-2 pl-md-5">
+                                    {{ children }}
+                                    </div>
+
+                                </div>
+                                {% endif %}
+                                 
+                                    
+
+                                </div>
+                            </div>
+                            {% endrecursetree %}
+                            
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+                    {% comment %} <button class="btn btn-sm btn-outline-dark">See Answers</button> {% endcomment %}
+                    
+                    {% comment %} <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark">{{delta.students}} Students</button></a> {% endcomment %}
+                
+        
+                </div>
+            {% comment %} </div> {% endcomment %}
+        {% comment %} </div> {% endcomment %}
+            
+            {% endfor %}
+    </div>
+    
+</div>
+
+<script>
+
+
+    function myunlikefunc(id,spanid){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"node-id": id,
+            'action' : 'unlike',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'qna:addAnswer' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "unliked"){
+					// ui is updated
+                    console.log('your unlike has been added')
+
+                    var unlikespan = document.getElementById(spanid);
+                    var unlikecount = document.getElementById('count-'+spanid).innerHTML
+                    unlikespan.style.display = 'none';
+
+                    var likespan = document.getElementById('like-'+id);
+                    var count = document.getElementById('like-count-'+id)
+                    var newNum = parseInt(unlikecount, 10) - 1;
+                    count.innerHTML = newNum;
+                    likespan.style.display = 'inline';
+                    
+					
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+
+    function mylikefunc(id){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",   
+			"node-id": id,
+            'action' : 'like',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'qna:addAnswer' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "liked"){
+					// ui is updated
+                    console.log('your like has been added')
+                    var likespan = document.getElementById('like-'+id);
+                    likespan.style.display = 'none';
+
+                    var unlikespan = document.getElementById('unlike-'+id);
+                    var count = document.getElementById('count-unlike-'+id)
+                    var likecount = document.getElementById('like-count-'+id).innerHTML
+                    var newNumber = parseInt(likecount, 10) + 1;
+                    count.innerHTML = newNumber;
+                    unlikespan.style.display = 'inline';
+					
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+
+    function mydeletefunc(id,cardId){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"node-id": id,
+            'action' : 'delete',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'qna:addAnswer' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "card deleted"){
+					// ui is updated
+                    console.log('The post has been deleted', cardId)
+                    var card = document.getElementById(cardId);
+                    card.style.display = 'none';
+					{% comment %} uiUpdateFunction() {% endcomment %}
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
+    function myreadmorefunc(id){
+        console.log('am i even getting called!')
+        readMoreBtn = document.getElementById(id)
+        readMoreBtn.style.display = 'none'
+    }
+
+    function submitForm(event, formId, ansElemental, repElemental, textareaId) {
+        // Prevent the default form submission
+        event.preventDefault();
+
+        // Your AJAX logic here
+        var formData = new FormData(document.getElementById(formId));
+
+
+        $.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url "qna:addAnswer" %}",
+			timeout: 5000,
+			data: formData,
+            processData: false, // Set processData and contentType to false
+            contentType: false,
+			success: function(data) {
+				console.log("SUCCESS", data);
+                if(data['status'] == "Answered"){
+					
+                    console.log('Boom your answer has been generated now just gotta have to update the ui')
+                    document.getElementById(textareaId).value = ''
+                    // Create a new element
+                        // Create a new card element
+                        var newCard = document.createElement('div');
+                        newCard.className = 'card';
+                        newCard.id = 'card-' + data.nodeId;
+                        newCard.innerHTML = '<div class="card-body" style="flex-direction: column;">' +
+                                                '<p class="text-secondary" style="font-size:12px; margin-bottom:0px;">' + data.name + ' | ' + data.domain + '</p>' + 
+                                                
+                                                '<span><button class="btn btn-sm btn-outline-dark ml-4" onclick="mydeletefunc(\'' + data.nodeId + '\', \'card-' + data.nodeId + '\')">delete</button></span>' +
+                                                
+                                                '<p>' + data.content + '</p>'
+                                            '</div>';
+
+                        // Find the existing div
+                        var existingDiv = document.getElementById(ansElemental); // Replace with the actual ID of your existing div
+
+                        // Insert the new card before the existing div
+                        existingDiv.parentNode.insertBefore(newCard, existingDiv);
+
+				}
+                if(data['status'] == "Replied"){
+					
+                    console.log('Boom your reply has been generated now just gotta have to update the ui')
+                    inpval = document.getElementById(textareaId).value = ''
+                    
+                        // Create a new card element
+                        var newCard = document.createElement('div');
+                        newCard.className = 'card';
+                        newCard.id = 'card-' + data.nodeId;
+                        newCard.style.marginLeft = '3em';
+                        newCard.innerHTML = '<div class="card-body" style="flex-direction: column;">' +
+                                                '<p class="text-secondary" style="font-size:12px; margin-bottom:0px;">' + data.name + ' | ' + data.domain + '</p>' +
+                                                
+                                                '<span><button class="btn btn-sm btn-outline-dark ml-4" onclick="mydeletefunc(\'' + data.nodeId + '\', \'card-' + data.nodeId + '\')">delete</button></span>' +
+                                                
+                                                '<p>' + data.content + '</p>'
+                                            '</div>';
+
+                        // Find the existing div
+                        var existingDiv = document.getElementById(repElemental); // Replace with the actual ID of your existing div
+
+                        // Insert the new card before the existing div
+                        existingDiv.insertAdjacentElement('afterend', newCard);
+                    
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+                alert('Some error occured while answering. Please try again later - ', data.message)
+				
+			},
+			complete: function(data){
+				// Req is made
+			}
+		}); 
+    }
+
+</script>
+
+{% endblock body %}

@@ -27,7 +27,7 @@ from account.views import (
     account_search_view,
 )
 
-from qna.views import pika_view
+from qna.views import *
 
 handler404 = 'mystranger_app.views.error_404_view'
 
@@ -36,7 +36,13 @@ urlpatterns = [
     path('', home_view, name='home' ),
     path('new_chat/', new_chat_view , name='new-chat' ),
     path('new_chat_text/', new_chat_text_view , name='new-chat-text' ),
-    path('pika/', pika_view , name='pika' ),
+
+
+    
+    
+    
+
+
     path('search/', account_search_view, name="search"),
     path('feedback/', feedback_view, name="feedback"),
     path('privacy_policy/', privacy_policy_view, name="privacy-policy"),
@@ -49,6 +55,7 @@ urlpatterns = [
     path('register/', register_view, name='register'),
 
     path('account/', include('account.urls', namespace='account')),
+    path('pika/', include('qna.urls', namespace='qna')),
 
     # Friend System
     path('friend/', include('friend.urls', namespace='friend')),

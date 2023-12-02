@@ -2,8 +2,10 @@ from django.contrib import admin
 from django.core.paginator import Paginator
 from django.core.cache import cache
 from django.db import models
+from mptt.admin import MPTTModelAdmin
 
-from qna.models import PublicChatRoom, PublicRoomChatMessage
+from qna.models import PublicChatRoom, PublicRoomChatMessage , Answer
+
 
 class PublicChatRoomAdmin(admin.ModelAdmin):
     list_display = ['id', 'owner','question' ]
@@ -51,6 +53,7 @@ class PublicRoomChatMessageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PublicRoomChatMessage, PublicRoomChatMessageAdmin)
+admin.site.register(Answer, MPTTModelAdmin)
 
 
 

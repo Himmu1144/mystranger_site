@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div class="p-5 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-5">
+      <h1 class="display-8 fw-bold">Ask Stranger a Question -</h1>
+      <form action="" method="post"> {% csrf_token %}
+      <input type="text" name="question" id="question" class="radius form-control" placeholder="ask an interesting question anonymously" required
+      autofocus>
+
+      <button class="btn btn-sm btn-outline-dark mt-4" type="Submit">Submit Question</button>
+    </form>
+    </div>
+  </div>
+
+
+  {% endblock body %}

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'chat',
     'notification',
     'qna',
+    'mptt',
 
     # Third party apps 
     'django.contrib.admin',
