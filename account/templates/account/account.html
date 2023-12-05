@@ -151,7 +151,16 @@
 				</div>
 
 				  <p class="mt-2 mb-1 field-heading">Email</p>
-				  <h6>{{email}}</h6>
+				  {% if request.user.is_authenticated and is_friend or is_self %}
+
+				  	<h6>{{email}}</h6>
+
+					{% else %}
+
+					<h6>{{hidden_email}}</h6>
+
+				  {% endif %}
+
 
 
 				  <div class="radio-sec">
@@ -166,8 +175,9 @@
 				{% endif %} {% endcomment %}
 
 					<div class="radio1">
-						<p class=" mb-1 field-heading">Distance</p>
-						{% if origin %}
+						<p class=" mb-1 field-heading">Vibes Answered - {{prof_answers_count}}</p>
+						<p class=" mb-1 field-heading">Vibes Recieved - {{prof_answers_received}}</p>
+						{% comment %} {% if origin %}
 							<div>
 								<input type="radio" name="my_dist" checked> Origin
 								<input type="radio" name="my_dist" disabled> Nearby
@@ -177,7 +187,7 @@
 								<input type="radio" name="my_dist" disabled> Origin
 								<input type="radio" name="my_dist" checked> Nearby
 							</div>
-						{% endif %}
+						{% endif %} {% endcomment %}
 					</div>
 
 					<div class="radio2 mt-2">
@@ -313,6 +323,8 @@
 		</div>
 		{% endif %}
 
+		{% comment %} Vibes Answered - No. of answers you have given
+		Vibe Received 🎉 - Total no. of answers your questions received {% endcomment %}
 		
 	</div>
 </div>

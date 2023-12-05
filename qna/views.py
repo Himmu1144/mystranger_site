@@ -26,13 +26,14 @@ def pika_view(request):
         # print('question - ', question)
         answers_with_descendants = []
 
-        answers = question.answers.filter(parent=None)
+        answers = question.answers.filter(parent=None).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
         answers = answers.annotate(num_likes=Count('likes'))
-        answers = answers.order_by('-num_likes')[:2]
+        answers = answers.order_by('-num_likes')[:1]
 
         top2_ans = []
         for answer in answers:
             # print('The parent answer - ', answer)
+            
             answers_and_replies = [answer] + list(answer.get_descendants())
             answers_with_descendants.extend(answers_and_replies) 
             top2_ans.append(answer.pk)
@@ -42,11 +43,13 @@ def pika_view(request):
         other_answers_with_descendants = []
 
         answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
-        answers = answers.order_by('-publish')[:2]
+        answers = answers.order_by('-timestamp')
         for answer in answers:
             # print('This is what the pending answers are - ', answer)
-            other_answers_and_replies = [answer] + list(answer.get_descendants())
-            other_answers_with_descendants.extend(other_answers_and_replies) 
+            print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
+            if answer.ans_reports.all().count() < 5:
+                other_answers_and_replies = [answer] + list(answer.get_descendants())
+                other_answers_with_descendants.extend(other_answers_and_replies) 
         
 
 
@@ -112,7 +115,7 @@ def create_post_view(request):
         roomv = PublicChatRoom(question = question, owner = user)
         roomv.save()
         
-        return HttpResponse('yelp your question has been uploaded')
+        return redirect('qna:pika')
 
     return render(request, 'qna\create_question.html')
 
@@ -129,6 +132,37 @@ def addAnswer_view(request, *args, **kwargs):
         return redirect("login")
 
     if request.POST:
+
+        if request.POST.get('action') == 'report':
+
+            print('ans report request arrived')
+            id = request.POST.get('node-id')
+            reporter = request.user
+
+            try:
+                answer = Answer.objects.get(pk=id)
+                if reporter in answer.ans_reports.all():
+                    # You have already reported this person
+                    response_data = {
+                'status' : 'success',
+                'response' : 'Already Reported',
+            }
+                else:
+                    # The person is reported 
+                    answer.add_flag(reporter)
+                    response_data = {
+                'status' : 'success',
+                'response' : 'reported',
+            }
+                
+                print('This answer/reply is getting reported - ', answer)
+
+            except Exception as e :
+                print('error fetching the answer')
+                response_data = {
+                'status' : 'error',
+                'message': str(e),
+            }
 
 
         if request.POST.get('action') == 'delete':
@@ -148,7 +182,35 @@ def addAnswer_view(request, *args, **kwargs):
                 'status' : 'delete done',
                 'response' : 'card deleted'
             }
-            except Answer.DoesNotExist:
+            except Exception as e:
+                print('error fetching the answer')
+                response_data = {
+                'status' : 'error',
+                'message': str(e),
+            }
+
+
+           
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
+        
+        if request.POST.get('action') == 'delete_my_question':
+
+            print('post delete question request arrived')
+
+            id = request.POST.get('node-id')
+            print('The delete question id is -', id)
+            try:
+                question = PublicChatRoom.objects.get(pk=id)
+                print('This question is getting deleted - ', question)
+
+                if question.owner == request.user:
+                    question.delete()
+
+                response_data = {
+                'status' : 'delete done',
+                'response' : 'card deleted'
+            }
+            except Exception as e:
                 print('error fetching the answer')
                 response_data = {
                 'status' : 'error',
@@ -174,7 +236,7 @@ def addAnswer_view(request, *args, **kwargs):
                 'response' : 'liked',
                 'count' : count,
             }
-            except Answer.DoesNotExist:
+            except Exception as e:
                 print('error fetching the answer')
                 response_data = {
                 'status' : 'error',
@@ -197,7 +259,7 @@ def addAnswer_view(request, *args, **kwargs):
                 'response' : 'unliked',
                 
             }
-            except Answer.DoesNotExist:
+            except Exception as e:
                 print('error fetching the answer')
                 response_data = {
                 'status' : 'error',
@@ -233,8 +295,10 @@ def addAnswer_view(request, *args, **kwargs):
                         
                     }
                 else:
+                    print('this is the before ans - ')
                     answer = Answer(question = question, user = user, content=content)
                     answer.save()
+                    print('this is the ans - ', answer)
                     response_data = {
                         'status' : 'Answered',
                         'message': 'Your answer has been added.',
@@ -256,3 +320,130 @@ def addAnswer_view(request, *args, **kwargs):
             }
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def show_ques_view(request,*args, **kwargs):
+
+    ans_id = kwargs.get('ans_id')
+    context = {}
+
+    try:
+        answer = Answer.objects.get(pk=ans_id)
+        ques_id = answer.question.id
+        question = PublicChatRoom.objects.get(pk=ques_id)
+
+        # now gotta check whether this answer is a answer or a reply
+        if answer.parent:
+            context['ans_id'] = int(ans_id)
+            context['highlight_reply'] = int(ans_id)
+
+            try:
+                child_node = Answer.objects.get(id=ans_id)
+                ancestors = child_node.get_ancestors(ascending=True)  # ascending=True returns ancestors from root to parent
+
+                # ------------------------------------------------------------------------
+
+                # nodes_to_expand = child_node.get_ancestors(include_self=True).values_list('id', flat=True)
+
+                # # Pass nodes_to_expand to your template
+                # context = {'nodes_to_expand': nodes_to_expand}
+
+                # The first element in the ancestors list will be the root ancestor
+                root_ancestor = child_node.get_root()
+                parent_id = child_node.parent.id
+                print('This is the fuckin parent id - ', parent_id)
+                context['parent_id'] = parent_id
+
+                answer = root_ancestor
+
+                print('This is his parent root answer - ', root_ancestor)
+
+                question_answers = [] # ['{question' : {answers}}]
+
+                answers_with_descendants = []
+
+                # answers = question.answers.filter(parent=None)
+                # answers = answers.annotate(num_likes=Count('likes'))
+                # answers = answers.order_by('-num_likes')[:1]
+
+                top2_ans = []
+                # for answer in answers:
+                    # print('The parent answer - ', answer)
+                answers_and_replies = [answer] + list(answer.get_descendants())
+                # answers_and_replies = [answer] + list(answer.get_descendants().order_by('-timestamp'))
+                answers_with_descendants.extend(answers_and_replies) 
+                top2_ans.append(answer.pk)
+                
+                # assuming that above instead of sending the first 2 answers we have send the top 2 answers , now we want to send the rest of the answers excluding the above 2
+
+                other_answers_with_descendants = []
+
+                answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
+                answers = answers.order_by('-timestamp')
+                for answer in answers:
+                    # print('This is what the pending answers are - ', answer)
+                    print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
+                    if answer.ans_reports.all().count() < 5:
+                        other_answers_and_replies = [answer] + list(answer.get_descendants())
+                        other_answers_with_descendants.extend(other_answers_and_replies) 
+                
+
+
+                
+                question_answers.append([question,answers_with_descendants, other_answers_with_descendants])
+
+                context['question'] = question_answers
+                print('The question answers are -', question_answers)
+                print('This is the fuckin id i have -',ans_id, type(ans_id))
+
+            except Answer.DoesNotExist:
+                return None
+            
+        else:
+            context['ans_id'] = ans_id
+            context['highlight_answer'] = ans_id
+            
+            # context['question'] = question
+
+            question_answers = [] # ['{question' : {answers}}]
+
+            answers_with_descendants = []
+
+            # answers = question.answers.filter(parent=None)
+            # answers = answers.annotate(num_likes=Count('likes'))
+            # answers = answers.order_by('-num_likes')[:1]
+
+            top2_ans = []
+            # for answer in answers:
+                # print('The parent answer - ', answer)
+            answers_and_replies = [answer] + list(answer.get_descendants())
+            answers_with_descendants.extend(answers_and_replies) 
+            top2_ans.append(answer.pk)
+            
+            # assuming that above instead of sending the first 2 answers we have send the top 2 answers , now we want to send the rest of the answers excluding the above 2
+
+            other_answers_with_descendants = []
+
+            answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
+            answers = answers.order_by('-timestamp')
+            for answer in answers:
+                # print('This is what the pending answers are - ', answer)
+                print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
+                if answer.ans_reports.all().count() < 1:
+                    other_answers_and_replies = [answer] + list(answer.get_descendants())
+                    other_answers_with_descendants.extend(other_answers_and_replies) 
+            
+
+
+            
+            question_answers.append([question,answers_with_descendants, other_answers_with_descendants])
+
+            context['question'] = question_answers
+            print('The question answers are -', question_answers)
+
+            
+    except Answer.DoesNotExist:
+        return HttpResponse('The question/answer you are looking for does not exist!')
+
+
+    return render(request, "qna/quest.html", context)

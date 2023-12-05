@@ -774,7 +774,7 @@ input:focus, textarea:focus, select:focus {
           <!-- <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search using email..."> -->
           <ul class="search-ul mr-2">
             <li class="search-icon">
-              <input type="search" name="q" id="id_q_large" placeholder="Search using email...">
+              <input type="search" name="q" id="id_q_large" placeholder="Search using name...">
               <label class="icon" onclick="executeQuery();">
                 <span id="sicon-logo" onclick="executeQuery();" class="fas fa-search"></span>
               </label>
@@ -790,7 +790,7 @@ input:focus, textarea:focus, select:focus {
             <span id="id_msg_notifications_count" class="notify-badge msg-notif" style="
               right: 10px !important;"></span>
               <div class="d-flex flex-direction-row mr-4 ml-2">
-            <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'qna:pika' %}">pika</a>
+            <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'qna:pika' %}">Vibes</a>
             <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a></div>
             <a class="text-light p-2 nav-msg2" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}"><i class="fa-solid fa-message" style="color: #ffffff;"></i></a>
           </div>
@@ -1070,7 +1070,7 @@ input:focus, textarea:focus, select:focus {
     */
       // new 'general' notifications data payload
       if (data.general_msg_type == 0) {
-        console.log('data.general_msg_type == 0')
+        console.log('data.general_msg_type == 0',data['notifications'])
         handleGeneralNotificationsData(data['notifications'], data['new_page_number'])
       }
 

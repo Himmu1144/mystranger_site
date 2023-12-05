@@ -77,6 +77,8 @@
 			//console.log('len not 0 thus refreshing the notifs')
 			// find the div and update it.
 			refreshGeneralNotificationsList(notification)
+			{% comment %} console.log('This is refresh notif - ', notification) {% endcomment %}
+
 		}
 	}
 
@@ -87,6 +89,8 @@
 	function refreshGeneralNotificationsList(notification) {
 		//console.log('rgnl is called')
 		notificationContainer = document.getElementById("id_general_notifications_container")
+		{% comment %} console.log('This is refresh List notif - ', notification) {% endcomment %}
+
 
 		if (notificationContainer != null) {
 			divs = notificationContainer.childNodes
@@ -103,6 +107,11 @@
 							break;
 							
 							case "FriendList":
+							//console.log('refreshing friendlist card')
+							refreshFriendListCard(card, notification)
+							break;
+
+							case "Answer":
 							//console.log('refreshing friendlist card')
 							refreshFriendListCard(card, notification)
 							break;
@@ -185,6 +194,8 @@
 	*/
 	function appendBottomGeneralNotification(notification) {
 
+		{% comment %} console.log('This is append bottom notif - ', notification) {% endcomment %}
+
 		switch (notification['notification_type']) {
 
 			case "FriendRequest":
@@ -194,6 +205,12 @@
 				break;
 
 			case "FriendList":
+				notificationContainer = document.getElementById("id_general_notifications_container")
+				card = createFriendListElement(notification)
+				notificationContainer.appendChild(card)
+				break;
+
+			case "Answer":
 				notificationContainer = document.getElementById("id_general_notifications_container")
 				card = createFriendListElement(notification)
 				notificationContainer.appendChild(card)
@@ -582,6 +599,12 @@
 				notificationContainer.insertBefore(card, notificationContainer.childNodes[0]);
 				break;
 
+			case "Answer":
+				notificationContainer = document.getElementById("id_general_notifications_container")
+				card = createFriendListElement(notification)
+				notificationContainer.insertBefore(card, notificationContainer.childNodes[0]);
+				break;
+
 			default:
 				break;
 				// code block
@@ -637,7 +660,7 @@
 			setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getUnreadMessageNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(refreshActiveCount, GENERAL_NOTIFICATION_INTERVAL)
-			{% comment %} setInterval(video_count, GENERAL_NOTIFICATION_INTERVAL) {% endcomment %}
+			{% comment %} setInterval(video_count, GENERAL_NOTIFICATION_INTERVAL)  {% endcomment %}
 			
 		}
 	}

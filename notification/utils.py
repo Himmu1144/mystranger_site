@@ -37,4 +37,16 @@ class LazyNotificationEncoder(Serializer):
 					'redirect_url': str(obj.redirect_url),
 				},
 			})
+		if obj.get_content_object_type() == "Answer":
+			dump_object.update({'notification_type': obj.get_content_object_type()})
+			dump_object.update({'notification_id': str(obj.pk)})
+			dump_object.update({'verb': obj.verb})
+			dump_object.update({'natural_timestamp': str(naturaltime(obj.timestamp))})
+			dump_object.update({'is_read': str(obj.read)})
+			dump_object.update({'timestamp': str(obj.timestamp)})
+			dump_object.update({
+				'actions': {
+					'redirect_url': str(obj.redirect_url),
+				},
+			})
 		return dump_object

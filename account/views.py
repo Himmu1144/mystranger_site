@@ -20,6 +20,8 @@ from account.models import AccountToken
 from account.models import RegistrationError
 from django.contrib import messages
 
+from qna.models import Answer, PublicChatRoom
+
 
 
 def register_view(request, *args, **kwargs):
@@ -165,7 +167,37 @@ def account_view(request, *args, **kwargs):
         context['email'] = account.email
         context['origin'] = account.origin
         # context['universityName'] = account.universityName
+        try:
+
+
+          my_answers_count = Answer.objects.filter(user=account, parent = None).count()
+          # print(my_answers_count)
+          # print('The asception was here -')
+          
+          my_answers_recieved_count = 0
+          questions = PublicChatRoom.objects.filter(owner=account)
+          for question in questions:
+              # my_answers_recieved_count += question.answers.filter(parent=None).count()
+              my_answers_recieved_count +=  Answer.objects.filter(question=question, parent=None).count()
+              # print(my_answers_recieved_count)
+
+          print('The asception was here or here -')
+
+          context['prof_answers_count'] = my_answers_count
+          context['prof_answers_received'] = my_answers_recieved_count
+        except Exception as e:
+            print('Exception at account view - ', str(e))
         context['gender'] = account.gender
+
+        email = account.email
+        email_part , dom_part = email.split('@')
+        hidden_email = email_part[:3] + ''
+        print(hidden_email)
+        for i in email_part[3:]:
+            hidden_email += '*'
+            # print(i)
+        hidden_email = hidden_email + '@' + dom_part
+        context['hidden_email'] = hidden_email
 
         try:
             friend_list = FriendList.objects.get(user=account)
@@ -299,9 +331,8 @@ def account_search_view(request, *args, **kwargs):
             search_query = request.GET.get("q")
             if len(search_query) > 0:
                 print('The search query - ', search_query)
-                # search_results = Account.objects.filter(email__icontains=search_query).filter(
-                #     name__icontains=search_query).distinct()
-                search_results = Account.objects.filter(email=search_query, is_verified = True)
+                search_results = Account.objects.filter(Q(name__icontains=search_query) & Q(is_verified = True) )
+                # search_results = Account.objects.filter(email=search_query, is_verified = True)
                 print("The search results are - ",search_results)
                 user = request.user
                 accounts = []  # [(account1, True), (account2, False), ...]

@@ -195,7 +195,9 @@ init()
                 }
 
                 {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + window.stranger_email {% endcomment %}
-                document.getElementById('strangerName').innerHTML = window.stranger
+                {% comment %} document.getElementById('strangerName').innerHTML = window.stranger {% endcomment %}
+
+                document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>'
                 document.getElementById('report_btn').disabled = false;
                 document.getElementById('flag_user_id').value = window.stranger_id;
                 document.getElementById('flag_user_name').value = window.stranger;
