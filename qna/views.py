@@ -117,10 +117,10 @@ def create_post_view(request):
         
         return redirect('qna:pika')
 
-    return render(request, 'qna\create_question.html')
+    return render(request, "qna/create_question.html")
 
 def minichat_view(request, *args, **kwargs):
-    return render(request, "qna\qnaroom.html")
+    return render(request, "qna/qnaroom.html")
 
 
 def addAnswer_view(request, *args, **kwargs):
@@ -429,7 +429,7 @@ def show_ques_view(request,*args, **kwargs):
             for answer in answers:
                 # print('This is what the pending answers are - ', answer)
                 print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
-                if answer.ans_reports.all().count() < 1:
+                if answer.ans_reports.all().count() < 5:
                     other_answers_and_replies = [answer] + list(answer.get_descendants())
                     other_answers_with_descendants.extend(other_answers_and_replies) 
             

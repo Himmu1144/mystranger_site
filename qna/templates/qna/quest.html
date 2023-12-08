@@ -353,7 +353,11 @@
             <div class="card-header">
                 <div style="width:100%" >
                     <div class="tp1">
-                        <span class="text-secondary small-text" style="font-size:12px; margin-bottom:0px;"><span class="heading-top">{{question.0.0.owner.name}} | {{question.0.0.owner.university_name}}</span> <span class="ml-2 timepamper"> {{question.0.0.timestamp|naturaltime}} </span></span>
+                        <span class="text-secondary small-text" style="font-size:12px; margin-bottom:0px;">
+                            
+                            <span class="heading-top"><a style="color:#009cda; margin-right:0.5em;" href="{% url "account:view" user_id=question.0.0.owner.id %}"><span>{{question.0.0.owner.name}} | {{question.0.0.owner.university_name}}</span> </a></span> 
+                        
+                        <span class="ml-2 timepamper"> {{question.0.0.timestamp|naturaltime}} </span></span>
 
                         <div class="tp1-right">
                         {% comment %} <button class="add-friend-btn" disabled id="send_req_btn-{{question.0.0.pk}}"><span class="img1"><img src="{% static 'images/add.svg' %}"

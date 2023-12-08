@@ -55,7 +55,7 @@ urlpatterns = [
     path('register/', register_view, name='register'),
 
     path('account/', include('account.urls', namespace='account')),
-    path('pika/', include('qna.urls', namespace='qna')),
+    path('vibes/', include('qna.urls', namespace='qna')),
 
     # Friend System
     path('friend/', include('friend.urls', namespace='friend')),

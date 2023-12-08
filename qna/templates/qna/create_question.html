@@ -2,9 +2,22 @@
 
 {% block body %}
 
+<style>
+
+  /* Media query for tablet width 320px */
+  @media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+    .phone-font{
+      font-size:1.2em;
+    } 
+
+  }
+
+</style>
+
 <div class="p-5 mb-4 bg-body-tertiary rounded-3">
     <div class="container-fluid py-5">
-      <h1 class="display-8 fw-bold">Ask Stranger's a Question -</h1>
+      <h1 class="display-8 fw-bold phone-font">Ask Stranger's a Question -</h1>
       <form action="" method="post"> {% csrf_token %}
       <input type="text" name="question" id="question" class="radius form-control" placeholder="ask an interesting question anonymously" required
       autofocus>

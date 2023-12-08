@@ -127,7 +127,13 @@
                     window.stranger_email = data.user1_self_email
                 }
 
-                document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>'
+                {% if not request.user_agent.is_mobile %}
+                    document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>'
+                {% else %}
+                    document.getElementById('strangerName').innerHTML = window.stranger
+                {% endif %}
+
+                {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>' {% endcomment %}
                 {% comment %} document.getElementById('strangerName').innerHTML = window.stranger {% endcomment %}
                 document.getElementById('report_btn').disabled = false;
                 document.getElementById('flag_user_id').value = window.stranger_id;

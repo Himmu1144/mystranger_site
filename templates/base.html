@@ -84,7 +84,8 @@
 
     .notifications-icon-container {
       width: 40px;
-      height: 40px;
+      height: 38px;
+
       background-color: var(--main-background-color);
     }
 
@@ -138,7 +139,8 @@
 
     .notifications-icon-container {
       width: 40px;
-      height: 40px;
+      height: 38px;
+
       background-color: var(--main-background-color);
     }
 
@@ -622,6 +624,16 @@ input:focus, textarea:focus, select:focus {
         <div class="wrapper" id="wrapper-btn2">
           <ul class="menu-bar">
             
+
+            <li>
+              <a href="{% url 'chat:private-chat-room' %}">
+                <div class="icon">
+                  <span class="fa-solid fa-message"></span>
+                </div>
+                Messages
+              </a>
+            </li>
+
             <li>
               
               <a class=" p-2 nav-msg account-nav" style='text-decoration:none;'
@@ -657,14 +669,14 @@ input:focus, textarea:focus, select:focus {
                 About us
               </a>
             </li> {% endcomment %}
-            <li>
+            {% comment %} <li>
               <a href="{% url "feedback" %}">
                 <div class="icon">
                   <span class="fa-solid fa-bug"></span>
                 </div>
                 Found a bug \ Feedback 
               </a>
-            </li>
+            </li> {% endcomment %}
             <li>
               
               <a class="p-2 dropleft" style='text-decoration:none;' href="{% url 'logout' %}">
@@ -772,7 +784,7 @@ input:focus, textarea:focus, select:focus {
       <div class="nav-left">
         <form class="search-bar justify-content-start" onsubmit="return executeQuery();">
           <!-- <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search using email..."> -->
-          <ul class="search-ul mr-2">
+          <ul class="search-ul" style="margin-right:1.5em!important;">
             <li class="search-icon">
               <input type="search" name="q" id="id_q_large" placeholder="Search using name...">
               <label class="icon" onclick="executeQuery();">
@@ -790,9 +802,10 @@ input:focus, textarea:focus, select:focus {
             <span id="id_msg_notifications_count" class="notify-badge msg-notif" style="
               right: 10px !important;"></span>
               <div class="d-flex flex-direction-row mr-4 ml-2">
-            <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'qna:pika' %}">Vibes</a>
-            <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a></div>
-            <a class="text-light p-2 nav-msg2" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}"><i class="fa-solid fa-message" style="color: #ffffff;"></i></a>
+                <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'qna:pika' %}">Vibes</a>
+                <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a></div>
+                <a class="text-light p-2 nav-msg2" style='text-decoration:none;' href="{% url 'qna:pika' %}"><i class="fa-solid fa-volleyball" style="color: #ffffff;"></i></a> 
+              </div>
           </div>
         </div>
 

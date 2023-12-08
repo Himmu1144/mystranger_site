@@ -251,15 +251,20 @@
 
     .tp2{
         flex-direction:column;
+        position:relative;
     }
 
     .total_ans_box{
         font-size: 10px!important;
         margin-left: 0em;
+        position:absolute;
+        right:0px;
+        bottom:-14px;
     }
 
     .the-ques{
-        font-size: 12px!important;
+        {% comment %} font-size: 12px!important; {% endcomment %}
+        font-size: 1em!important;
     }
 
     .ans_texti{
@@ -333,7 +338,11 @@
             <div class="card-header">
                 <div style="width:100%" >
                     <div class="tp1">
-                        <span class="text-secondary small-text" style="font-size:12px; margin-bottom:0px;"><span class="heading-top">{{question.0.owner.name}} | {{question.0.owner.university_name}}</span> <span class="ml-2 timepamper"> {{question.0.timestamp|naturaltime}} </span></span>
+                        <span class="text-secondary small-text" style="font-size:12px; margin-bottom:0px;">
+                            
+                            <span class="heading-top"><a style="color:#009cda; margin-right:0.5em;" href="{% url "account:view" user_id=question.0.owner.id %}"><span>{{question.0.owner.name}} | {{question.0.owner.university_name}}</span> </a></span> 
+                            
+                            <span class="ml-2 timepamper"> {{question.0.timestamp|naturaltime}} </span></span>
 
                         <div class="tp1-right">
 
