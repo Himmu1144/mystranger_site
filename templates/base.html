@@ -17,6 +17,9 @@
 
   <link href="https://fonts.googleapis.com/css?family=Fredoka+One" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Raleway:400,700" rel="stylesheet">
+
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.min.css">
   {% comment %}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> {% endcomment %}
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -971,6 +974,7 @@ input:focus, textarea:focus, select:focus {
 
     {% else %}
     <div class='d-flex'>
+      <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'qna:pika' %}">Vibes</a>
       <a class="p-2 text-light dropleft" href="{% url 'login' %}">Login</a>
       <a class=" p-2 text-light dropleft" href="{% url 'register' %}">Register</a>
     </div>

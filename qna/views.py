@@ -8,8 +8,8 @@ from django.db.models import Count
 # Create your views here.
 def pika_view(request):
 
-    if not request.user.is_authenticated:
-        return redirect('login')
+    # if not request.user.is_authenticated:
+    #     return redirect('login')
 
     context = {}
 

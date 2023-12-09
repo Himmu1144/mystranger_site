@@ -400,8 +400,15 @@
     
                                 
                                 <ul class="dropdown-menu report-dpn">
+
+                                {% if request.user.is_authenticated %}
+
                                   
                                 <li><button class="dropdown-item" onclick="myquestiondeletefunc('{{question.0.id}}', 'card-main-{{question.0.id}}')" type="button">Delete</button></li>
+
+                                {% else %}
+                                    <li><button disabled class="dropdown-item" onclick="myquestiondeletefunc('', 'card-main')" type="button">Delete</button></li>
+                                {% endif %}
                                 
                                   
                                 </ul>
@@ -482,7 +489,17 @@
                                             
                                             <ul class="dropdown-menu report-dpn">
                                             {% if node.user != request.user %}
-                                            <li><button class="dropdown-item" onclick="myreportfunc('{{node.pk}}')"  type="button">Report</button></li>
+
+                                            {% if request.user.is_authenticated %}
+
+                                                <li><button class="dropdown-item" onclick="myreportfunc('{{node.pk}}')"  type="button">Report</button></li>
+
+                                            {% else %}
+
+                                            <li><button disabled class="dropdown-item" onclick="myreportfunc('')"  type="button">Report</button></li>
+
+                                            {% endif %}
+
                                             {% else %}
                                             <li><button class="dropdown-item" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')" type="button">Delete</button></li>
                                             {% endif %}
@@ -532,8 +549,16 @@
                                 <span id="like-{{node.pk}}" ><button class="like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
 
                             {% else %}
+
+                            {% if request.user.is_authenticated %}
                             
                                 <span id="like-{{node.pk}}" style="display:none;" ><button class=" like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% else %}
+
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class=" like-btn" ><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% endif %}
 
                             
                                 <span id="unlike2-{{node.pk}}" style="" ><button class=" like-btn" onclick="myunlikefunc('{{node.pk}}', 'unlike2-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike2-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
@@ -546,14 +571,20 @@
 
 
                                 {% if node.level < 2 %}
+                                {% if request.user.is_authenticated %}
                                 <span><button class="secondary-text f12" style="width:50px; border:none; background:none;  color: #009cda; font-size:14px;" type="button" data-bs-toggle="collapse" data-bs-target="#reply-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
                                     reply
                                 </button></span>
+                                {% endif %}
 
                             </div>
                             
+                                {% if request.user.is_authenticated %}
+
                            
                             <div class="collapse replybox" id="reply-{{node.pk}}">
+
+                                
                                 
                                 <form class="answer-form" id="repform-{{node.id}}" onsubmit="submitForm(event, 'repform-{{node.id}}', 'null', 'reply-{{node.pk}}' , 'id_chat_message_input_answer-{{node.id}}' )" action="" method='post'> {% csrf_token %}
                                     <input hidden  type="text" name='question-id' id="question-{{question.0.id}}" value="{{question.0.id}}">
@@ -563,6 +594,8 @@
                                     </form>
                                 
                             </div> 
+
+                                    {% endif %}
                                  
                                 {% endif %}
 
@@ -688,7 +721,11 @@
                                             
                                             <ul class="dropdown-menu report-dpn">
                                             {% if node.user != request.user %}
-                                            <li><button class="dropdown-item" onclick="myreportfunc('{{node.pk}}')" type="button">Report</button></li>
+                                                {% if request.user.is_authenticated %}
+                                                 <li><button class="dropdown-item" onclick="myreportfunc('{{node.pk}}')" type="button">Report</button></li>
+                                                {% else %}
+                                                <li><button disabled class="dropdown-item" onclick="myreportfunc('')" type="button">Report</button></li>
+                                                {% endif %}
                                             {% else %}
                                             <li><button class="dropdown-item" onclick="mydeletefunc('{{node.id}}', 'card-{{node.id}}')" type="button">Delete</button></li>
                                             {% endif %}
@@ -743,8 +780,16 @@
                                 <span id="like-{{node.pk}}" ><button class="like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
 
                             {% else %}
+
+                            {% if request.user.is_authenticated %}
                             
                                 <span id="like-{{node.pk}}" style="display:none;" ><button class="like-btn" onclick="mylikefunc('{{node.pk}}')"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% else %}
+
+                                <span id="like-{{node.pk}}" style="display:none;" ><button class="like-btn"><i class="fa-regular fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="like-count-{{node.pk}}"> {{node.likes.all|length}} </span></button></span>
+
+                                {% endif %}
 
                             
                                 <span id="unlike2-{{node.pk}}" style="" ><button class="like-btn" onclick="myunlikefunc('{{node.pk}}', 'unlike2-{{node.pk}}')"><i class="fa-solid fa-heart f12" style="color: #009cda; font-size:14px;"></i> <span id="count-unlike2-{{node.pk}}"> {{node.likes.all|length}}</span></button></span>
@@ -776,11 +821,18 @@
 
 
                                 {% if node.level < 2 %}
+                                {% if request.user.is_authenticated %}
+
                                 <span><button class="secondary-text f12" style="width:50px; border:none; background:none; color: #009cda; font-size:14px;" type="button" data-bs-toggle="collapse" data-bs-target="#reply-{{node.pk}}" aria-expanded="false" aria-controls="collapseExample">
                                     reply
                                 </button></span>
+
+                                {% endif %}
                            
                             </div>
+
+                            {% if request.user.is_authenticated %}
+
 
                             <div class="collapse replybox" id="reply-{{node.pk}}">
                                 
@@ -792,6 +844,8 @@
                                     </form>
                                 
                             </div> 
+
+                                {% endif %}
                                  
                                 {% endif %}
 
@@ -823,12 +877,25 @@
 
                 {% endif %}
 
+                
+
                 <div id="elemental-{{question.0.pk}}">
+
+                    
+                    {% if request.user.is_authenticated %}
                     <form class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
                         <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
                         <textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
-                        <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>Add answer</span></button>
-                    </form>
+
+                            <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>Add answer</span></button>
+
+                            
+                        </form>
+                        {% else %}
+                       
+
+                           <p style="font-size:12px; text-align:center;">~login to answer</p>
+                    {% endif %}
                 </div>  
 
                     {% comment %} <button class="btn btn-sm btn-outline-dark">See Answers</button> {% endcomment %}
