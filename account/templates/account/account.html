@@ -5,6 +5,12 @@
 
 <style type="text/css">
 
+	.bio-content{
+		max-height:200px;
+		overflow-y:auto;
+		{% comment %} border:2px solid red; {% endcomment %}
+	}
+
 	body{
 		height: 100vh;
         {% comment %} border: 2px solid red; {% endcomment %}
@@ -124,6 +130,17 @@
 		background-color: #0c87b8;
 	} */
 
+	/* Media query for tablet width 320px */
+	@media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+		.bio{
+			width:unset !important;
+		}
+
+	}
+
+
+
 </style>
 
 <div class="container-fluid cont-main">
@@ -175,8 +192,8 @@
 				{% endif %} {% endcomment %}
 
 					<div class="radio1">
-						<p class=" mb-1 field-heading">Vibes Answered - {{prof_answers_count}}</p>
-						<p class=" mb-1 field-heading">Vibes Recieved - {{prof_answers_received}}</p>
+						<p class=" mb-1 field-heading"><strong>Vibe Score - {{vibe_score}}</strong></p>
+						
 						{% comment %} {% if origin %}
 							<div>
 								<input type="radio" name="my_dist" checked> Origin
@@ -205,6 +222,17 @@
 					</div>
 					
 				</div>
+
+				{% if bio %}
+
+					<div class="bio" style="width:40vw;">
+						<h6> Bio </h6>
+						<div class="bio-content">
+							<p style="height:auto; overflow-y:auto;">{{bio}}</p>
+						</div>
+					</div>
+
+				{% endif %}
 			  		
 			  
 

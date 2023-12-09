@@ -8,6 +8,25 @@
 
     @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
 
+{% comment %}      
+/* Styling the scrollbar track */
+::-webkit-scrollbar {
+    width: 10px; /* Set the width of the scrollbar */
+}
+
+/* Styling the scrollbar thumb (the draggable part) */
+::-webkit-scrollbar-thumb {
+    background: white; /* Set the color of the thumb */
+    border-radius: 5px; /* Round the corners of the thumb */
+}
+
+/* Styling the scrollbar track (the non-draggable part) */
+::-webkit-scrollbar-track {
+    background: white; /* Set the color of the track */
+    /* background: #eee;  */
+    /* background: #bcdfed; Set the color of the track */
+} {% endcomment %}
+
     .card-header{
         font-family: 'Varela Round', sans-serif;
     }
@@ -250,7 +269,7 @@
     }
 
     .tp2{
-        flex-direction:column;
+        {% comment %} flex-direction:column; {% endcomment %}
         position:relative;
     }
 

@@ -166,6 +166,8 @@ def account_view(request, *args, **kwargs):
         context['name'] = account.name
         context['email'] = account.email
         context['origin'] = account.origin
+        if account.bio:
+          context['bio'] = account.bio
         # context['universityName'] = account.universityName
         try:
 
@@ -183,10 +185,11 @@ def account_view(request, *args, **kwargs):
 
           print('The asception was here or here -')
 
-          context['prof_answers_count'] = my_answers_count
-          context['prof_answers_received'] = my_answers_recieved_count
+          context['vibe_score'] = my_answers_count + my_answers_recieved_count
+          
         except Exception as e:
             print('Exception at account view - ', str(e))
+
         context['gender'] = account.gender
 
         email = account.email
@@ -264,8 +267,10 @@ def edit_account_view(request, *args, **kwargs):
         if request.POST:
             # name = request.POST.get('name')
             origin = request.POST.get('my_dist')
-            # universityName = request.POST.get('uniname')
+            bio = request.POST.get('bio')
+            print('This is the bio - ', bio)
             # account.name = name
+            account.bio = bio
             account.origin = origin
             # account.universityName = universityName
             account.save()
@@ -286,9 +291,12 @@ def edit_account_view(request, *args, **kwargs):
                 "email": account.email,
                 "name": account.name,
                 "origin": account.origin,
+                'bio':account.bio,
                 'universityName' : uni_name,
                 'domain' : domain,
             }
+
+            
 
             context['form'] = initial
 
@@ -520,6 +528,7 @@ def nearby_uni(request):
             context['user_uni'] = uni_obj.universityName
             context['user_uni_domain'] = uni_obj.name
             context['user_uni_num'] = user_uni_num
+            context['user_uni_id'] = uni_obj.id
 
             nearby_universities = uni_obj.nearbyList.all()
             for university in nearby_universities:
@@ -530,6 +539,7 @@ def nearby_uni(request):
                         'university' : university.universityName,
                         'students' : university.users.filter(is_verified = True).count(),
                         'domain' : university.name,
+                        'uni_id' : university.id
                     })
             context['nearby_lst'] = nearby_lst
             # print(nearby_lst)
@@ -541,6 +551,7 @@ def nearby_uni(request):
                 user_uni_num = uni_obj.users.filter(is_verified = True).count()
                 context['user_uni'] = uni_obj.universityName
                 context['user_uni_num'] = user_uni_num
+                context['user_uni_id'] = uni_obj.id
 
                 nearby_universities = uni_obj.nearbyList.all()
                 for university in nearby_universities:
@@ -548,6 +559,9 @@ def nearby_uni(request):
                         nearby_lst.append({
                             'university' : university.universityName,
                             'students' : university.users.filter(is_verified = True).count(),
+                            'domain' : university.name,
+                            'uni_id' : university.id
+
                         })
                 context['nearby_lst'] = nearby_lst
                 
@@ -557,6 +571,55 @@ def nearby_uni(request):
     except Exception as e:
         print(e)
     return render(request, 'account/nearby_uni_list.html',context)
+
+
+
+def nearby_uni_stud(request,  *args, **kwargs):
+    context = {}
+    try:
+        if not request.user.is_authenticated:
+            return redirect("login")
+        
+        uni_id = kwargs.get('uni_id')
+
+        try:
+            uni_obj = University.objects.get(id=uni_id)
+        except University.DoesNotExist:
+            return HttpResponse('The university you are looking for does not exist!')
+        
+        if uni_obj:
+            user_uni_num = uni_obj.users.filter(is_verified = True).count()
+            context['user_uni'] = uni_obj.universityName
+            context['user_uni_domain'] = uni_obj.name
+            context['user_uni_num'] = user_uni_num
+
+            uni_students = uni_obj.users.filter(is_verified=True)
+            nearby_lst = []
+            for student in uni_students:
+                # print(university)
+                # print(type(university))
+
+                account = request.user
+                auth_user_friend_list = FriendList.objects.get(user=account)
+
+                if student.bio:
+                    bio = student.bio
+                else: 
+                    bio = ""
+               
+                nearby_lst.append({
+                    'name' : student.name,
+                    'id' : student.id,
+                    'bio' : bio,
+                    'is_friend' : auth_user_friend_list.is_mutual_friend(student),
+                })
+            context['nearby_lst'] = nearby_lst
+        
+       
+        
+    except Exception as e:
+        print(e)
+    return render(request, 'account/nearby_uni_stud_list.html',context)
 
 def registration_error(request):
     context = {}

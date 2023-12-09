@@ -186,6 +186,7 @@ def create_notification(sender, instance, **kwargs):
 
 	
 	if instance.parent:
+		print(instance.parent, 'this tis the fuckin parent')
 		if instance.parent.user != instance.user:
 			instance.notifications.create(
 				target=instance.parent.user,
@@ -201,7 +202,7 @@ def create_notification(sender, instance, **kwargs):
 				from_user=instance.user,
 				redirect_url=f"{domain_name}/vibes/question/{instance.id}/",
 				# verb=f"{instance.user.name} Answered at your question",
-				verb=f"{instance.user.name} answered this at your question - {instance.content[:50]} ..." if len(instance.content) > 50 else f"{instance.user.name} replied this at your vibe - {instance.content}",
+				verb=f"{instance.user.name} vibed this at your question - {instance.content[:50]} ..." if len(instance.content) > 50 else f"{instance.user.name} vibed this at your question - {instance.content}",
 				content_type=instance,
 			)
 		

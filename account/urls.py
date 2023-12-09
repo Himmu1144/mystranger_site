@@ -8,6 +8,7 @@ from account.views import (
     verify,
     nearby_uni,
     registration_error,
+    nearby_uni_stud
 
     
 )
@@ -22,6 +23,7 @@ urlpatterns = [
 	path('register/token/', tokenSend, name="token"),
     path('verify/<auth_token>' , verify , name="verify"),
     path('nearby/universities' , nearby_uni , name="nearby-uni"),
+    path('nearby/uni-students/<uni_id>' , nearby_uni_stud , name="nearby-uni-stud"),
     path('registration/issueForm' , registration_error , name="reg-error"),
     
 ]

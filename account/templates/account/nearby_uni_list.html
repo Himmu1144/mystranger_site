@@ -67,7 +67,7 @@
             <div>
         <strong style="font-size: 20px;">{{user_uni}}</strong>
         <p class="text-secondary" style="font-size:13px; margin-bottom:0px;">{{user_uni_domain}}</p></div>
-        <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark ">{{user_uni_num}} {% if user_uni_num == 1 %}Student{% else %}Students{% endif %} </button></a>
+        <a class="nearby-num" href="{% url "account:nearby-uni-stud" uni_id=user_uni_id %}"><button class="btn btn-sm btn-outline-dark ">{{user_uni_num}} {% if user_uni_num == 1 %}Student{% else %}Students{% endif %} </button></a>
         </div>
         <!-- <div class="card-body heading-top">
            
@@ -83,9 +83,9 @@
                 <p style="margin-bottom:4px;">{{delta.university}}</p>
                 <p class="text-secondary" style="font-size:12px; margin-bottom:0px;">domain : {{delta.domain}}</p></div>
                 {% if delta.students == 1 %}
-                    <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark">{{delta.students}} Student</button></a>
+                    <a class="nearby-num" href="{% url "account:nearby-uni-stud" uni_id=delta.uni_id %}"><button class="btn btn-sm btn-outline-dark">{{delta.students}} Student</button></a>
                 {% else %}
-                    <a class="nearby-num" href="#"><button class="btn btn-sm btn-outline-dark">{{delta.students}} Students</button></a>
+                    <a class="nearby-num" href="{% url "account:nearby-uni-stud" uni_id=delta.uni_id %}"><button class="btn btn-sm btn-outline-dark">{{delta.students}} Students</button></a>
                 {% endif %}
                 <!-- <p>Registered Students : </p> -->
                    

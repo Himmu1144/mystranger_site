@@ -60,6 +60,7 @@ class Account(AbstractBaseUser):
                               max_length=100, unique=True, null=False)
     name = models.CharField(max_length=100, default='Stranger')
     university_name = models.CharField(max_length=100, default='Unknown',blank=False)
+    bio = models.CharField(max_length=5000,blank=True, null=True, default='')
     # universityName = models.CharField(max_length=200, default="",blank=True)
     origin = models.BooleanField(default=False)
     flags = models.IntegerField(default=0, blank=True)
