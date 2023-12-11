@@ -11,6 +11,10 @@ def pika_view(request):
     # if not request.user.is_authenticated:
     #     return redirect('login')
 
+    if request.user.is_authenticated:
+        user = request.user
+        user.update_last_activity()
+
     context = {}
 
     question_answers = [] # ['{question' : {answers}}]
@@ -327,8 +331,23 @@ def show_ques_view(request,*args, **kwargs):
     ans_id = kwargs.get('ans_id')
     context = {}
 
+    if request.user.is_authenticated:
+        user = request.user
+        user.update_last_activity()
+
     try:
-        answer = Answer.objects.get(pk=ans_id)
+        try:
+            answer = Answer.objects.get(pk=ans_id)
+        except Answer.DoesNotExist:
+            # now check if its a question
+            try:
+                question = PublicChatRoom.objects.get(pk=ans_id)
+                answer = question.answers.filter(parent=None).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
+                answer = answer.annotate(num_likes=Count('likes'))
+                answer = answer.order_by('-num_likes')[:1].first()
+            except:
+                return HttpResponse('The question/answer you are looking for does not exist! or is deleted!')
+            
         ques_id = answer.question.id
         question = PublicChatRoom.objects.get(pk=ques_id)
 

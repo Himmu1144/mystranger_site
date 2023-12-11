@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from friend.models import FriendList
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 
 
@@ -73,6 +74,7 @@ class Account(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     terms = models.BooleanField(default=True,blank=False,null=False)
     is_verified = models.BooleanField(default=False)
+    last_activity = models.DateTimeField(verbose_name='last activity', default=timezone.now)
 
     GENDER_CHOICES = [
         ('M', 'Male'),
@@ -101,6 +103,10 @@ class Account(AbstractBaseUser):
     # Does this user have permission to view this app? (ALWAYS YES FOR SIMPLICITY)
     def has_module_perms(self, app_label):
         return True
+    
+    def update_last_activity(self):
+        self.last_activity = timezone.now()
+        self.save()
 
 @receiver(post_save, sender=Account)
 def _post_save_receiver(sender, instance, **kwargs):

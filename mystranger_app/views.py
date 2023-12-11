@@ -13,6 +13,7 @@ def home_view(request):
     context = {}
     if request.user.is_authenticated:
         user = request.user
+        user.update_last_activity()
         # checking if user's uni exist or the user is using uni prof instead
         uni_name = user.university_name
 

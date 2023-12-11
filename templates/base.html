@@ -538,6 +538,10 @@ input:focus, textarea:focus, select:focus {
 
 .nav-msg{
   display: none;
+} 
+
+.vibe-msg{
+  display:inline!important;
 }
 
 .nav-msg2{
@@ -603,6 +607,9 @@ input:focus, textarea:focus, select:focus {
     padding-top: 0px!important;
   }
 
+  msg-notif-mob{
+    display:none;
+  }
   
 
   }
@@ -629,12 +636,18 @@ input:focus, textarea:focus, select:focus {
             
 
             <li>
+\
               <a href="{% url 'chat:private-chat-room' %}">
                 <div class="icon">
                   <span class="fa-solid fa-message"></span>
                 </div>
+                <div class="d-flex notifications-icon-container rounded-circle align-items-center main-msg-notif" style="flex-direction:row;" onclick="setMsgNotificationsAsRead()">
+                  <span id="id_msg_notifications_count_mobile" class="notify-badge msg-notif msg-notif-mob" style="
+                    right: 25px !important; top: 27px;"></span>
                 Messages
+              </div>
               </a>
+
             </li>
 
             <li>
@@ -802,7 +815,7 @@ input:focus, textarea:focus, select:focus {
       <div class='d-flex nav-phone' style="align-items: center;">
         <div class="btn-group dropleft">
           <div class="d-flex notifications-icon-container rounded-circle align-items-center main-msg-notif" onclick="setMsgNotificationsAsRead()">
-            <span id="id_msg_notifications_count" class="notify-badge msg-notif" style="
+            <span id="id_msg_notifications_count" class="notify-badge msg-notif msg-notif-mob" style="
               right: 10px !important;"></span>
               <div class="d-flex flex-direction-row mr-4 ml-2">
                 <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'qna:pika' %}">Vibes</a>
@@ -974,7 +987,7 @@ input:focus, textarea:focus, select:focus {
 
     {% else %}
     <div class='d-flex'>
-      <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'qna:pika' %}">Vibes</a>
+      <a class="text-light p-2 nav-msg vibe-msg" style='text-decoration:none;' href="{% url 'qna:pika' %}">Vibes</a>
       <a class="p-2 text-light dropleft" href="{% url 'login' %}">Login</a>
       <a class=" p-2 text-light dropleft" href="{% url 'register' %}">Register</a>
     </div>

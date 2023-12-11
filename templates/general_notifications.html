@@ -630,6 +630,7 @@
 	}
 
 	function setUnreadMessageNotificationsCount(count){
+		{% if not request.user_agent.is_mobile %}
 		var countElement = document.getElementById("id_msg_notifications_count")
 		
 		if(count > 0){
@@ -641,6 +642,22 @@
 			countElement.style.background = "transparent"
 			countElement.style.display = "none"
 		}
+
+		{% else %}
+
+		var countElement = document.getElementById("id_msg_notifications_count_mobile")
+		
+		if(count > 0){
+			countElement.innerHTML = count
+			countElement.style.background = "red"
+			countElement.style.display = "block"
+		}
+		else{
+			countElement.style.background = "transparent"
+			countElement.style.display = "none"
+		}
+
+		{% endif %}
 	}
 
 </script>

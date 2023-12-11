@@ -779,8 +779,8 @@
 		// Correctly decide between ws:// and wss://
 		
 		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-		{% comment %} var ws_path = ws_scheme + '://' + window.location.host + "/mchat/" + roomId + "/";  {% endcomment %}
-		var ws_path = ws_scheme + '://' + window.location.host + ":8001/mchat/" + roomId + "/"; // production
+		var ws_path = ws_scheme + '://' + window.location.host + "/mchat/" + roomId + "/"; 
+		{% comment %} var ws_path = ws_scheme + '://' + window.location.host + ":8001/mchat/" + roomId + "/"; // production {% endcomment %}
 
 
 		// console.log("Connecting to " + ws_path);
@@ -1392,8 +1392,8 @@
 	
 
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-	{% comment %} var ws2_path = ws_scheme + '://' + window.location.host + "/mchat-notif/"; // development {% endcomment %}
-	var ws2_path = ws_scheme + '://' + window.location.host + ":8001/mchat-notif/"; // production
+	var ws2_path = ws_scheme + '://' + window.location.host + "/mchat-notif/"; // development
+	{% comment %} var ws2_path = ws_scheme + '://' + window.location.host + ":8001/mchat-notif/"; // production {% endcomment %}
 
 
 	// console.log("Connecting to " + ws_path);

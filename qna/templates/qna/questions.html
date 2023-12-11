@@ -27,6 +27,13 @@
     /* background: #bcdfed; Set the color of the track */
 } {% endcomment %}
 
+    .share-btn{
+        border:none;
+        background:none;
+        margin-top:5px;
+        font-size:14px;
+    }
+
     .card-header{
         font-family: 'Varela Round', sans-serif;
     }
@@ -256,7 +263,7 @@
     }
 
     .small-text{
-        font-size: 9px!important;
+        font-size: 11px!important;
         margin-bottom: 4px!important;
         display: flex;
     flex-direction: column;
@@ -287,7 +294,7 @@
     }
 
     .ans_texti{
-        font-size:12px;
+        font-size:13px;
     }
 
     .like-btn{
@@ -361,7 +368,7 @@
                             
                             <span class="heading-top"><a style="color:#009cda; margin-right:0.5em;" href="{% url "account:view" user_id=question.0.owner.id %}"><span>{{question.0.owner.name}} | {{question.0.owner.university_name}}</span> </a></span> 
                             
-                            <span class="ml-2 timepamper"> {{question.0.timestamp|naturaltime}} </span></span>
+                            <span class="timepamper"> {{question.0.timestamp|naturaltime}} </span></span>
 
                         <div class="tp1-right">
 
@@ -371,6 +378,8 @@
                                 width="26px" alt="" srcset=""></span></button>
                             <button class="d-none cancel_btn" onclick="cancel_friend('send_req_btn-{{question.0.pk}}','{{question.0.owner.pk}}', 'cancel_req_btn-{{question.0.pk}}')" id="cancel_req_btn-{{question.0.pk}}"><i class="fa-solid fa-xmark "
                             style="color:red;"></i></button>
+
+                            <button class="share-btn" onclick="openShareModal('{{question.0.pk}}')"><i class="fa-solid fa-share-from-square" style="color: #343a40;"></i></button>
 
 
                             {% comment %} <div class="dropdown">
@@ -392,6 +401,8 @@
 
 
                         {% if question.0.owner == request.user %}
+
+                        <button class="share-btn" onclick="openShareModal('{{question.0.pk}}')"><i class="fa-solid fa-share-from-square" style="color: #343a40;"></i></button>
 
                         <div class="dropdown">
                         
@@ -912,10 +923,55 @@
     
 </div>
 
+<!-- Bootstrap Modal -->
+<div class="modal" tabindex="-1" role="dialog" id="shareModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Share Post</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Share this link:</p>
+          {% comment %} <input type="text" class="form-control mb-3" id="shareLink" value="https://mystranger.in/vibes/question/ans_id/" readonly> {% endcomment %}
+          <input type="text" class="form-control mb-3" id="shareLink" readonly>
+          <button class="btn btn-primary" onclick="copyLink()">Copy Link</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% include 'friend/snippets/send_friend_request.html' %}
 {% include 'friend/snippets/cancel_friend_request.html' %}
 
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.15.7/dist/sweetalert2.min.js"></script>
+
+
 <script>
+
+    function openShareModal(postId) {
+        {% comment %} var dynamicLink = `https://example.com/post/${postId}`; {% endcomment %}
+        {% comment %} var dynamicLink = `https://mystranger.in/vibes/question/${postId}/`; {% endcomment %}
+        var dynamicLink = `http://127.0.0.1:8000/vibes/question/${postId}/`;
+        document.getElementById('shareLink').value = dynamicLink;
+        $('#shareModal').modal('show');
+      }
+    
+      function copyLink() {
+        var shareLinkInput = document.getElementById('shareLink');
+        shareLinkInput.select();
+        document.execCommand('copy');
+        Swal.fire('Link Copied!', '', 'success');
+      }
+    
+      // Close modal when clicking outside
+      $(document).mouseup(function (e) {
+        var modal = $('#shareModal');
+        if (!modal.is(e.target) && modal.has(e.target).length === 0) {
+          modal.modal('hide');
+        }
+      });
 
     function add_friend(send_req_btn_id, receiver_id, cancel_req_btn_id){
         console.log('add friend got clicked')

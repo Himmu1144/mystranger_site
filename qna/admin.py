@@ -8,9 +8,10 @@ from qna.models import PublicChatRoom, PublicRoomChatMessage , Answer
 
 
 class PublicChatRoomAdmin(admin.ModelAdmin):
-    list_display = ['id', 'owner','question' ]
+    list_display = ['id', 'owner','question', 'timestamp' ]
     search_fields = ['id', 'title', 'question', ]
     readonly_fields = ['id',]
+    
 
     class Meta:
         model = PublicChatRoom
