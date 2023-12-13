@@ -168,15 +168,11 @@
 				</div>
 
 				  <p class="mt-2 mb-1 field-heading">Email</p>
-				  {% if request.user.is_authenticated and is_friend or is_self %}
-
-				  	<h6>{{email}}</h6>
-
-					{% else %}
+				 
 
 					<h6>{{hidden_email}}</h6>
 
-				  {% endif %}
+				
 
 
 

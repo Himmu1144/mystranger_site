@@ -129,6 +129,8 @@ class RegistrationError(models.Model):
     uni_address = models.CharField(max_length=400 )
     issue_faced = models.CharField(max_length=10000 )
     is_resolved = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return str(self.email)
@@ -139,6 +141,7 @@ class deleted_account(models.Model):
     name = models.CharField(max_length=100)
     reason = models.CharField(max_length=10000)
     is_resolved = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.email)
