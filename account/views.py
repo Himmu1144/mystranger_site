@@ -186,6 +186,16 @@ def account_view(request, *args, **kwargs):
           print('The asception was here or here -')
 
           context['vibe_score'] = my_answers_count + my_answers_recieved_count
+
+          try:
+              university = University.objects.get(name=request.user.university_name)
+              nearby_list_count = university.nearbyList.all().count()
+              context['nearby_list_count'] = nearby_list_count
+          except University.DoesNotExist:
+              university = UniversityProfile.objects.get(name=request.user.university_name)
+              nearby_list_count = university.nearbyList.all().count()
+              context['nearby_list_count'] = nearby_list_count
+            
           
         except Exception as e:
             print('Exception at account view - ', str(e))

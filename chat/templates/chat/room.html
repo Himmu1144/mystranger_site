@@ -481,6 +481,8 @@
 
 </style>
 
+
+
 <div class="main-container">
 	<div class="row cont-row">
 		<div class="left-column video">
@@ -570,6 +572,7 @@
 									id="id_chat_message_input"></textarea> -->
 							<div class="txtarea-cont">
 
+								<div class="bitmojiStickerPicker"></div>
 								<textarea class="flex-grow-1 video-textarea" id="id_chat_message_input"></textarea>
 								<button class="chat-message-submit-button send-button send-btn-cont" id="send_button">
 									<span id="id_chat_message_submit" class="material-icons send-btn">send
@@ -621,20 +624,52 @@
 	</div>
 </div>
 <!-- Client Error MODAL -->
-
-<script src="{% static 'collections/collections.min.js' %}"></script>
+{% comment %} <script>
+	/* Load the Bitmoji Kit SDK asynchronously */
+	(function (d, s, id) {
+	  var js, sjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "https://sdk.snapkit.com/js/v1/login_bitmoji.js";
+	  sjs.parentNode.insertBefore(js, sjs);
+	}(document, 'script', 'bitmojikit-sdk'));
+  </script>
+<script src="{% static 'collections/collections.min.js' %}"></script> {% endcomment %}
 
 <script type="text/javascript">
-
-	function goBack(){
-		var rightColumn = document.querySelector('.right-column');
-		rightColumn.style.left = '100%';
-	}
+{% comment %} /* Setup Bitmoji Kit Web here */
+window.snapKitInit = () => {
+	const bitmojiWebPickerIconClass = "bitmojiStickerPicker";
+	const uiOptions = {
+	  onStickerPickCallback: sendImage,
+	  webpickerPosition: "topLeft",
+	};
+	const loginParamsObj = {
+	  clientId: /* your client id here: */ "",
+	  redirectURI: "http://localhost:8081/",
+	  scopeList: [
+		 "user.bitmoji.avatar",
+		 "user.display_name",
+	  ]
+	};
+	
+  snap.bitmojikit.mountBitmojiStickerPickerIcons(
+	  bitmojiWebPickerIconClass,
+	  uiOptions,
+	  loginParamsObj
+	);
+  } {% endcomment %}
 
 	{% comment %} var generalCachedMsgNotifList = new List([]) {% endcomment %}
 
 	// submitGeneralMsgNotificationToCache()
 	{% comment %} console.log(generalCachedMsgNotifList) {% endcomment %}
+
+	
+	function goBack(){
+		var rightColumn = document.querySelector('.right-column');
+		rightColumn.style.left = '100%';
+	}
 
 	function submitGeneralMsgNotificationToCache() {
 		// console.log('SGNMTOCAHE is being called')
