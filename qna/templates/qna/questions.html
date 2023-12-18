@@ -6,6 +6,120 @@
 
 <style>
 
+    {% comment %} For the polls {% endcomment %}
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+    
+    .wrapper{
+      background: #fff;
+      border-radius: 15px;
+      padding: 25px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+    }
+    .wrapper header{
+      font-size: 22px;
+      font-weight: 600;
+    }
+    .wrapper .poll-area{
+      margin: 20px 0 15px 0;
+    }
+    .poll-area label{
+      display: block;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      padding: 8px 15px;
+      border: 2px solid #e6e6e6;
+      transition: all 0.2s ease;
+    }
+    .poll-area label:hover{
+      border-color: #ddd;
+    }
+    label.selected{
+      border-color: #6665ee!important;
+    }
+    label .row{
+      display: flex;
+      pointer-events: none;
+      justify-content: space-between;
+    }
+    label .row .column{
+      display: flex;
+      align-items: center;
+    }
+    label .row .circle{
+      height: 19px;
+      width: 19px;
+      display: block;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      margin-right: 10px;
+      position: relative;
+    }
+    label.selected .row .circle{
+      border-color: #6665ee;
+    }
+    label .row .circle::after{
+      content: "";
+      height: 11px;
+      width: 11px;
+      background: #6665ee;
+      border-radius: inherit;
+      position: absolute;
+      left: 2px;
+      top: 2px;
+      display: none;
+    }
+    .poll-area label:hover .row .circle::after{
+      display: block;
+      background: #e6e6e6;
+    }
+    label.selected .row .circle::after{
+      display: block;
+      background: #6665ee!important;
+    }
+    label .row span{
+      font-size: 16px;
+      font-weight: 500;
+    }
+    label .row .percent{
+      display: none;
+    }
+    label .progress{
+      height: 7px;
+      width: 100%;
+      position: relative;
+      background: #f0f0f0;
+      margin: 8px 0 3px 0;
+      border-radius: 30px;
+      display: none;
+      pointer-events: none;
+    }
+    label .progress:after{
+      position: absolute;
+      content: "";
+      height: 100%;
+      background: #ccc;
+      width: calc(1% * var(--w));
+      border-radius: inherit;
+      transition: all 0.2s ease;
+    }
+    label.selected .progress::after{
+      background: #6665ee;
+    }
+    label.selectall .progress,
+    label.selectall .row .percent{
+      display: block;
+    }
+    input[type="radio"],
+    input[type="checkbox"]{
+      display: none;
+    }
+
+    .poll-area{
+        padding: 20px;
+    }
+
     @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
 
 {% comment %}      
@@ -43,7 +157,7 @@
         {% comment %} border: 2px solid green; {% endcomment %}
         width: 60vw;
         margin: auto;
-        margin-top: 2em;
+        margin-top: 0.5em;
 
     }
 
@@ -241,11 +355,57 @@
         cursor:pointer;
     }
 
+    .innerbar{
+        top: 0;
+        position: absolute;
+        z-index: 2;
+        height: 29px;
+        width: 0%;
+        left: 0px;
+        background: #7cdaff;
+        transition: width 1s ease;
+        border-radius: 8px 10px 10px 8px;
+    }
+
     {% comment %} .btn-answer:focus,
 .btn-answer:active {
     outline: none !important;
     box-shadow: none !important;
 } {% endcomment %}
+
+    
+
+    /* Media query for tablet width 320px */
+  @media only screen and (min-width: 800px) { 
+
+    .thepoll-cont{
+        height: 45px!important;
+    }
+
+    .innerbar{
+        height: 44px!important;
+    }
+
+    .poll-optieon{
+        top: 7px!important;
+    font-size: 17px!important;
+    }
+
+    .percetion{
+        position: absolute;
+    right: 25px !important;
+    z-index: 2;
+    font-size: 16px!important;
+    top: 10px !important;
+    }
+
+    .tick-percetion{
+        right: 10px!important;
+    top: 16px!important;
+    font-size:12px!important;
+    }
+
+  }
 
     /* Media query for tablet width 320px */
   @media only screen and (min-width: 300px) and (max-width: 500px) { 
@@ -447,16 +607,75 @@
                 <p>Users</p>  
             
             </div> -->
+
+            {% if not question.0.polls.all %}
+                        {% comment %} <p class="p-4" >No polls</p> {% endcomment %}
+                {% else %}
+                <div class="poll-area">
+                    <div style="border: 1px solid #343a40;
+                    position: relative;
+                    padding: 20px 20px 5px 20px;
+                    border-radius: 14px;" class="total-line">
+                        <div style="    background: white;
+                        left: 17px;
+                        position: absolute;
+                        top: -17px;
+                        padding: 5px;" class="total-count">
+                            <span style="font-size:14px;" id="poll-count-{{question.0.id}}">{{question.0.poll_count}} vibes</span>
+                        </div>
+                    
+                    {% for poll in question.0.polls.all %}
+                    
+
+                            {% comment %} <div class="row">
+                              <div class="column">
+                                <span class="circle"></span>
+                                <span class="text">{{poll.option}}</span>
+                              </div>
+                              <span class="percent"></span>
+                            </div>
+                            <div class="progress" style=''></div>
+                          {% endcomment %}
+
+                          <div class="poll-{{question.0.id}} thepoll-cont" id="poll-{{poll.id}}" style="padding: 6px 12px;
+                          border: 1px solid #8d8d8d;
+                          border-radius: 8px;
+                          margin-bottom: 8px;
+                          position: relative;
+                          height: 30px;" 
+                          
+                          {% if request.user.is_authenticated %} onclick="myselecfunc('{{poll.id}}','{{question.0.id}}')"  {% endif %} >
+                          <div style="z-index:1;" class="innerbar" id="innerbar-{{poll.id}}">
+                        </div>
+                          <span class="poll-optieon" style="position: absolute;
+                          z-index: 2;
+                          top: 2px;
+                          font-size: 14px;">{{poll.option}}
+                            </span>
+                            <span style="font-size: 12px;"><span class="percetion" style="position:absolute; right:20px; z-index:2;" class="percentage" id="persia-{{poll.id}}"></span><span style="font-size: 10px;
+                            display: none;
+                            position: absolute;
+                            right: 6px;
+                            top: 10px;
+                            z-index: 2;" class='tick-percetion' id="tick-{{poll.id}}"><i class="fa-solid fa-check" style="color: #009cda;"></i></span></span>
+                        </div>
+                          
+                    {% endfor %}
+                </div>
+                    </div>
+            {% endif %}
            
             <div class="card">
                 {% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
                     
                     {% if not question.0.answers.all %}
+                        {% if not question.0.polls.all %}
                         <p class="p-4" >Be the first to answer {{question.0.owner.name}}'s question</p>
+                        {% endif %}
                     {% else %}
                         {% comment %} {% for answer in question.answers.all %} {% endcomment %}
                         {% load mptt_tags %}
-                        
+                        {% if not question.0.polls.all %}
                             {% recursetree question.1 %}
 
                             {% comment %} {% if node.ans_reported.all|length > 5 %}{% endif %} {% endcomment %}
@@ -646,6 +865,7 @@
 
 
                             {% endrecursetree %}
+                            {% endif %}
                             
                         {% comment %} {% endfor %} {% endcomment %}
                     {% endif %}
@@ -894,6 +1114,8 @@
 
                     
                     {% if request.user.is_authenticated %}
+                    
+                    {% comment %} {% if not question.0.polls.all %} {% endcomment %}
                     <form class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
                         <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
                         <textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
@@ -902,6 +1124,7 @@
 
                             
                         </form>
+                        {% comment %} {% endif %} {% endcomment %}
                         {% else %}
                        
 
@@ -950,10 +1173,86 @@
 
 <script>
 
+    function myselecfunc(pollid,allpollid){
+        console.log('I am getting called baby - ',pollid,allpollid)
+        
+
+        <!-- Now i gotta disable click on all polls with allpollid  -->
+        // Get all elements with the class "pollidea"
+        var pollElements = document.getElementsByClassName('poll-'+allpollid);
+
+        // Loop through each element and disable the onclick function
+        for (var i = 0; i < pollElements.length; i++) {
+            // Disable the onclick function
+            pollElements[i].onclick = null;
+        }
+
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"poll-id": pollid,
+            'action' : 'poll-selected',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'qna:addAnswer' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+			
+
+                if(data['status'] == "got_data"){ 
+
+                    console.log(data.response)
+                    mydict = data.response
+                    for (var key in mydict) { 
+                        var percentage = mydict[key];
+                        
+                        polltransition = document.getElementById('innerbar-'+key)
+                        {% comment %} polltransition.style.background = '#009cda' {% endcomment %}
+                        polltransition.style.width = percentage + '%';
+                        {% comment %} polltransition.style.transition = 'width 2s ease'; // Adjust the duration and easing as needed {% endcomment %}
+                       
+                        document.getElementById('persia-'+key).innerHTML = percentage + ' %'
+                        {% comment %} document.getElementById('poll-count-'+key).innerHTML = percentage + ' %' {% endcomment %}
+
+                    }
+
+                    var elementa = document.getElementById('tick-'+pollid)
+                    console.log('tick-',pollid, elementa)
+                    elementa.style.display = 'flex';
+
+                    var currentValue = document.getElementById('poll-count-' + allpollid).innerHTML;
+                    {% comment %} console.log('valval - ', currentValue) {% endcomment %}
+                    // Convert the value to a number (assuming it's a numeric value)
+                    var currentNumber = parseInt(currentValue, 10);
+                    
+
+                    // Add 1 to the value
+                    var newValue = currentNumber + 1;
+
+                    // Update the element with the new value
+                    document.getElementById('poll-count-' + allpollid).innerHTML = newValue + ' vibes';
+
+                }
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				{% comment %} alert("Something went wrong.") {% endcomment %}
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+
+       }
+
     function openShareModal(postId) {
         {% comment %} var dynamicLink = `https://example.com/post/${postId}`; {% endcomment %}
         {% comment %} var dynamicLink = `https://mystranger.in/vibes/question/${postId}/`; {% endcomment %}
-        var dynamicLink = `http://127.0.0.1:8000/vibes/question/${postId}/`;
+        var dynamicLink = `http://127.0.0.1:8000/vibes/question/${postId}/?question=true`;
         document.getElementById('shareLink').value = dynamicLink;
         $('#shareModal').modal('show');
       }

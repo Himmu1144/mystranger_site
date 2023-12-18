@@ -30,6 +30,13 @@ class PublicChatRoom(models.Model):
 
 	def ans_count(self):
 		return self.answers.filter(parent=None).count()
+	
+	def poll_count(self):
+		polls = self.polls.filter(question=self)
+		count = 0
+		for poll in polls:
+			count += poll.polled.all().count()
+		return count
 
 	def connect_user(self, user):
 		"""
@@ -224,9 +231,36 @@ def update_is_report_action(sender, instance, action, **kwargs):
 
 
 
+class Polls(models.Model):
+	question            = models.ForeignKey(PublicChatRoom, on_delete=models.CASCADE, related_name='polls')
+	option            = models.TextField(unique=False, blank=False,)
+	polled				= models.ManyToManyField(settings.AUTH_USER_MODEL, help_text="polled", blank=True, related_name='polled')
+
+	def add_user(self, user):
+		"""
+		return true if user is added to the users list
+		"""
+		is_user_added = False
+		if not user in self.polled.all():
+			self.polled.add(user)
+			self.save()
+			is_user_added = True
+		elif user in self.polled.all():
+			is_user_added = True
+		return is_user_added 
 
 
-
-
-
+	def remove_user(self, user):
+		"""
+		return true if user is removed from the users list
+		"""
+		is_user_removed = False
+		if user in self.polled.all():
+			self.polled.remove(user)
+			self.save()
+			is_user_removed = True
+		return is_user_removed 
+	
+	def __str__(self):
+		return self.option
 

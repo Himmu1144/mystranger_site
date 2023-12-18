@@ -4,7 +4,7 @@ from django.core.cache import cache
 from django.db import models
 from mptt.admin import MPTTModelAdmin
 
-from qna.models import PublicChatRoom, PublicRoomChatMessage , Answer
+from qna.models import PublicChatRoom, PublicRoomChatMessage , Answer , Polls
 
 
 class PublicChatRoomAdmin(admin.ModelAdmin):
@@ -54,6 +54,7 @@ class PublicRoomChatMessageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PublicRoomChatMessage, PublicRoomChatMessageAdmin)
+admin.site.register(Polls)
 admin.site.register(Answer, MPTTModelAdmin)
 
 

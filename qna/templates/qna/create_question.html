@@ -15,13 +15,35 @@
 
 </style>
 
+{% if messages %}
+  
+    {% for message in messages %}
+      
+      <div style="margin-bottom: 0px;" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong></strong> {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+ 
+{% endif %}
 <div class="p-5 mb-4 bg-body-tertiary rounded-3">
     <div class="container-fluid py-5">
+      
       <h1 class="display-8 fw-bold phone-font">Ask Stranger's a Question -</h1>
       <form action="" method="post"> {% csrf_token %}
-      <input type="text" name="question" id="question" class="radius form-control" placeholder="ask an interesting question anonymously" required
+      <input type="text" name="question" id="question" class="radius form-control" placeholder="ask without being judged ..." required
       autofocus>
+      {% comment %} polls optional {% endcomment %}
+      <h6 class="text-secondary mt-4">Wanna add polls? (optional)</h6>
+      <input type="text" name="poll1" id="poll1" class="radius form-control mt-1" placeholder="tik tik option1">
+      <input type="text" name="poll2" id="poll2" class="radius form-control mt-1" placeholder="tik tac option2">
+      <input type="text" name="poll3" id="poll3" class="radius form-control mt-1" placeholder="wanna add more... option3">
+      <input type="text" name="poll4" id="poll4" class="radius form-control mt-1" placeholder="huff puff option4">
 
+
+      <p class="text-secondary mt-2" style="font-size:14px;">if adding polls minimum of 2 options are required!</p>
       <button class="btn btn-sm btn-outline-dark mt-4" type="Submit">Submit Question</button>
     </form>
     </div>

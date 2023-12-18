@@ -400,6 +400,14 @@
 		font-weight: 900px;
 	}
 
+	.friend-container{
+		{% comment %} border: 1px solid rgb(52, 58, 64); {% endcomment %}
+    border-radius: 8px;
+    display: flex !important;
+    flex-direction: column !important;
+	border: 1px solid rgb(205 205 205);
+	}
+
 	/* Media query for tablet width 320px */
   @media only screen and (min-width: 300px) and (max-width: 500px) {  
 	body{
@@ -494,7 +502,7 @@
 					<div class="d-flex flex-column friends-list-container ">
 						{% if m_and_f %}
 						{% for x in m_and_f %}
-						<div class="d-flex flex-row p-2 friend-container flex-grow-1"
+						<div class="d-flex flex-row p-2 friend-container flex-grow-1 mt-1 mb-1"
 							onclick="onSelectFriend('{{x.friend.id}}')" id="id_friend_container_{{x.friend.id}}">
 							{% comment %} <img class="profile-image rounded-circle img-fluid"
 								id="id_friend_img_{{x.friend.id}}" src="{% static 'codingwithmitch/dummy_image.png' %}">
@@ -510,6 +518,23 @@
 
 								{% endif %}
 							</div>
+							<p style="
+								margin-bottom: 0px;
+								padding-left: 0.5em;
+							">
+						
+							{% comment %} {% if x.last_message|length > 30 %}
+                               
+							{{ x.last_message|slice:":30" }}...
+                                    
+                                
+                            {% elif x.last_message == 'None'%}
+                                 
+							{% else %}
+								{{x.last_message}}
+                            {% endif %} {% endcomment %}
+						
+						</p>
 						</div>
 						{% endfor %}
 						{% else %}
@@ -1378,7 +1403,8 @@ window.snapKitInit = () => {
 
 	function highlightFriend(userId) {
 		// select new friend
-		document.getElementById("id_friend_container_" + userId).style.background = "#f2f2f2"
+		document.getElementById("id_friend_container_" + userId).style.background = "#343a40"
+		document.getElementById("id_friend_container_" + userId).style.color = "white"
 		document.getElementById("id_friend_count_" + userId).style.display = "none"
 		var countElement = document.getElementById("id_msg_notifications_count")
 		countElement.style.background = "transparent"
@@ -1389,6 +1415,7 @@ window.snapKitInit = () => {
 		{% if m_and_f %}
 		{% for x in m_and_f %}
 		document.getElementById("id_friend_container_{{x.friend.id}}").style.background = ""
+		document.getElementById("id_friend_container_{{x.friend.id}}").style.color = "black"
 		{% endfor %}
 		{% endif %}
 

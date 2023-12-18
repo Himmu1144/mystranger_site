@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from qna.models import PublicChatRoom, Answer
+from qna.models import PublicChatRoom, Answer, Polls
 import json
 from django.db.models import Count
+from django.contrib import messages
 
 
 # Create your views here.
@@ -28,6 +29,20 @@ def pika_view(request):
     for question in questions:
         # question_answers.append([question, question.answers.all()])
         # print('question - ', question)
+
+        '''
+        check if the question is already polled than don't show it to the user
+        '''
+        skip_outer_loop = False
+        for poll in question.polls.all():
+            if request.user in poll.polled.all():
+                # print('The user has already polled this quest &&&&&&&&&&&&&&&')
+                skip_outer_loop = True
+                break  # exit the inner loop
+
+        if skip_outer_loop:
+            continue  # skip the remaining iterations of the outer loop
+
         answers_with_descendants = []
 
         answers = question.answers.filter(parent=None).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
@@ -46,7 +61,10 @@ def pika_view(request):
 
         other_answers_with_descendants = []
 
-        answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
+        if not question.polls.all():
+            answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
+        else:
+            answers = question.answers.filter(parent=None)
         answers = answers.order_by('-timestamp')
         for answer in answers:
             # print('This is what the pending answers are - ', answer)
@@ -116,8 +134,34 @@ def create_post_view(request):
         user = request.user
         question = request.POST.get('question')
 
-        roomv = PublicChatRoom(question = question, owner = user)
-        roomv.save()
+        poll1 = request.POST.get('poll1')
+        poll2 = request.POST.get('poll2')
+        poll3 = request.POST.get('poll3')
+        poll4 = request.POST.get('poll4')
+
+        
+        if poll1 or poll2 or poll3 or poll4:
+            #This means this questions has polls in it
+
+            polls_list = [poll1,poll2,poll3,poll4]
+            counter = 0
+            for poll in polls_list:
+                if poll:
+                    counter += 1
+            if counter <2:
+                messages.warning(request, 'Please add atleast two poles or add none...')
+                return redirect('qna:create-post')
+            roomv = PublicChatRoom(question = question, owner = user)
+            roomv.save()
+            for poll in polls_list:
+                if poll:
+                    pollva = Polls(question = roomv, option=poll)
+                    pollva.save()
+        else:
+            roomv = PublicChatRoom(question = question, owner = user)
+            roomv.save()
+            
+
         
         return redirect('qna:pika')
 
@@ -271,6 +315,53 @@ def addAnswer_view(request, *args, **kwargs):
             }
             
             return HttpResponse(json.dumps(response_data), content_type="application/json")
+        
+
+        if request.POST.get('action') == 'poll-selected':
+
+            print('poll selected request arrived')
+            id = request.POST.get('poll-id')
+
+            try:
+            #     answer = Answer.objects.get(pk=id)
+            #     answer.remove_like(request.user)
+                poll = Polls.objects.get(id=id)
+                poll.add_user(request.user)
+
+                # now we wanna get a json with poll id and its percentage
+
+                # for that first gonna fetch the question
+
+                question = poll.question
+                # print(question)
+
+                empy_dict = {}
+                total_polled = 0
+                for poll in question.polls.all():
+                    total_polled += poll.polled.all().count()
+                
+                for poll in question.polls.all():
+                    empy_dict[poll.id] = round((poll.polled.all().count() / total_polled) * 100, 1)
+                
+                print('This is the empy dict with all the data regarding this ques and its polls - ', empy_dict)
+
+                
+                response_data = {
+                'status' : 'got_data',
+                'response' : empy_dict,
+                'total_polls' : total_polled,
+                
+            }
+                
+            except Exception as e:
+                print('error fetching the data - ' , str(e))
+                response_data = {
+                'status' : 'error',
+                'message': str(e),
+            }
+            
+            
+            return HttpResponse(json.dumps(response_data), content_type="application/json")
 
 
         try:
@@ -336,10 +427,12 @@ def show_ques_view(request,*args, **kwargs):
         user.update_last_activity()
 
     try:
-        try:
+        
+        is_ques = request.GET.get('question')
+        if not is_ques:
             answer = Answer.objects.get(pk=ans_id)
-        except Answer.DoesNotExist:
-            # now check if its a question
+        else:
+        # now check if its a question
             try:
                 question = PublicChatRoom.objects.get(pk=ans_id)
                 answer = question.answers.filter(parent=None).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)

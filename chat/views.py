@@ -50,6 +50,7 @@ def private_chat_room_view(request, *args, **kwargs):
         Where message = The most recent message
         """
         m_and_f = []
+        f_and_m = []
         for room in rooms:
             # Figure out which user is the "other user" (aka friend)
             if room.user1 == user:
@@ -65,9 +66,12 @@ def private_chat_room_view(request, *args, **kwargs):
                 Q(room=room) & Q(user=friend) & Q(read=False))
             unread_messages_count = unread_messages.count()
 
+            messages = RoomChatMessage.objects.filter(Q(room=room) & Q(user=friend)).order_by("-timestamp")
+            message = messages.first()
+
             m_and_f.append({
                 'unread_messages_count': unread_messages_count,
-                    'friend': friend
+                'friend': friend,
             })
 
         context['m_and_f'] = m_and_f
