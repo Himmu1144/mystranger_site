@@ -614,6 +614,20 @@
         border-radius: 8px 10px 10px 8px;
     }
 
+
+	.card-conti{
+		border-radius: 20px;
+    padding: 5px 0px;
+    flex-direction: row;
+    /* width: 100%; */
+    justify-content: space-around;
+    border: 1px solid #343a40;
+	margin: 7px 7px 12px 7px;
+	}
+
+	.active{
+		color:#009cda!important;
+	}
     {% comment %} .btn-answer:focus,
 .btn-answer:active {
     outline: none !important;
@@ -674,6 +688,10 @@
 
 	.btn-nearby-ans{
 		width: 140px!important;
+	}
+
+	.card-conti{
+		margin: 1em!important;
 	}
 
   }
@@ -985,18 +1003,36 @@
 			{% endif %}
 
 		</div> 
+		
+	</div>
+
+	<div class="card card-conti">
+		<div class="answers">
+			<a class="{% if answers_active %}active{% endif %}" href="{% url "account:view" user_id=account.id %}?show=vibes">Vibes</a>
+		</div>
+		<div class="questions">
+			<a class="{% if posts_active %}active{% endif %}" href="{% url "account:view" user_id=account.id %}?show=Posts">Posts</a>
+		</div>
+		<div class="prompt d-none">
+			Real Me
+		</div>
 	</div>
 
 	<div class="nearby-container">
 
 		<div class="container">
+			{% if question_top2_answers %}
 			{% for question in question_top2_answers %}
 			<div class="card card-main mb-4" id="card-main-{{question.0.id}}">
 				<div class="card-header">
 					<div style="width:100%" >
 						<div class="tp1">
 							<span class="text-secondary small-text" style="font-size:12px; margin-bottom:0px;">
+								{% if posts_active %}
+								<span class="text-secondary" style="font-size:9px; display:block;">~ {{account.name}} posted this </span>
+								{% elif answers_active %}
 								<span class="text-secondary" style="font-size:9px; display:block;">~ {{account.name}} vibed at this </span>
+								{% endif %}
 								<span class="heading-top"><a style="color:#009cda; margin-right:0.5em;" href="{% url "account:view" user_id=question.0.owner.id %}"><span>{{question.0.owner.name}} | {{question.0.owner.university_name}}</span> </a></span> 
 								
 								<span class="timepamper"> {{question.0.timestamp|naturaltime}} </span></span>
@@ -1682,6 +1718,16 @@
 			{% comment %} </div> {% endcomment %}
 				
 				{% endfor %}
+
+				{% else %}
+					
+					{% if posts_active %}
+						<p style="text-align:center;">{{account.name}} has not posted anything yet</p>
+						{% elif answers_active %}
+						<p style="text-align:center;">{{account.name}} has not vibed at anything yet</p>
+					{% endif %}
+
+				{% endif %}
 		</div>
 		
 	</div>
@@ -1867,7 +1913,7 @@
     function openShareModal(postId) {
         {% comment %} var dynamicLink = `https://example.com/post/${postId}`; {% endcomment %}
         {% comment %} var dynamicLink = `https://mystranger.in/vibes/question/${postId}/`; {% endcomment %}
-        var dynamicLink = `http://127.0.0.1:8000/vibes/question/${postId}/?question=true`;
+        var dynamicLink = `https://mystranger.in/vibes/question/${postId}/?question=true`;
         document.getElementById('shareLink').value = dynamicLink;
         $('#shareModal').modal('show');
       }

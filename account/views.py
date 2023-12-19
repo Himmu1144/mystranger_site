@@ -181,7 +181,7 @@ def account_view(request, *args, **kwargs):
         # context['universityName'] = account.universityName
         try:
           my_answers_count = Answer.objects.filter(user=account, parent = None).count()
-          print(my_answers_count,'the fuckin anus count')
+          # print(my_answers_count,'the fuckin anus count')
           # print('The asception was here -')
           
           my_answers_recieved_count = 0
@@ -204,7 +204,7 @@ def account_view(request, *args, **kwargs):
         email = account.email
         email_part , dom_part = email.split('@')
         hidden_email = email_part[:3] + ''
-        print(hidden_email)
+        # print(hidden_email)
         for i in email_part[3:]:
             hidden_email += '*'
             # print(i)
@@ -271,95 +271,201 @@ def account_view(request, *args, **kwargs):
               nearby_list_count = university.nearbyList.all().count()
               context['nearby_list_count'] = nearby_list_count
 
-        '''
-        Now we wanna show all the questions that this user has either hunched on or had answered
-        '''
+        show = request.GET.get('show')
+        print('This is show -', show)
+        if show == 'Posts':
+            print('Broooo wanted to seee the posts section in account')
 
-        question_answers = [] # ['{question' : {answers}}]
+            # show all the posts this user account has posted
 
-        # here we wanna fetch those questions which this user (we are looking at had polled or answered at)
-        questions = PublicChatRoom.objects.all().order_by('-timestamp')
+            question_answers = [] # ['{question' : {answers}}]
 
-        # # questions = PublicChatRoom.objects.all().exclude(answers__user = request.user)
-        questions = questions.order_by('-timestamp')
-        
+            # here we wanna fetch those questions which this user (we are looking at had polled or answered at)
+            questions = PublicChatRoom.objects.filter(owner=account)
 
-        for question in questions:
-            # question_answers.append([question, question.answers.all()])
-            # print('question - ', question)
-
-            skip_loop_due_answer = False
-            if not question.answers.filter(user=account, parent=None).exists():
-                skip_loop_due_answer = True
-
-            '''
-            check if the question is not already polled than don't show it to the user + if he/she hasn't answered that too
-            '''
-            skip_outer_loop = False
+            # # questions = PublicChatRoom.objects.all().exclude(answers__user = request.user)
+            questions = questions.order_by('-timestamp')
             
-            for poll in question.polls.all():
-                if account in poll.polled.all():
-                    # This means the user has not polled this ques now check whether he has answered it
-                    skip_outer_loop = True
+
+            for question in questions:
+                # question_answers.append([question, question.answers.all()])
+                # print('question - ', question)
+
+                skip_loop_due_answer = False
+                if not question.answers.filter(user=account, parent=None).exists():
+                    skip_loop_due_answer = True
+
+                '''
+                check if the question is not already polled than don't show it to the user + if he/she hasn't answered that too
+                '''
+                skip_outer_loop = False
+                
+                for poll in question.polls.all():
+                    if account in poll.polled.all():
+                        # This means the user has not polled this ques now check whether he has answered it
+                        skip_outer_loop = True
+                        
+
+                
+                # if (not skip_outer_loop) and skip_loop_due_answer:
+                #     continue  # skip the remaining iterations of the outer loop
+                
+
+                poll_status = question.is_already_polled(request.user)
+                answers_with_descendants = []
+
+                # Now this is not going to be the top answer , the top answer is going to be the one that this user has answered
+                answers = question.answers.filter(parent=None,user=account).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
+                answers = answers.order_by('-timestamp')[:1]
+
+                if not answers:
+                    answers = question.answers.filter(parent=None).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
+                    answers = answers.annotate(num_likes=Count('likes'))
+                    answers = answers.order_by('-num_likes')[:1]
+
+                
+
+                top2_ans = []
+                for answer in answers:
+                    # print('The parent answer - ', answer)
                     
-
-            
-            if (not skip_outer_loop) and skip_loop_due_answer:
-                continue  # skip the remaining iterations of the outer loop
-            
-
-            poll_status = question.is_already_polled(request.user)
-            answers_with_descendants = []
-
-            # Now this is not going to be the top answer , the top answer is going to be the one that this user has answered
-            answers = question.answers.filter(parent=None,user=account).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
-            answers = answers.order_by('-timestamp')[:1]
-
-            
-
-            top2_ans = []
-            for answer in answers:
-                # print('The parent answer - ', answer)
+                    answers_and_replies = [answer] + list(answer.get_descendants())
+                    answers_with_descendants.extend(answers_and_replies) 
+                    top2_ans.append(answer.pk)
                 
-                answers_and_replies = [answer] + list(answer.get_descendants())
-                answers_with_descendants.extend(answers_and_replies) 
-                top2_ans.append(answer.pk)
-            
-            # assuming that above instead of sending the first 2 answers we have send the top 2 answers , now we want to send the rest of the answers excluding the above 2
+                # assuming that above instead of sending the first 2 answers we have send the top 2 answers , now we want to send the rest of the answers excluding the above 2
 
-            other_answers_with_descendants = []
+                other_answers_with_descendants = []
 
-            if not question.polls.all():
-                answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
-            else:
-                answers = question.answers.filter(parent=None)
-            
-            
-            answers = answers.order_by('-timestamp')
-            answers = answers.annotate(
-            is_axce=Case(
-                When(user=account, then=Value(1)),
-                default=Value(0),
-                output_field=IntegerField(),
+                if not question.polls.all():
+                    answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
+                else:
+                    answers = question.answers.filter(parent=None)
+                
+                
+                answers = answers.order_by('-timestamp')
+                answers = answers.annotate(
+                is_axce=Case(
+                    When(user=account, then=Value(1)),
+                    default=Value(0),
+                    output_field=IntegerField(),
+                )
             )
-        )
-            answers = answers.order_by('-is_axce', '-timestamp')
+                answers = answers.order_by('-is_axce', '-timestamp')
 
-            for answer in answers:
-                # print('This is what the pending answers are - ', answer)
-                print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
-                if answer.ans_reports.all().count() < 5:
-                    other_answers_and_replies = [answer] + list(answer.get_descendants())
-                    other_answers_with_descendants.extend(other_answers_and_replies) 
-            
-
-
-            
-            question_answers.append([question,answers_with_descendants, other_answers_with_descendants, poll_status])
+                for answer in answers:
+                    # print('This is what the pending answers are - ', answer)
+                    # print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
+                    if answer.ans_reports.all().count() < 5:
+                        other_answers_and_replies = [answer] + list(answer.get_descendants())
+                        other_answers_with_descendants.extend(other_answers_and_replies) 
                 
+
+
+                
+                question_answers.append([question,answers_with_descendants, other_answers_with_descendants, poll_status])
+                    
+                
+          
+            context['question_top2_answers'] = question_answers
+            context['posts_active'] = 'yes'
             
-      
-        context['question_top2_answers'] = question_answers
+
+            
+
+
+        else:
+
+          '''
+          Now we wanna show all the questions that this user has either hunched on or had answered
+          '''
+
+          question_answers = [] # ['{question' : {answers}}]
+
+          # here we wanna fetch those questions which this user (we are looking at had polled or answered at)
+          questions = PublicChatRoom.objects.all().order_by('-timestamp')
+
+          # # questions = PublicChatRoom.objects.all().exclude(answers__user = request.user)
+          questions = questions.order_by('-timestamp')
+          
+
+          for question in questions:
+              # question_answers.append([question, question.answers.all()])
+              # print('question - ', question)
+
+              skip_loop_due_answer = False
+              if not question.answers.filter(user=account, parent=None).exists():
+                  skip_loop_due_answer = True
+
+              '''
+              check if the question is not already polled than don't show it to the user + if he/she hasn't answered that too
+              '''
+              skip_outer_loop = False
+              
+              for poll in question.polls.all():
+                  if account in poll.polled.all():
+                      # This means the user has not polled this ques now check whether he has answered it
+                      skip_outer_loop = True
+                      
+
+              
+              if (not skip_outer_loop) and skip_loop_due_answer:
+                  continue  # skip the remaining iterations of the outer loop
+              
+
+              poll_status = question.is_already_polled(request.user)
+              answers_with_descendants = []
+
+              # Now this is not going to be the top answer , the top answer is going to be the one that this user has answered
+              answers = question.answers.filter(parent=None,user=account).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
+              answers = answers.order_by('-timestamp')[:1]
+
+              
+
+              top2_ans = []
+              for answer in answers:
+                  # print('The parent answer - ', answer)
+                  
+                  answers_and_replies = [answer] + list(answer.get_descendants())
+                  answers_with_descendants.extend(answers_and_replies) 
+                  top2_ans.append(answer.pk)
+              
+              # assuming that above instead of sending the first 2 answers we have send the top 2 answers , now we want to send the rest of the answers excluding the above 2
+
+              other_answers_with_descendants = []
+
+              if not question.polls.all():
+                  answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
+              else:
+                  answers = question.answers.filter(parent=None)
+              
+              
+              answers = answers.order_by('-timestamp')
+              answers = answers.annotate(
+              is_axce=Case(
+                  When(user=account, then=Value(1)),
+                  default=Value(0),
+                  output_field=IntegerField(),
+              )
+          )
+              answers = answers.order_by('-is_axce', '-timestamp')
+
+              for answer in answers:
+                  # print('This is what the pending answers are - ', answer)
+                  # print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
+                  if answer.ans_reports.all().count() < 5:
+                      other_answers_and_replies = [answer] + list(answer.get_descendants())
+                      other_answers_with_descendants.extend(other_answers_and_replies) 
+              
+
+
+              
+              question_answers.append([question,answers_with_descendants, other_answers_with_descendants, poll_status])
+                  
+              
+        
+          context['question_top2_answers'] = question_answers
+          context['answers_active'] = 'yup'
 
 
         return render(request, "account/account.html", context)
@@ -379,7 +485,7 @@ def edit_account_view(request, *args, **kwargs):
             # name = request.POST.get('name')
             origin = request.POST.get('my_dist')
             bio = request.POST.get('bio')
-            print('This is the bio - ', bio)
+            # print('This is the bio - ', bio)
             # account.name = name
             account.bio = bio
             account.origin = origin
