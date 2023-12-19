@@ -4,6 +4,7 @@ from qna.models import PublicChatRoom, Answer, Polls
 import json
 from django.db.models import Count
 from django.contrib import messages
+from account.models import Account
 
 
 # Create your views here.
@@ -79,48 +80,8 @@ def pika_view(request):
         question_answers.append([question,answers_with_descendants, other_answers_with_descendants])
             
         
-    # print(question_answers)
-
-        # print(question)
-    #     answers = Answer.objects.filter(question = question , parent=None)
-    #     replies = Answer.objects.filter(question = question).exclude(parent=None)
-    #     print('The Answers of the question - ', answers)
-    #     print('The replies on the answers - ', replies)
-    
-    # for answer in question_answers:
-    #     for sub_ans in answer[1]:
-    #         print('This is the what - ', sub_ans)
-
-    # print(question_answers)
-
-    # context['questions'] = questions
+   
     context['question_top2_answers'] = question_answers
-
-
-    # if request.method == 'POST':
-    #     question_id = request.POST.get('question-id')
-    #     print('The question id is -', question_id)
-    #     content = request.POST.get('id_chat_message_input')
-    #     user = request.user
-
-    #     try:
-    #         question = PublicChatRoom.objects.get(pk=question_id)
-
-    #         parent_id = request.POST.get('answer-id')
-    #         print('The parent id is - ', parent_id)
-    #         if parent_id:
-    #             parent = Answer.objects.get(pk=parent_id)
-    #             answer = Answer(question = question, user = user, content=content, parent=parent)
-    #             answer.save()
-    #         else:
-    #             answer = Answer(question = question, user = user, content=content)
-    #             answer.save()
-    #     except PublicChatRoom.DoesNotExist:
-    #         print('Error - question/answer doesn not exist!')
-
-    #     return redirect('qna:pika')
-
-
 
     return render(request, "qna/questions.html", context)
 
@@ -345,11 +306,25 @@ def addAnswer_view(request, *args, **kwargs):
                 
                 print('This is the empy dict with all the data regarding this ques and its polls - ', empy_dict)
 
-                
+
+                ac_poll_id = None
+                try:
+                    if request.POST.get('account') == 'yup':
+                        account_id = request.POST.get('account_id')
+                        account = Account.objects.get(id=account_id)
+                        for poll in question.polls.all():
+                            if account in poll.polled.all():
+                                ac_poll_id = poll.id
+                                break
+                except Exception as e:
+                    print('Error fetching what other user polled - ',str(e))
+
+
                 response_data = {
                 'status' : 'got_data',
                 'response' : empy_dict,
                 'total_polls' : total_polled,
+                'ac_poll_id' : ac_poll_id,
                 
             }
                 

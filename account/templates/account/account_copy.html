@@ -89,7 +89,10 @@
 
 	.cont-main{
 		flex: 1;
-		margin-top: 2em;
+		border: 1px solid rgba(0,0,0,.125);
+		padding:0px;
+		width:50vw;
+		{% comment %} margin-top: 2em; {% endcomment %}
 	}
 
 	/* .update-btn:hover{	
@@ -130,12 +133,111 @@
 		background-color: #0c87b8;
 	} */
 
+
+	.ac-header{
+		height:58px;
+		{% comment %} border:2px solid red; {% endcomment %}
+		border-bottom: 1px solid rgba(0,0,0,.125);
+		display: flex;
+		align-items: center;
+		padding: 10px;
+		justify-content: space-between;
+		{% comment %} width:100%; {% endcomment %}
+	}
+
+
+	.down-layer{
+		{% comment %} border:2px solid black; {% endcomment %}
+	}
+
+
+	.vibe-layer{
+		{% comment %} border:2px solid black; {% endcomment %}
+		padding:1em;
+		{% comment %} height:10px; {% endcomment %}
+	}
+
+	.bio-content p{
+		margin:0px;
+		font-size:10px;
+	}
+
+	.uplayer{
+		justify-content: space-between;
+		align-items:center;
+	}
+
+	.vibe-span{
+		display: flex;
+    flex-direction: column;
+    {% comment %} border: 1px solid green; {% endcomment %}
+    justify-content: center;
+    align-items: center;
+	}
+
+	.btn-vibe{
+		
+	}
+
+	.btn:hover{
+        background-color: #343a40!important;
+        cursor: default;
+    }
+
+    .btn-answer{
+		padding: 0px;
+		border-radius: 100px;
+		width: 72px;
+		height: 23px;
+		{% comment %} margin-left: 10px; {% endcomment %}
+		display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+	.btn-nearby-ans{
+		width: 122px;
+	}
+
+	.btn-nearby-req{
+		width: 142px;
+	}
+
+    .btn-answer:hover{
+        background-color:white!important;
+        color:black;
+    }
+
+    .btn-answer span {
+        font-size:10px
+    }
+
+	.span-up-left{
+		display: flex;
+    flex-direction: column;
+    align-items: center;
+	}
+
+	a{
+		color:#343a40;
+	}
+
+	.frnd-dropdown{
+		padding: 2px;
+    min-width: 90px;
+    {% comment %} max-width: 100px; {% endcomment %}
+    font-size: 10px;
+	}
+
+
 	/* Media query for tablet width 320px */
 	@media only screen and (min-width: 300px) and (max-width: 500px) { 
 
-		.bio{
-			width:unset !important;
+		.cont-main{
+			width:100vw;
 		}
+
+		
 
 	}
 
@@ -143,209 +245,205 @@
 
 </style>
 
-<div class="container-fluid cont-main">
-	<div class="d-flex flex-row justify-content-center flex-wrap align-items-start">
 
-		<div class="card profile-card m-2">
-		  <div class="card-body">
-		  	<div class="d-flex flex-column justify-content-center p-2">
-		  		<!-- <div class="image-container mx-auto mb-4">
-		  			<img class="d-block border border-dark rounded-circle img-fluid mx-auto profile-image" alt="codingwithmitch logo" id="id_profile_image" src="{{profile_image}}">
-		  		</div> -->
+<div class="container cont-main">
 
-				<div>
-					<div>
-				  <p class="mt-2 mb-1 field-heading">Name</p>
-				  <h6>{{name}}</h6>
-				</div>
-				{% comment %} <div>
-				  {% if universityName %}
-					<p class="mt-2 mb-1 field-heading">University</p>
-					<h6>{{universityName}}</h6>
-				  {% endif %}
-				</div> {% endcomment %}
+	<div class="ac-header">
 
-				</div>
+		<div class="lefti">
+			<span><strong style="font-size: 12px;">{{name}}</strong> <span class="ml-2" style="font-size:10px;"> {% if gender == 'M' %}
+		
+					(Him)
+			
+			{% else %}
+				
+					(Her)
+				
+			{% endif %} </span></span>
+			<p class="text-secondary" style="font-size:9px; margin-bottom:0px;">{% if request.user.is_authenticated and is_self %}
 
-				  <p class="mt-2 mb-1 field-heading">Email</p>
-				  {% if request.user.is_authenticated and is_self %}
+				<span>{{email}}</span>
 
-				  	<h6>{{email}}</h6>
+			  {% else %}
 
-					{% else %}
+			  <span>{{hidden_email}}</span>
 
-					<h6>{{hidden_email}}</h6>
-
-				  {% endif %}
-
-
-
-				  <div class="radio-sec">
-
-				  
-				  
-  
-				  
-				{% comment %} {% if universityName %}
-					<p class="mt-2 mb-1 field-heading">University Name</p>
-					<h6 style="font-size:1rem;">{{universityName}}</h6>
-				{% endif %} {% endcomment %}
-
-					<div class="radio1">
-						<p class=" mb-1 field-heading"><strong>Vibe Score - {{vibe_score}}</strong></p>
-						
-						{% comment %} {% if origin %}
-							<div>
-								<input type="radio" name="my_dist" checked> Origin
-								<input type="radio" name="my_dist" disabled> Nearby
-							</div>
-						{% else %}
-							<div>
-								<input type="radio" name="my_dist" disabled> Origin
-								<input type="radio" name="my_dist" checked> Nearby
-							</div>
-						{% endif %} {% endcomment %}
-					</div>
-
-					<div class="radio2 mt-2">
-						<p class="mb-1 field-heading">Gender :</p>
-	
-						{% if gender == 'M' %}
-							<div class="ml-2">
-								<p>Male</p>
-							</div>
-						{% else %}
-							<div class="ml-2">
-								<p>Female</p>
-							</div>
-						{% endif %}
-					</div>
-					
-				</div>
-
-				{% if bio %}
-
-					<div class="bio" style="width:40vw;">
-						<h6> Bio </h6>
-						<div class="bio-content">
-							<p style="height:auto; overflow-y:auto;">{{bio}}</p>
-						</div>
-					</div>
-
-				{% endif %}
-			  		
-			  
-
-		  		<!-- If Auth user is viewing their own profile -->
-		  		{% if is_self %}
-		  		<a  class="mt-4 update-btn btn btn-outline-dark" href="{% url 'account:edit' user_id=request.user.id %}">Update</a>
-				<div class="d-flex flex-column mt-3">
-					<a class="m-auto blue-color" href="{% url "password_change" %}">Change password</a>
-				</div>
-		  		{% endif %}
-		  	</div>
-		  </div>
+			{% endif %}</p>
 		</div>
 
-		{% if request.user.is_authenticated %}
-		<div class="d-flex flex-column mb-4">
+		{% if request.user.is_authenticated and is_self %}
+		<div class="righti">
+			<a  class="" style="color:#343a40;" href="{% url 'account:edit' user_id=request.user.id %}"><i class="fa-regular fa-pen-to-square"></i></a>
+		</div>
+		{% endif %}
 
-			
+	</div>
 
-			<div class="card m-2 px-4 pb-4" style="border: none;">
-				<!-- Cancel Friend Request / Send Friend Request / Remove Friend -->
-				{% if is_friend == False and is_self == False %}
+
+	<div class="vibe-layer">
+		<div class="uplayer d-flex">
+			<div class="up-right">
+
+				<span class="vibe-span">
+					<span style="font-size:10px">{{vibe_score}}</span>
+					<strong style="font-size:13px" >Vibe Score</strong>
+				</span>
+
+
+			</div>
+
+			<div class="up-left" style="">
+
+				<span class="d-flex">
+					{% if is_self %}
+
+					<a href="{% url 'friend:list' user_id=id %}" style="margin-right: 0.5em;">
+						<span class='span-up-left'>
+
+						<span style="font-size:10px" class="">{{friends|length}}</span>
+						{% comment %} <button style="font-size:10px" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-user-group" style="color: #009cda; font-size:10px;"></i> Friends</button> {% endcomment %}
+
+						<button class="btn btn-sm btn-answer btn-outline-dark" type="button"><span><i class="fa-solid fa-user-group" style="color: #009cda; font-size:10px;"></i> Friends</span></button>
+
+					</span>
+				</a>
+
+					<a href="{% url "account:nearby-uni" %}"><span class="span-up-left">
+						<span style="font-size:10px" class="">{{nearby_list_count}}</span>
+						{% comment %} <button style="font-size:10px" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-location-dot" style="color: #009cda; font-size:10px;"></i> Nearby Universities</button> {% endcomment %}
+						<button class="btn btn-sm btn-answer btn-outline-dark btn-nearby-ans" type="button"><span><i class="fa-solid fa-location-dot" style="color: #009cda; font-size:10px;"></i> Nearby Universities</span></button>
+					</span></a>
+
+					
+					
+			{% endif %}
+
+			{% if is_friend %}
+
+					
+						<span class='span-up-left dropdown' style="margin-right:1em;">
+
+						{% comment %} <span style="font-size:10px" class="">{{friends|length}}</span> {% endcomment %}
+						{% comment %} <button style="font-size:10px" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-user-group" style="color: #009cda; font-size:10px;"></i> Friends</button> {% endcomment %}
+
+						<button class="btn btn-sm btn-answer btn-outline-dark dropdown-toggle"  type="button" id="id_friends_toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Friends</span></button>
+
+						<div class="dropdown-menu frnd-dropdown" aria-labelledby="id_friends_toggle">
+							<a class="dropdown-item" href="#" onclick="removeFriend('{{id}}', onFriendRemoved)">Unfriend</a>
+						</div>
+
+					</span>
+				
+
+				{% comment %} <div class="dropdown pt-4 m-auto">
+					<button class="btn btn-secondary dropdown-toggle friends-btn" type="button" id="id_friends_toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Friends
+					</button>
+					<div class="dropdown-menu" aria-labelledby="id_friends_toggle">
+						<a class="dropdown-item" href="#" onclick="removeFriend('{{id}}', onFriendRemoved)">Unfriend</a>
+					</div>
+				</div> {% endcomment %}
+
+					<a href="{% url "account:nearby-uni" %}"><span class="span-up-left">
+						{% comment %} <span style="font-size:10px" class="">{{nearby_list_count}}</span> {% endcomment %}
+						
+						<button onclick="createOrReturnPrivateChat('{{id}}')" class="btn btn-sm btn-answer btn-outline-dark" type="button"><span>Message</span></button>
+					</span></a>
+
+					{% comment %} <div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" style="background-color: #009cda;" onclick="createOrReturnPrivateChat('{{id}}')">
+						<span class="material-icons m-auto" >
+						message
+						</span>
+						<span class="message-btn-text m-auto pl-2">Message</span>
+					</div>
+					 {% endcomment %}
+					
+			{% endif %}
+
+
+			{% if is_friend == False and is_self == False %}
 
 						<!-- THEM to YOU -->
 						{% if request_sent == 0 %}
-						<div class="card m-2 p-4">
+						<div class="" style="padding: 5px 10px !important;
+						border: 1px solid #343049; border-radius: 21px;">
 							<div class="d-flex flex-row align-items-center">
-								<span class="friend-text align-items-center mr-2">Accept Friend Request</span>
-								<span id="id_cancel_{{id}}" class="decline-friend-request material-icons p-1" onclick='triggerDeclineFriendRequest("{{pending_friend_request_id}}")'>cancel</span>
-								<span id="id_confirm_{{id}}" class="confirm-friend-request material-icons p-1" onclick='triggerAcceptFriendRequest("{{pending_friend_request_id}}")'>check</span>
+								<span style="font-size: 10px;" class="friend-text align-items-center mr-2">Accept Friend Req</span>
+								<span style="font-size: 10px;" id="id_cancel_{{id}}" class="decline-friend-request material-icons p-1" onclick='triggerDeclineFriendRequest("{{pending_friend_request_id}}")'>cancel</span>
+								<span style="font-size: 10px;" id="id_confirm_{{id}}" class="confirm-friend-request material-icons p-1" onclick='triggerAcceptFriendRequest("{{pending_friend_request_id}}")'>check</span>
 							</div>
 						</div>
+
+						
 						{% endif %}
 
 						<!-- You sent them a request -->
 						{% if request_sent == 1 %}
-						<div class="d-flex flex-column align-items-center pt-4">
-							<button class="btn btn-danger" id="id_cancel_friend_request_btn">
+						{% comment %} <div class="d-flex flex-column align-items-center pt-4"> {% endcomment %}
+							{% comment %} <button class="btn btn-danger" id="id_cancel_friend_request_btn">
 								Cancel Friend Request
-							</button>
-						</div>
+							</button> {% endcomment %}
+
+							<button  id="id_cancel_friend_request_btn" class="btn btn-sm btn-answer btn-outline-danger btn-nearby-ans" type="button"><span>Cancel Friend Req..</span></button>
+							
+						{% comment %} </div> {% endcomment %}
 						{% endif %}
 
 						<!-- No requests have been sent -->
 						{% if request_sent == -1 %}
-						<div class="d-flex flex-column align-items-center pt-4">
+						{% comment %} <div class="d-flex flex-column align-items-center pt-4">
 							<button class="btn btn-primary btn-send" style="background-color: #009cda;" id="id_send_friend_request_btn">
 								Send Friend Request
 							</button>
-						</div>
+						</div> {% endcomment %}
+						<button  id="id_send_friend_request_btn" class="btn btn-sm btn-answer btn-outline-dark" type="button"><span>Add Friend</span></button>
 						{% endif %}
 				{% endif %}
-					
-					
-				{% if is_friend %}
-					<div class="dropdown pt-4 m-auto">
-						<button class="btn btn-secondary dropdown-toggle friends-btn" type="button" id="id_friends_toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Friends
-						</button>
-						<div class="dropdown-menu" aria-labelledby="id_friends_toggle">
-							<a class="dropdown-item" href="#" onclick="removeFriend('{{id}}', onFriendRemoved)">Unfriend</a>
-						</div>
-					</div>
-				{% endif %}
-				
-				<!-- TODO -->
-				<!-- Friend list link -->
-				{% if is_self %}
-		  		<div class="d-flex flex-column pt-4">
-					<a href="{% url 'friend:list' user_id=id %}">
-						<div class="d-flex flex-row align-items-center justify-content-center icon-container">
-							<span class="material-icons mr-2 friends-icon">contact_page</span><span class="friend-text">Friends ({{friends|length}})</span>
-						</div>
-					</a>
-				</div>
-				{% endif %}
+
+
+			</span>
 
 			</div>
+		</div> 
+		<div class="down-layer mt-2">
 
-			<!-- TODO -->
+			{% if bio %}
+
+					
+			<div class="bio-content">
+				<p style="height:auto; overflow-y:auto;">{{bio}}</p>
+			</div>
+				
+			{% else %}
+
+			{% if is_self %}
+
+			<a style="font-size:10px; color:#009cda" href="{% url 'account:edit' user_id=request.user.id %}"><u>click here to add bio...</u></a>
+
+			{% endif %}
+
+			{% endif %}
+
 			{% if friend_requests and is_self %}
-			<div class="card m-2 px-4 pb-4">
+			<div class="d-flex justify-content-center mt-2">
+			<div class="btn-nearby-req" style="padding: 5px 10px !important;
+			border: 1px solid #343049; border-radius: 21px;">
 				<!-- Friend requests -->
-		  		<div class="d-flex flex-column pt-4">
+		  		<div class="d-flex flex-column">
 					<a href="{% url 'friend:friend-requests' user_id=id %}">
 						<div class="d-flex flex-row align-items-center justify-content-center icon-container">
-							<span class="material-icons mr-2 person-add-icon">person_add</span><span class="friend-text">Friend Requests ({{friend_requests|length}})</span>
+							<span style="font-size:10px" class="material-icons mr-2 person-add-icon">person_add</span><span class="friend-text" style="font-size:10px">Friend Requests ({{friend_requests|length}})</span>
 						</div>
 					</a>
 				</div>
 			</div>
-			{% endif %}
-
-			{% if is_friend %}
-				<div class="d-flex flex-row align-items-center btn btn-primary m-2 px-4" style="background-color: #009cda;" onclick="createOrReturnPrivateChat('{{id}}')">
-					<span class="material-icons m-auto" >
-					message
-					</span>
-					<span class="message-btn-text m-auto pl-2">Message</span>
-				</div>
-			{% endif %}
-			
-
-			
 		</div>
-		{% endif %}
+			{% endif %}
 
-		{% comment %} Vibes Answered - No. of answers you have given
-		Vibe Received 🎉 - Total no. of answers your questions received {% endcomment %}
-		
+		</div> 
 	</div>
-</div>
 
+</div>
 
 <script type="text/javascript">
 

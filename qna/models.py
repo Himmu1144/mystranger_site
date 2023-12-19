@@ -62,6 +62,12 @@ class PublicChatRoom(models.Model):
 			self.save()
 			is_user_removed = True
 		return is_user_removed 
+	
+	def is_already_polled(self,user):
+		for poll in self.polls.all():
+			if user in poll.polled.all():
+				return True
+		return False
 
 
 	@property
@@ -260,6 +266,14 @@ class Polls(models.Model):
 			self.save()
 			is_user_removed = True
 		return is_user_removed 
+	
+	def percentage(self):
+		total_polls = self.question.poll_count()
+		my_count = self.polled.all().count()
+		perci = round((my_count / total_polls) * 100, 1)
+		return perci
+	
+		
 	
 	def __str__(self):
 		return self.option
