@@ -6,6 +6,7 @@ from friend.models import FriendList
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from django.conf import settings
 
 
 
@@ -129,6 +130,8 @@ class RegistrationError(models.Model):
     uni_address = models.CharField(max_length=400 )
     issue_faced = models.CharField(max_length=10000 )
     is_resolved = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return str(self.email)
@@ -139,8 +142,18 @@ class deleted_account(models.Model):
     name = models.CharField(max_length=100)
     reason = models.CharField(max_length=10000)
     is_resolved = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.email)
+    
+class Prompt(models.Model):
+    user =              models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='prompts')
+    question			= models.CharField(max_length=1000, unique=False, blank=False,)
+    answer			= models.CharField(max_length=5005, unique=False, blank=False,)
+    timestamp           = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.name
 
 

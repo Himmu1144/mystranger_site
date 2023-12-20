@@ -6,6 +6,241 @@
 
 <style type="text/css">
 
+	
+
+	{% comment %} prompt card {% endcomment %}
+	.section_our_solution .row {
+		align-items: center;
+	  }
+	  
+	  .our_solution_category {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+	  }
+	  .our_solution_category .solution_cards_box {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		height: 100%;
+	  }
+	  .solution_cards_box .solution_card {
+		flex: 0 50%;
+		background: #fff;
+		box-shadow: 0 2px 4px 0 rgba(136, 144, 195, 0.2),
+		  0 5px 15px 0 rgba(37, 44, 97, 0.15);
+		border-radius: 15px;
+		margin: 8px;
+		padding: 10px 15px;
+		position: relative;
+		z-index: 1;
+		overflow: hidden;
+		min-height: 90px;
+		transition: 0.7s;
+	  }
+	  
+	  .solution_cards_box .solution_card:hover {
+		{% comment %} background: #309df0; {% endcomment %}
+		background: #009cda;
+		color: #fff;
+		transform: scale(1.1);
+		z-index: 9;
+	  }
+	  
+	  .solution_cards_box .solution_card:hover::before {
+		background: rgb(85 108 214 / 10%);
+		
+	  }
+	  
+	  .solution_cards_box .solution_card:hover .solu_title h3,
+	  .solution_cards_box .solution_card:hover .solu_description p {
+		color: #fff;
+	  }
+	  
+	  .solution_cards_box .solution_card:before {
+		content: "";
+		position: absolute;
+		background: rgb(85 108 214 / 5%);
+		width: 170px;
+		height: 400px;
+		z-index: -1;
+		transform: rotate(42deg);
+		right: -56px;
+		top: -23px;
+		border-radius: 35px;
+	  }
+	  
+	  .solution_cards_box .solution_card:hover .solu_description button {
+		background: #fff !important;
+		color: #309df0;
+	  }
+	  
+	  .solution_card .so_top_icon {
+	  }
+	  
+	  .solution_card .solu_title h3 {
+		color: #212121;
+		font-size: 1.3rem;
+		margin-top: 13px;
+		margin-bottom: 13px;
+	  }
+	  
+	  .solution_card .solu_description p {
+		font-size: 15px;
+		margin-bottom: 15px;
+	  }
+	  
+	  .solution_card .solu_description button {
+		border: 0;
+		border-radius: 15px;
+		background: linear-gradient(
+		  140deg,
+		  #42c3ca 0%,
+		  #42c3ca 50%,
+		  #42c3cac7 75%
+		) !important;
+		color: #fff;
+		font-weight: 500;
+		font-size: 1rem;
+		padding: 5px 16px;
+	  }
+	  
+	  .our_solution_content h1 {
+		text-transform: capitalize;
+		margin-bottom: 1rem;
+		font-size: 2.5rem;
+	  }
+	  .our_solution_content p {
+	  }
+	  
+	  .hover_color_bubble {
+		position: absolute;
+		background: rgb(54 81 207 / 15%);
+		width: 100rem;
+		height: 100rem;
+		left: 0;
+		right: 0;
+		z-index: -1;
+		top: 16rem;
+		border-radius: 50%;
+		transform: rotate(-36deg);
+		left: -18rem;
+		transition: 0.7s;
+	  }
+	  
+	  .solution_cards_box .solution_card:hover .hover_color_bubble {
+		top: 0rem;
+	  }
+	  
+	  .solution_cards_box .solution_card .so_top_icon {
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		background: #fff;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	  }
+	  
+	  .solution_cards_box .solution_card .so_top_icon img {
+		width: 40px;
+		height: 50px;
+		object-fit: contain;
+	  }
+	  
+	  /*start media query*/
+	  @media screen and (min-width: 320px) {
+		.sol_card_top_3 {
+		  position: relative;
+		  top: 0;
+		}
+	  
+		.our_solution_category {
+		  width: 100%;
+		  margin: 0 auto;
+		}
+	  
+		.our_solution_category .solution_cards_box {
+		  flex: auto;
+		}
+	  }
+	  @media only screen and (min-width: 768px) {
+		.our_solution_category .solution_cards_box {
+		  flex: 1;
+		}
+	  }
+	  @media only screen and (min-width: 1024px) {
+		.sol_card_top_3 {
+		  position: relative;
+		  top: -3rem;
+		}
+		.our_solution_category {
+		  width: 85%;
+		  margin: 0 auto;
+		}
+	  }
+	  
+
+	.info-wrap{
+        background: #272a34;
+    }
+
+    .contact-wrap{
+        background: #1c1e25;
+    }
+
+    .wrapper {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 21px 41px -13px rgba(0, 0, 0, 0.18);
+    -moz-box-shadow: 0px 21px 41px -13px rgba(0, 0, 0, 0.18);
+    box-shadow: 0px 21px 41px -13px rgba(0, 0, 0, 0.18);
+}
+
+.btn-feedback{
+    background-color: #009cda;
+	border-radius:30px;
+	font-size:15px;
+}
+.btn-feedback:hover{
+    background-color: #038ac0;
+}
+
+/* Media query for tablet width 768px */
+  @media only screen and (min-width: 768px) and (max-width: 1023px) { 
+
+    .ftco-section{
+        margin-top: 1em;
+      }
+
+	  
+	}
+	
+	/* Media query for tablet width 320px */
+	@media only screen and (min-width: 300px) and (max-width: 500px) { 
+
+	  .solution_card{
+		  min-height:70px!important;
+	  }
+
+    .ftco-section{
+        margin-top: 1em;
+      }
+
+	.a-p-h{
+		font-size:16px!important;
+	}
+
+	.a-p-s-h{
+		font-size:14px!important;
+	}
+
+
+  }
+
+
 	.bio-content{
 		max-height:200px;
 		overflow-y:auto;
@@ -146,7 +381,7 @@
 		z-index: 1000;
 		position: fixed;
 		background: white;
-		width: 58%;
+		width: 57%;
 		{% comment %} width:100%; {% endcomment %}
 	}
 
@@ -426,6 +661,7 @@
         {% comment %} max-height: 80vh; {% endcomment %}
         width:58%;
 		overflow-y:scroll;
+		overflow-x: hidden;
         {% comment %} overflow-y: scroll;
         border:2px solid red; {% endcomment %}
     }
@@ -639,6 +875,23 @@
     /* Media query for tablet width 320px */
   @media only screen and (min-width: 800px) { 
 
+	.ac-header{
+		height:75px;
+		padding:20px;
+	}
+
+	.width-add-prom{
+		width:95%!important;
+	}
+
+	.vibe-layer{
+		margin-top: 4.5em;
+	}
+
+	.num{
+		font-size:15px!important;
+	}
+
     .thepoll-cont{
         height: 45px!important;
     }
@@ -706,6 +959,18 @@
     .container{
         width:100%;
     }
+
+	.navbar{
+
+		position: fixed;
+		width: 100%;
+		z-index: 3000;
+
+	}
+
+	.cont-main{
+		margin-top: 53px;
+	}
 
     .img1 img{
         width: 22px;
@@ -812,7 +1077,7 @@
 	<div class="ac-header">
 
 		<div class="lefti">
-			<span><strong class="d-name" style="font-size: 12px;">{{name}}</strong> <span class="ml-2 d-gen" style="font-size:10px;"> {% if gender == 'M' %}
+			<span><strong class="d-name" style="font-size: 14px;">{{name}}</strong> <span class="ml-2 d-gen" style="font-size:10px;"> {% if gender == 'M' %}
 		
 					(Him)
 			
@@ -821,7 +1086,7 @@
 					(Her)
 				
 			{% endif %} </span></span>
-			<p class="text-secondary" style="font-size:9px; margin-bottom:0px;">{% if request.user.is_authenticated and is_self %}
+			<p class="text-secondary" style="font-size:11px; margin-bottom:0px;">{% if request.user.is_authenticated and is_self %}
 
 				<span class="d-email">{{email}}</span>
 
@@ -862,7 +1127,7 @@
 					<a href="{% url 'friend:list' user_id=id %}" style="margin-right: 0.5em;">
 						<span class='span-up-left'>
 
-						<span style="font-size:10px" class="">{{friends|length}}</span>
+						<span style="font-size:10px" class="num">{{friends|length}}</span>
 						{% comment %} <button style="font-size:10px" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-user-group" style="color: #009cda; font-size:10px;"></i> Friends</button> {% endcomment %}
 
 						<button class="btn btn-sm btn-answer btn-outline-dark" type="button"><span><i class="fa-solid fa-user-group" style="color: #009cda; font-size:10px;"></i> Friends</span></button>
@@ -871,7 +1136,7 @@
 				</a>
 
 					<a href="{% url "account:nearby-uni" %}"><span class="span-up-left">
-						<span style="font-size:10px" class="">{{nearby_list_count}}</span>
+						<span style="font-size:10px" class="num">{{nearby_list_count}}</span>
 						{% comment %} <button style="font-size:10px" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-location-dot" style="color: #009cda; font-size:10px;"></i> Nearby Universities</button> {% endcomment %}
 						<button class="btn btn-sm btn-answer btn-outline-dark btn-nearby-ans" type="button"><span><i class="fa-solid fa-location-dot" style="color: #009cda; font-size:10px;"></i> Nearby Universities</span></button>
 					</span></a>
@@ -1007,15 +1272,19 @@
 	</div>
 
 	<div class="card card-conti">
+		{% if prompts or is_self or show_btn %}
+		<div class="prompt active">
+			
+			<a class="{% if realme %}active{% endif %}" href="{% url "account:view" user_id=account.id %}">Real Me</a>
+		</div>
+		{% endif %}
 		<div class="answers">
 			<a class="{% if answers_active %}active{% endif %}" href="{% url "account:view" user_id=account.id %}?show=vibes">Vibes</a>
 		</div>
 		<div class="questions">
 			<a class="{% if posts_active %}active{% endif %}" href="{% url "account:view" user_id=account.id %}?show=Posts">Posts</a>
 		</div>
-		<div class="prompt d-none">
-			Real Me
-		</div>
+		
 	</div>
 
 	<div class="nearby-container">
@@ -1170,7 +1439,7 @@
 								top: 10px;
 								z-index: 2;" class='tick-percetion' id="tick-{{poll.id}}"><i class="fa-solid fa-check" style="color: #009cda;"></i></span></span>
 								<span style="
-								{% if account in poll.polled.all and account != request.user %} display:flex; {% else %} display: none; {% endif %}
+								display: none; 
 								position: absolute;
 								left: -14px;
 								top: 17px;							
@@ -1182,7 +1451,7 @@
 							  
 						{% endfor %}
 
-						<span style="font-size:11px; {% if  account == request.user %}  display: none; {% endif %}" class="text-secondary;">{{account.name}} vibed at <i class="fa-solid fa-circle" style="color: #009cda; font-size:8px;"></i> </span>
+						<span style="font-size:11px; display: none;" class="text-secondary;">{{account.name}} vibed at <i class="fa-solid fa-circle" style="color: #009cda; font-size:8px;"></i> </span>
 
 							{% else %}
 
@@ -1232,7 +1501,7 @@
 						  
 					{% endfor %}
 
-					<span style="display:none; font-size:11px;" class="text-secondary;" id="vibestat-{{question.0.id}}">{{account.name}} vibed at <i class="fa-solid fa-circle" style="color: #009cda; font-size:8px;"></i> </span>
+					<span style="display:none; font-size:11px;" class="text-secondary;" id="vibestat-{{question.0.id}}"> It's a match you both have vibed at <i class="fa-solid fa-circle" style="color: #009cda; font-size:8px;"></i> </span>
 
 						{% endif %}
 						
@@ -1728,10 +1997,141 @@
 					{% endif %}
 
 				{% endif %}
+				
 		</div>
 		
 	</div>
 </div>
+
+{% if prompts%}
+
+{% if messages %}
+    {% for message in messages %}
+      <div style="margin-bottom: 0px;" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong></strong> {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+	{% endif %}
+
+	{% if is_self %}
+	<div class="card d-flex" style="justify-content:center; align-items:center; border:none; margin-bottom: 4px;">
+		<a style="color:#009cda;" href="{% url "account:prompt" %}">Add prompts <i class="fa-regular fa-pen-to-square ml-2" aria-hidden="true"></i></a>
+	</div>
+	{% endif %}
+
+	{% for prompt in prompts %}
+	
+		
+
+		
+{% comment %} <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"> {% endcomment %}
+
+<div class="section_our_solution" style="padding: 8px 20px;">
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <div class="our_solution_category">
+        <div class="solution_cards_box">
+          <div class="solution_card" id="prompt-card-{{prompt.id}}">
+            <div class="hover_color_bubble"></div>
+            
+            <div class="solu_title" style="display: flex;
+			align-items: center;
+			justify-content: space-between;">
+              <h6>{{prompt.question}}</h6>
+			  {% if is_self %}
+			  <div class="dropdown">
+                        
+				<button class="btn btn-secondary dropdown-toggle dots" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+					<span style="margin-left:1em; display: flex; margin-top: 4px;" class="img2"><i class="fa-solid fa-ellipsis-vertical"></i></span></button>
+					<ul class="dropdown-menu report-dpn">
+
+							
+							<li><button class="dropdown-item" onclick="myprompdeletefunc('{{prompt.id}}', 'prompt-card-{{prompt.id}}')" type="button">Delete</button></li>
+							
+							
+						</ul>
+					</div>
+					{% endif %}
+
+            </div>
+            <div class="solu_description">
+              <p style="margin-bottom: 4px;">
+                {{prompt.answer}}
+              </p>
+              
+            </div>
+          </div>
+          
+        
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+	{% endfor %}
+
+{% elif is_self and realme %}
+<div class="container mt-3 mb-3">
+
+	{% if messages %}
+    {% for message in messages %}
+      <div style="margin-bottom: 0px;" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong></strong> {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endfor %}
+	{% endif %}
+
+	<div class="row justify-content-center">
+		
+	</div>
+	<div class="row justify-content-center">
+		<div class="width-add-prom" style="padding: 0px; width:95%;">
+			<div class="wrapper" style="padding: 0px; max-width:none;">
+				<div class="row no-gutters">
+					
+					<div class="d-flex align-items-stretch" style="padding: 0px;">
+						<div class="info-wrap w-100 p-md-5 p-4 py-2 img">
+							<h5 class="a-p-h mb-3" style="color: white;">Tell Other's who you really are </h5>
+							<p class="mt-2 ml-2 a-p-s-h" style="color:white;">Be your real self , tell others who you really are ,
+								what you really want and what you really like, without
+								the fear of being judged. </p>
+							<p class="mb-4 mt-2 ml-2 a-p-s-h" style="color:white;">Throw away all the social criteria's and tell 
+								other college students the real side of you.
+								The side that no one knows , the side that
+								you don't easily express.</p>
+							{% comment %} <div class="dbox w-100 d-flex align-items-start"> {% endcomment %}
+								<!-- <div class="icon d-flex align-items-center justify-content-center">
+									<span class="fa fa-map-marker"></span>
+								</div> -->
+
+								<div>
+								<a href="{% url "account:prompt" %}"><input type="button" value="Add Prompts" class="btn btn-primary btn-feedback"></a>
+							</div>
+								
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endif %}
+
 	
 
 </div>
@@ -1893,8 +2293,12 @@
                     // Update the element with the new value
                     document.getElementById('poll-count-' + allpollid).innerHTML = newValue + ' vibes';
 
-					document.getElementById('ac-poll-'+data.ac_poll_id).style.display = 'flex'; 
-					document.getElementById('vibestat-'+allpollid).style.display = 'inline'; 
+					if (pollid == data.ac_poll_id){
+					console.log(pollid,data.ac_poll_id,'idk-man ----')
+						document.getElementById('ac-poll-'+data.ac_poll_id).style.display = 'flex'; 
+						document.getElementById('vibestat-'+allpollid).style.display = 'inline'; 
+					}
+					
 
                 }
 				
@@ -1933,7 +2337,7 @@
         }
       });
 
-    function add_friend(send_req_btn_id, receiver_id, cancel_req_btn_id){
+    {% comment %} function add_friend(send_req_btn_id, receiver_id, cancel_req_btn_id){
         console.log('add friend got clicked')
         var sendFriendRequestBtn = document.getElementById(send_req_btn_id)
         if (sendFriendRequestBtn != null){
@@ -1943,9 +2347,9 @@
                
             })
         }
-}
+} {% endcomment %}
 
-function cancel_friend(send_req_btn_id, receiver_id, cancel_req_btn_id){
+{% comment %} function cancel_friend(send_req_btn_id, receiver_id, cancel_req_btn_id){
 
 console.log('cancel friend got clicked')
 var cancelFriendRequestBtn = document.getElementById(cancel_req_btn_id)
@@ -1957,9 +2361,9 @@ var cancelFriendRequestBtn = document.getElementById(cancel_req_btn_id)
 		})
 	}
 
-}
+} {% endcomment %}
 
-function onFriendRequestSent(send_req_btn_id, cancel_req_btn_id){
+{% comment %} function onFriendRequestSent(send_req_btn_id, cancel_req_btn_id){
     var sendFriendRequestBtn = document.getElementById(send_req_btn_id)
     sendFriendRequestBtn.style.display = "none"
 
@@ -1967,16 +2371,16 @@ function onFriendRequestSent(send_req_btn_id, cancel_req_btn_id){
     cancelFriendRequestBtn.classList.remove("d-none");
     // though reloding the page is the easiest and most convenient way but we can try to do this without reloading the page
     // if there's a way to do so then that is going to enhance the user experience
-}
+} {% endcomment %}
 
-function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
+{% comment %} function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
 
     var cancelFriendRequestBtn = document.getElementById(cancel_req_btn)
     cancelFriendRequestBtn.classList.add("d-none");
 
     var sendFriendRequestBtn = document.getElementById(send_req_btn)
     sendFriendRequestBtn.style.display = "inline-block"
-}
+} {% endcomment %}
 
     function mytoogleanswersfunc(id){
         console.log('func getin called')
@@ -2145,6 +2549,40 @@ function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
 			}
 		});
     }
+
+	function myprompdeletefunc(id,cardId){
+        payload = {
+			"csrfmiddlewaretoken": "{{ csrf_token }}",
+			"promp-id": id,
+            'action' : 'delete',
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url 'account:prompt' %}",
+			timeout: 5000,
+			data: payload,
+			success: function(data) {
+				console.log("SUCCESS", data)
+				if(data['response'] == "card deleted"){
+					// ui is updated
+                    console.log('The prompt has been deleted', cardId)
+                    var card = document.getElementById(cardId);
+                    card.style.display = 'none';
+					
+				}
+				
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert("Something went wrong.")
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
+    }
+
     function myquestiondeletefunc(id,cardId){
         payload = {
 			"csrfmiddlewaretoken": "{{ csrf_token }}",

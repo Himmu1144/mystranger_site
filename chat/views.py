@@ -146,3 +146,4 @@ def report_view(request, *args, **kwargs):
             }
 
     return HttpResponse(json.dumps(response_data), content_type="application/json")
+

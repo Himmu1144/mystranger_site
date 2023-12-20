@@ -69,6 +69,18 @@ def send_friend_request(request, *args, **kwargs):
 					for request in friend_requests:
 						if request.is_active:
 							raise Exception("You already sent them a friend request.")
+						
+					# check if you are already friends or not -
+					friend_list = FriendList.objects.filter(user=user).first()
+					is_already_friend = friend_list.is_mutual_friend(receiver)
+					if is_already_friend:
+						raise Exception("You are already friends with them.")
+					
+					# A user can only send 10 friend requests in 24 hrs
+					"""
+					Gotta find a way to make this work ...
+					"""
+
 					# If none are active create a new friend request
 					friend_request = FriendRequest(sender=user, receiver=receiver)
 					friend_request.save()

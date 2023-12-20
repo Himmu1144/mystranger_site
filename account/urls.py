@@ -8,7 +8,8 @@ from account.views import (
     verify,
     nearby_uni,
     registration_error,
-    nearby_uni_stud
+    nearby_uni_stud,
+    prompt_view,
 
     
 )
@@ -25,5 +26,6 @@ urlpatterns = [
     path('nearby/universities' , nearby_uni , name="nearby-uni"),
     path('nearby/uni-students/<uni_id>' , nearby_uni_stud , name="nearby-uni-stud"),
     path('registration/issueForm' , registration_error , name="reg-error"),
+    path('prompt/view' , prompt_view , name="prompt"),
     
 ]

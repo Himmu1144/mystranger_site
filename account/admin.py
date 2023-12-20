@@ -2,8 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from account.models import Account 
 from account.models import AccountToken
-
-from account.models import RegistrationError, deleted_account
+from account.models import RegistrationError, deleted_account , Prompt
 
 
 
@@ -17,8 +16,29 @@ class AccountAdmin(UserAdmin):
 	list_filter = ()
 	fieldsets = ()
 
+class DeleteAccountAdmin(admin.ModelAdmin):
+	list_display = ('email','timestamp')
+	search_fields = ('email','name',)
+	readonly_fields=('id', 'timestamp')
+	ordering = ['timestamp']
+
+	filter_horizontal = ()
+	list_filter = ()
+	fieldsets = ()
+
+class RegErrorAccountAdmin(admin.ModelAdmin):
+	list_display = ('email','timestamp')
+	search_fields = ('email','uni_name')
+	readonly_fields=('id', 'timestamp')
+	ordering = ['timestamp']
+
+	filter_horizontal = ()
+	list_filter = ()
+	fieldsets = ()
+
 
 admin.site.register(Account, AccountAdmin)
 admin.site.register(AccountToken)
-admin.site.register(RegistrationError)
-admin.site.register(deleted_account)
+admin.site.register(RegistrationError,RegErrorAccountAdmin)
+admin.site.register(deleted_account,DeleteAccountAdmin)
+admin.site.register(Prompt)

@@ -18,6 +18,7 @@ from django.core.mail import send_mail
 import uuid
 from account.models import AccountToken
 from account.models import RegistrationError
+from account.models import Prompt
 from django.contrib import messages
 
 from qna.models import Answer, PublicChatRoom
@@ -273,6 +274,12 @@ def account_view(request, *args, **kwargs):
 
         show = request.GET.get('show')
         print('This is show -', show)
+
+        prompts = Prompt.objects.filter(user=account)
+        if prompts:
+          context['show_btn'] = 'showi'
+
+        
         if show == 'Posts':
             print('Broooo wanted to seee the posts section in account')
 
@@ -369,12 +376,9 @@ def account_view(request, *args, **kwargs):
           
             context['question_top2_answers'] = question_answers
             context['posts_active'] = 'yes'
-            
+          
 
-            
-
-
-        else:
+        elif (show == 'vibes') or (not prompts and not is_self):
 
           '''
           Now we wanna show all the questions that this user has either hunched on or had answered
@@ -466,6 +470,18 @@ def account_view(request, *args, **kwargs):
         
           context['question_top2_answers'] = question_answers
           context['answers_active'] = 'yup'
+        
+        else:
+
+          prompts = Prompt.objects.filter(user=account)
+
+          context['realme'] = 'ouy hoey'
+          if prompts:
+            #check whether the user has propts of or not
+            context['prompts'] = prompts
+        
+        
+            
 
 
         return render(request, "account/account.html", context)
@@ -545,6 +561,101 @@ def edit_account_view(request, *args, **kwargs):
 
     
 #     return render(request, "account/edit_account_pass.html",context)
+
+def prompt_view(request, *args, **kwargs):
+    
+    if request.method == 'POST':
+
+      if request.POST.get('action') == 'delete':
+          print('a prompt delete req came')
+
+          id = request.POST.get('promp-id')
+          try:
+                promptva = Prompt.objects.get(pk=id)
+                print('This prompt is getting deleted - ', promptva)
+
+                if promptva.user == request.user:
+                    promptva.delete()
+
+                response_data = {
+                'status' : 'delete done',
+                'response' : 'card deleted',
+            }
+          except Exception as e:
+              print('error fetching the prompt')
+              response_data = {
+              'status' : 'error',
+              'message': str(e),
+          }
+              
+          return HttpResponse(json.dumps(response_data), content_type="application/json")
+          
+
+      if 'main-prompt-id' in request.POST:
+          print('Main-prompt is submitted')
+
+          question = request.POST.get('selectedQuestion')
+          answer = request.POST.get('prompt-answer')
+          
+  
+          if question and answer:
+              print(question,answer)
+
+              '''
+              Now before creating a prompt we wanna check how many prompts does this user have
+              if it's less than 5 than cool else redirect the user to his/her prompts and tell to delete some
+              '''
+
+              # checking his total prompts
+
+              prompts = Prompt.objects.filter(user=request.user)
+              if len(prompts)>=5:
+                  messages.warning(request, 'you can only add 5 prompts, delete some of your old prompts to add a new one. ')
+                  return redirect("account:view", user_id=request.user.pk)
+                  # return HttpResponse('You can only add one prompt at max bitch')
+              else:
+                # adding a prompt
+                promptva = Prompt(user=request.user, question=question, answer=answer)
+                promptva.save()
+
+                return redirect("account:view", user_id=request.user.pk)
+          # else:
+          #     messages.warning(request, 'Please add atleast two poles or add none...')
+          #     return redirect("account:view", user_id=request.user.pk)
+      if 'custom-prompt-id' in request.POST:
+          print('Main-prompt is submitted')
+
+          question = request.POST.get('custom-question')
+          answer = request.POST.get('custom-prompt-answer')
+          
+  
+          if question and answer:
+              print(question,answer)
+
+              '''
+              Now before creating a prompt we wanna check how many prompts does this user have
+              if it's less than 5 than cool else redirect the user to his/her prompts and tell to delete some
+              '''
+
+              # checking his total prompts
+
+              prompts = Prompt.objects.filter(user=request.user)
+              if len(prompts)>=5:
+                  messages.warning(request, 'you can only add 5 prompts, delete some of your old prompts to add a new one. ')
+                  return redirect("account:view", user_id=request.user.pk)
+                  # return HttpResponse('You can only add one prompt at max bitch')
+              else:
+                # adding a prompt
+                promptva = Prompt(user=request.user, question=question, answer=answer)
+                promptva.save()
+
+                return redirect("account:view", user_id=request.user.pk)
+
+            
+
+
+
+    return render(request, 'account/prompt_edit.html')
 
 
 # This is basically almost exactly the same as friends/friend_list_view
