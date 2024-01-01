@@ -129,6 +129,7 @@
 
                 {% if not request.user_agent.is_mobile %}
                     document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>'
+                    document.getElementById('strangerName').innerHTML = window.stranger 
                 {% else %}
                     document.getElementById('strangerName').innerHTML = window.stranger
                 {% endif %}

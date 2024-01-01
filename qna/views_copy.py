@@ -24,92 +24,69 @@ def pika_view(request):
 
     context = {}
 
-    # question_answers = [] # ['{question' : {answers}}]
+    question_answers = [] # ['{question' : {answers}}]
 
     # questions = PublicChatRoom.objects.all()
     questions = PublicChatRoom.objects.all().order_by('-timestamp')
     # questions = PublicChatRoom.objects.all().exclude(answers__user = request.user)
     questions = questions.order_by('-timestamp')
     
-    # Number of questions to display per page
-    questions_per_page = 5
 
-    paginator = Paginator(questions, questions_per_page)
-    page = request.GET.get('page', 1)
+    for question in questions:
+        # question_answers.append([question, question.answers.all()])
+        # print('question - ', question)
 
-    try:
-        questions_page = paginator.page(page)
-    except PageNotAnInteger:
-        # If the page is not an integer, deliver the first page.
-        questions_page = paginator.page(1)
-    except EmptyPage:
-        # If the page is out of range (e.g. 9999), deliver the last page of results.
-        questions_page = paginator.page(paginator.num_pages)
+        '''
+        check if the question is already polled than don't show it to the user
+        '''
+        skip_outer_loop = False
+        for poll in question.polls.all():
+            if request.user in poll.polled.all():
+                # print('The user has already polled this quest &&&&&&&&&&&&&&&')
+                skip_outer_loop = True
+                break  # exit the inner loop
 
-    # Access the questions for the current page
-    current_page_questions = questions_page.object_list
+        if skip_outer_loop:
+            continue  # skip the remaining iterations of the outer loop
 
-    context['the_questions'] = questions_page
-    print('this is the questions page - ',current_page_questions)
-    my_list = qna_payload(request, current_page_questions)
+        answers_with_descendants = []
 
-    print(my_list)
+        answers = question.answers.filter(parent=None).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
+        answers = answers.annotate(num_likes=Count('likes'))
+        answers = answers.order_by('-num_likes')[:1]
 
-    # for question in questions:
-    #     # question_answers.append([question, question.answers.all()])
-    #     # print('question - ', question)
-
-    #     '''
-    #     check if the question is already polled than don't show it to the user
-    #     '''
-    #     skip_outer_loop = False
-    #     for poll in question.polls.all():
-    #         if request.user in poll.polled.all():
-    #             # print('The user has already polled this quest &&&&&&&&&&&&&&&')
-    #             skip_outer_loop = True
-    #             break  # exit the inner loop
-
-    #     if skip_outer_loop:
-    #         continue  # skip the remaining iterations of the outer loop
-
-    #     answers_with_descendants = []
-
-    #     answers = question.answers.filter(parent=None).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
-    #     answers = answers.annotate(num_likes=Count('likes'))
-    #     answers = answers.order_by('-num_likes')[:1]
-
-    #     top2_ans = []
-    #     for answer in answers:
-    #         # print('The parent answer - ', answer)
+        top2_ans = []
+        for answer in answers:
+            # print('The parent answer - ', answer)
             
-    #         answers_and_replies = [answer] + list(answer.get_descendants())
-    #         answers_with_descendants.extend(answers_and_replies) 
-    #         top2_ans.append(answer.pk)
+            answers_and_replies = [answer] + list(answer.get_descendants())
+            answers_with_descendants.extend(answers_and_replies) 
+            top2_ans.append(answer.pk)
         
-    #     # assuming that above instead of sending the first 2 answers we have send the top 2 answers , now we want to send the rest of the answers excluding the above 2
+        # assuming that above instead of sending the first 2 answers we have send the top 2 answers , now we want to send the rest of the answers excluding the above 2
 
-    #     other_answers_with_descendants = []
+        other_answers_with_descendants = []
 
-    #     if not question.polls.all():
-    #         answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
-    #     else:
-    #         answers = question.answers.filter(parent=None)
-    #     answers = answers.order_by('-timestamp')
-    #     for answer in answers:
-    #         # print('This is what the pending answers are - ', answer)
-    #         print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
-    #         if answer.ans_reports.all().count() < 5:
-    #             other_answers_and_replies = [answer] + list(answer.get_descendants())
-    #             other_answers_with_descendants.extend(other_answers_and_replies) 
+        if not question.polls.all():
+            answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
+        else:
+            answers = question.answers.filter(parent=None)
+        answers = answers.order_by('-timestamp')
+        for answer in answers:
+            # print('This is what the pending answers are - ', answer)
+            print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
+            if answer.ans_reports.all().count() < 5:
+                other_answers_and_replies = [answer] + list(answer.get_descendants())
+                other_answers_with_descendants.extend(other_answers_and_replies) 
         
 
 
         
-    #     question_answers.append([question,answers_with_descendants, other_answers_with_descendants])
+        question_answers.append([question,answers_with_descendants, other_answers_with_descendants])
             
         
    
-    context['question_top2_answers'] = my_list
+    context['question_top2_answers'] = question_answers
 
     return render(request, "qna/questions.html", context)
 
@@ -562,63 +539,3 @@ def show_ques_view(request,*args, **kwargs):
 
 
     return render(request, "qna/quest.html", context)
-
-def qna_payload(request, questions):
-    try:
-        
-        question_answers = [] # ['{question' : {answers}}]
-
-        for question in questions:
-            # question_answers.append([question, question.answers.all()])
-            # print('question - ', question)
-
-            '''
-            check if the question is already polled than don't show it to the user
-            '''
-            # skip_outer_loop = False
-            # for poll in question.polls.all():
-            #     if request.user in poll.polled.all():
-            #         # print('The user has already polled this quest &&&&&&&&&&&&&&&')
-            #         skip_outer_loop = True
-            #         break  # exit the inner loop
-
-            # if skip_outer_loop:
-            #     continue  # skip the remaining iterations of the outer loop
-
-            answers_with_descendants = []
-
-            answers = question.answers.filter(parent=None).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
-            answers = answers.annotate(num_likes=Count('likes'))
-            answers = answers.order_by('-num_likes')[:1]
-
-            top2_ans = []
-            for answer in answers:
-                # print('The parent answer - ', answer)
-                
-                answers_and_replies = [answer] + list(answer.get_descendants())
-                answers_with_descendants.extend(answers_and_replies) 
-                top2_ans.append(answer.pk)
-            
-            # assuming that above instead of sending the first 2 answers we have send the top 2 answers , now we want to send the rest of the answers excluding the above 2
-
-            other_answers_with_descendants = []
-
-            if not question.polls.all():
-                answers = question.answers.filter(parent=None).exclude(id__in=top2_ans)
-            else:
-                answers = question.answers.filter(parent=None)
-            answers = answers.order_by('-timestamp')
-            for answer in answers:
-                # print('This is what the pending answers are - ', answer)
-                print('The answer - ',answer,' The reports - ',answer.ans_reports.all().count())
-                if answer.ans_reports.all().count() < 5:
-                    other_answers_and_replies = [answer] + list(answer.get_descendants())
-                    other_answers_with_descendants.extend(other_answers_and_replies) 
-            
-            
-            question_answers.append([question,answers_with_descendants, other_answers_with_descendants])
-    except Exception as e:
-        print('The fuckin exci -', str(e))
-    
-    return question_answers
-    
