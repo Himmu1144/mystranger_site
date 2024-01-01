@@ -7,8 +7,11 @@ from django.contrib import messages
 from account.models import Account
 
 from django.shortcuts import render, get_object_or_404
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import JsonResponse
 from django.db.models import Count
+from django.template.loader import render_to_string
+from django.template import RequestContext
 
 
 
@@ -30,11 +33,31 @@ def pika_view(request):
     questions = PublicChatRoom.objects.all().order_by('-timestamp')
     # questions = PublicChatRoom.objects.all().exclude(answers__user = request.user)
     questions = questions.order_by('-timestamp')
+
+    unpolled_questions = []
+    for question in questions:
+       
+        print('question - ', question)
+
+        '''
+        check if the question is already polled than don't show it to the user
+        '''
+        skip_outer_loop = False
+        for poll in question.polls.all():
+            if request.user in poll.polled.all():
+                # print('The user has already polled this quest &&&&&&&&&&&&&&&')
+                skip_outer_loop = True
+                break  # exit the inner loop
+
+        if skip_outer_loop:
+            continue  # skip the remaining iterations of the outer loop
+
+        unpolled_questions.append(question)
     
     # Number of questions to display per page
     questions_per_page = 5
 
-    paginator = Paginator(questions, questions_per_page)
+    paginator = Paginator(unpolled_questions, questions_per_page)
     page = request.GET.get('page', 1)
 
     try:
@@ -54,6 +77,44 @@ def pika_view(request):
     my_list = qna_payload(request, current_page_questions)
 
     print(my_list)
+
+
+    # # Your existing code to retrieve questions
+    # questions = PublicChatRoom.objects.all().order_by('-timestamp')
+    # questions_per_page = 5
+
+    # paginator = Paginator(questions, questions_per_page)
+    # page = request.GET.get('page', 1)
+
+    try:
+        questions_page = paginator.page(page)
+    except PageNotAnInteger:
+        questions_page = paginator.page(1)
+    except EmptyPage:
+        questions_page = paginator.page(paginator.num_pages)
+
+    current_page_questions = questions_page.object_list
+
+    context = {
+        'the_questions': questions_page,
+    }
+
+    print('this is the questions page - ',current_page_questions)
+    my_list = qna_payload(request, current_page_questions)
+
+    # print(my_list)
+    context['question_top2_answers'] = my_list
+
+    if request.GET.get('action') == 'new_ques':
+        # If it's an AJAX request, return JSON response
+        print('the ajax request is getting processed')
+       
+        data = {
+            'html': render_to_string('qna/question_partial.html', {'question_top2_answers': my_list,'the_questions': questions_page}, request=request),
+            'has_next': questions_page.has_next(),
+        }
+        # print('the fuckin data - ', data)
+        return JsonResponse(data)
 
     # for question in questions:
     #     # question_answers.append([question, question.answers.all()])
@@ -109,7 +170,7 @@ def pika_view(request):
             
         
    
-    context['question_top2_answers'] = my_list
+    # context['question_top2_answers'] = my_list
 
     return render(request, "qna/questions.html", context)
 
@@ -380,32 +441,44 @@ def addAnswer_view(request, *args, **kwargs):
                 parent_id = request.POST.get('answer-id')
                 print('The parent id is - ', parent_id)
                 if parent_id:
-                    parent = Answer.objects.get(pk=parent_id)
-                    answer = Answer(question = question, user = user, content=content, parent=parent)
-                    answer.save()
-                    response_data = {
-                        'status' : 'Replied',
-                        'message': 'Your reply has been added.',
-                        'name' : user.name,
-                        'content' : content,
-                        'domain' : user.university_name,
-                        'nodeId' : answer.id,
-                        
-                    }
+                    if content:
+                        parent = Answer.objects.get(pk=parent_id)
+                        answer = Answer(question = question, user = user, content=content, parent=parent)
+                        answer.save()
+                        response_data = {
+                            'status' : 'Replied',
+                            'message': 'Your reply has been added.',
+                            'name' : user.name,
+                            'content' : content,
+                            'domain' : user.university_name,
+                            'nodeId' : answer.id,
+                            
+                        }
+                    else:
+                        response_data = {
+                            'status' : 'empty_msg',
+
+                        }
                 else:
                     print('this is the before ans - ')
-                    answer = Answer(question = question, user = user, content=content)
-                    answer.save()
-                    print('this is the ans - ', answer)
-                    response_data = {
-                        'status' : 'Answered',
-                        'message': 'Your answer has been added.',
-                        'name' : user.name,
-                        'content' : content,
-                        'domain' : user.university_name,
-                        'nodeId' : answer.id,
-                        
-                    }
+                    if content:
+                        answer = Answer(question = question, user = user, content=content)
+                        answer.save()
+                        print('this is the ans - ', answer)
+                        response_data = {
+                            'status' : 'Answered',
+                            'message': 'Your answer has been added.',
+                            'name' : user.name,
+                            'content' : content,
+                            'domain' : user.university_name,
+                            'nodeId' : answer.id,
+                            
+                        }
+                    else:
+                        response_data = {
+                            'status' : 'empty_msg',
+
+                        }
 
             except PublicChatRoom.DoesNotExist:
                 print('Error - question/answer doesn not exist!')
