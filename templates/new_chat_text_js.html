@@ -133,6 +133,14 @@
                     document.getElementById('strangerName').innerHTML = window.stranger
                 {% endif %}
 
+                // Setting up the icebreaker if it exists
+                console.log('Ice breaker - ', data.icebreaker)
+                document.getElementById('ice-cont').style.display = 'block';
+                document.getElementById('icebreaker').innerHTML = data.icebreaker
+                    
+
+                
+
                 {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>' {% endcomment %}
                 {% comment %} document.getElementById('strangerName').innerHTML = window.stranger {% endcomment %}
                 document.getElementById('report_btn').disabled = false;

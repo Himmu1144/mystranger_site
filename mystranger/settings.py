@@ -48,9 +48,10 @@ INSTALLED_APPS = [
     'chat',
     'notification',
     'qna',
-    'mptt',
+    'nrt',
 
     # Third party apps 
+    'mptt',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -179,8 +180,8 @@ CHANNEL_LAYERS = {
 # EMAIL_HOST_USER = 'email'
 # EMAIL_HOST_PASSWORD = 'password'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' //this is prod ig
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtpout.secureserver.net'  # GoDaddy SMTP server
 EMAIL_PORT = 587  # This is the SMTP port for GoDaddy
 EMAIL_USE_TLS = True  # Use TLS (Transport Layer Security)

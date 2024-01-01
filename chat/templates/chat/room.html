@@ -3,6 +3,65 @@
 {% block body %}
 
 <style>
+
+
+	.timestamp-span.hidden {
+		display: none!important;
+	}
+
+
+	
+	.msg_cont1_timestamp{
+		right: 3px;
+		bottom: -14px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: 400;
+	}
+	
+	.msg_cont_timestamp{
+		left: 3px;
+		bottom: -14px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: 400;
+	}
+	
+	{% comment %} .msgbar-container{
+		background:grey;
+	} {% endcomment %}
+
+	.msg_bar1_timestamp{
+		width: 53px;
+    left: -64px;
+    bottom: 8px;
+    position: absolute;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 20px;
+    background: #e6e6e6;
+    display: flex;
+    justify-content: center;
+	padding: 3px 5px;
+	}
+	
+	.msg_bar_timestamp{
+		
+		
+	width: 53px;
+    right: -64px;
+    bottom: 8px;
+    position: absolute;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 20px;
+    background: #e6e6e6;
+    display: flex;
+    justify-content: center;
+	padding: 3px 5px;
+	}
+	
+
 	body {
 		height: 100vh;
 		/* border: 2px solid red; */
@@ -288,6 +347,84 @@
 	}
 
 	.inside_msg_cont{
+		{% comment %} padding-right: 4px;
+		background: #f0f2f2;
+		min-width: 90px;
+		min-height: 45px;
+		padding-left: 4px;
+		border-radius: 8px;
+		max-width:400px; {% endcomment %}
+		position:relative;
+		padding-right: 4px;
+    background: #ff943b;
+    min-width: 61px;
+    min-height: 37px;
+    padding-left: 4px;
+    border-radius: 10px;
+    font-weight: bold!important;
+	}
+
+	.inside_msg_cont p {
+		font-weight:600;
+		color:white;
+	}
+
+	.inside_msg_cont1 p {
+		font-weight:600;
+	}
+
+	.inside_msg_cont1{
+		background: #f0f2f2;
+		{% comment %} padding-right: 4px;
+		min-width: 90px;
+		min-height: 45px;
+		padding-left: 4px;
+		border-radius: 8px;
+		max-width:400px; {% endcomment %}
+	position:relative;
+	padding-right: 4px;
+    background: #e6e6e6;
+    min-width: 61px;
+    min-height: 37px;
+    padding-left: 6px;
+    border-radius: 10px;
+    font-weight: bold!important;
+	}
+
+	.inside_msg_cont1::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        /* left: -8px; */
+		right: -8px;
+        height: 9px;
+        width: 15px;
+		
+        /* background-color: red; */
+        {% comment %} background: linear-gradient(135deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent); {% endcomment %}
+        background: linear-gradient(135deg, #e6e6e6 0%, #e6e6e6 50%, transparent 50%, transparent);
+        /* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+    }
+
+	.inside_msg_cont::before{
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -8px;
+		/* right: -8px; */
+        height: 9px;
+        width: 15px;
+		
+        /* background-color: red; */
+        {% comment %} background: linear-gradient(226deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent); {% endcomment %}
+        /* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
+
+		background: linear-gradient(226deg, #ff943b 0%, #ff943b 50%, transparent 50%, transparent);
+    }
+
+
+
+	{% comment %} .inside_msg_cont{
 		padding-right: 4px;
 		background: #f0f2f2;
 		min-width: 90px;
@@ -333,7 +470,7 @@
         /* background-color: red; */
         background: linear-gradient(226deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
         /* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
-    }
+    } {% endcomment %}
 
 	.msg-p{
 		font-size: 18px;
@@ -409,10 +546,35 @@
 	}
 
 	/* Media query for tablet width 320px */
-  @media only screen and (min-width: 300px) and (max-width: 500px) {  
+  @media only screen and (min-width: 300px) and (max-width: 600px) {  
 	body{
 		height: unset;
 	}
+
+	
+	
+
+	.timestamp-span.hidden {
+		display: none!important;
+	}
+	
+	.msg_cont1_timestamp{
+		right: 3px;
+		bottom: -14px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: 400;
+	}
+	
+	.msg_cont_timestamp{
+		left: 3px;
+		bottom: -14px;
+		position: absolute;
+		font-size: 10px;
+		font-weight: 400;
+	}
+	
+
 	.main-container{
 		/* height: 90vh; */
 		height: calc(100svh - 53px);
@@ -481,8 +643,27 @@
     	font-size: 11px;
 	}
 
+	
+	.send-btn{
+		font-size: 16px;
+    top: 7px;
+	}
+
+	.video-textarea{
+		height: 30px!important;
+		border-radius:40px;
+		margin-left:0px;
+		font-size:13px;
+	}
+
+	.video-textarea{
+		height: 46px;
+	}
+
+	
+
 	.bottom-header{
-		margin-bottom:12px;
+		margin-bottom:15px;
 	}
 
   }
@@ -552,8 +733,9 @@
 				<div class="right-header" id="id_room_title">
 					<div class="d-flex top-cont-left">
 						<div class="back-arrow" id="bk-arrow" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></div>
-					<a class="d-flex flex-row" id="id_user_info_container">
+					<a class="d-flex flex-column" id="id_user_info_container">
 						<h4 class="ml-2" id="id_other_username"></h4>
+						<span class="text-secondary ml-2" id="last_seen" style="font-size:10px;"></span>
 					</a>
 					<span id="typing" class="typo d-none">typing...</span>
 				</div>
@@ -561,14 +743,14 @@
 						</span><span style="
 						margin-right: 10px;
 						padding-left: 5px;
-					">online</span>
+					"></span>
 					</div>
 
 					<div id='offline_dot' class="offline-dot-display"><span class="offline-dot">
 						</span><span style="
 						margin-right: 10px;
 						padding-left: 5px;
-					">offline</span>
+					"></span>
 					</div>
 				</div>
 				<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
@@ -595,15 +777,14 @@
 								</button></a> {% endcomment %}
 							<!-- <textarea disabled class="flex-grow-1 chat-message-input"
 									id="id_chat_message_input"></textarea> -->
-							<div class="txtarea-cont">
+									<div class="txtarea-cont">
 
-								<div class="bitmojiStickerPicker"></div>
-								<textarea class="flex-grow-1 video-textarea" id="id_chat_message_input"></textarea>
-								<button class="chat-message-submit-button send-button send-btn-cont" id="send_button">
-									<span id="id_chat_message_submit" class="material-icons send-btn">send
-									</span>
-								</button>
-							</div>
+										<textarea class="flex-grow-1 video-textarea" id="id_chat_message_input" placeholder="say something..."></textarea>
+										<button class="chat-message-submit-button send-button send-btn-cont" id="send_button">
+											<span id="id_chat_message_submit" class="material-icons send-btn">send
+											</span>
+										</button>
+									</div>
 						</div>
 					
 				</div>
@@ -660,6 +841,10 @@
 	}(document, 'script', 'bitmojikit-sdk'));
   </script>
 <script src="{% static 'collections/collections.min.js' %}"></script> {% endcomment %}
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
 
 <script type="text/javascript">
 {% comment %} /* Setup Bitmoji Kit Web here */
@@ -744,7 +929,7 @@ window.snapKitInit = () => {
 
 		{% comment %} {% for key, value in id_count_dict.items %}
 		var countElement = document.getElementById("id_friend_count_{{key}}")
-		countElement.innerHTML = {{ value }
+		countElement.innerHTML = {{ value }}
 	}
 	countElement.style.background = "red"
 	countElement.style.display = "block"
@@ -875,7 +1060,25 @@ window.snapKitInit = () => {
 				markRoomCount()
 				console.log("*************** The room id is - ",data.room_id)
 				startStatusCheckService()
-				
+
+				var lastSeenElement = document.getElementById('last_seen'); // Correct variable name
+
+				var lastSeenJson = data.last_seen;
+				console.log('bc ', lastSeenJson);
+
+				// Parse the JSON string
+				var lastSeenTimestamp = JSON.parse(lastSeenJson);
+				console.log('bc ', lastSeenTimestamp);
+
+				// Assuming lastSeenTimestamp is a Unix timestamp (in seconds)
+				var lastSeenMoment = moment(lastSeenTimestamp);
+
+				// Format the last seen time using moment.js
+				var formattedLastSeen = lastSeenMoment.fromNow();
+
+				// Update the HTML element with the formatted last seen time
+				lastSeenElement.innerHTML = formattedLastSeen;
+								
 
 			}
 
@@ -901,6 +1104,10 @@ window.snapKitInit = () => {
 
 					var online_dot = document.getElementById('online_dot')
 					online_dot.style.display = 'inline-block';
+
+					var last_seen = document.getElementById('last_seen')
+					last_seen.style.display='none'
+
 
 					// var pathElements = document.querySelectorAll('.svg-path')
 					// pathElements.forEach(function(pathElement) {
@@ -944,6 +1151,9 @@ window.snapKitInit = () => {
 					var online_dot = document.getElementById('online_dot')
 					online_dot.style.display = 'inline-block';
 
+					var last_seen = document.getElementById('last_seen')
+					last_seen.style.display='none'
+
 					var pathElements = document.querySelectorAll('.svg-path')
 					pathElements.forEach(function(pathElement) {
 						console.log("***********_____________________----------- updating the color of each element")
@@ -979,6 +1189,18 @@ window.snapKitInit = () => {
 					}, 3000); // Remove the message after 1 seconds (adjust as needed)
 			}
         } 
+
+
+			if(data.message_deleted){
+				console.log('message deleted called - ', 'msgdiv-' + data.msg_id)
+				var element = document.getElementById('msgdiv-'+data.msg_id)
+				if (element){
+					console.log('sup boi - ')
+					element.classList.remove('d-flex')
+					element.classList.add('d-none')
+					element.style.display='none !important';
+				}
+			}
 
 			// new payload of messages coming in from backend
 			if (data.messages_payload) {
@@ -1125,6 +1347,8 @@ window.snapKitInit = () => {
 		document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName'].slice(0,12) + '...' 
 		
 		document.getElementById("id_user_info_container").href = "{% url 'account:view' user_id=4586463456756486676 %}".replace("4586463456756486676", user_info['id'])
+
+
 	}
 
 	function showClientErrorModal(message) {
@@ -1184,6 +1408,7 @@ window.snapKitInit = () => {
 		var newMessageDiv = document.createElement("div")
 		newMessageDiv.classList.add("d-flex")
 		newMessageDiv.classList.add("flex-row")
+		newMessageDiv.id = "msgdiv-"+msg_id;
 		
 		if (auth_user_id == user_id){
 			// console.log('The user_id',user_id)
@@ -1221,6 +1446,58 @@ window.snapKitInit = () => {
 		var div2 = document.createElement("div")
 		div2.classList.add("d-flex")
 		div2.classList.add("flex-row")
+
+		var timestampSpan = document.createElement("span");
+		timestampSpan.innerHTML = timestamp;
+		timestampSpan.classList.add("timestamp-span");
+		timestampSpan.classList.add("d-flex");
+		timestampSpan.classList.add("align-items-center");
+		timestampSpan.classList.add("text-secondary");
+		timestampSpan.classList.add("hidden"); // Apply the hidden class by default
+		if (auth_user_id == user_id){
+			timestampSpan.classList.add("msg_cont1_timestamp");
+		} else {
+			timestampSpan.classList.add("msg_cont_timestamp");
+
+		}
+
+		if (auth_user_id == user_id){
+		var msgbarContainer = document.createElement("div");
+		msgbarContainer.classList.add("timestamp-span");
+		
+		msgbarContainer.classList.add("hidden");
+			msgbarContainer.classList.add("msg_bar1_timestamp");
+		 
+
+		
+		var toggleButton = document.createElement("a");
+		{% comment %} toggleButton.innerHTML = '<i class="fa-solid fa-trash" style="color: #ff943b;"></i>'; {% endcomment %}
+		toggleButton.innerHTML = '<span style="color:#009cda;">unsend</span>';
+
+		toggleButton.addEventListener("click", function () {
+			// Toggle the visibility by adding/removing a CSS class to the timestampContainer
+			{% comment %} timestampContainer.classList.toggle("hidden"); {% endcomment %}
+			// Call your JavaScript function here
+			yourFunction(msg_id);
+		});
+		
+	}
+		
+		// Add a click event listener to toggle the visibility of the timestamp
+		newMessageDiv.addEventListener("click", function () {
+			// Toggle the visibility by adding/removing a CSS class to the timestampSpan
+			timestampSpan.classList.toggle("hidden");
+			if (auth_user_id == user_id){
+			msgbarContainer.classList.toggle("hidden"); }
+		});
+
+		div2.appendChild(timestampSpan);
+		if (auth_user_id == user_id){
+		msgbarContainer.appendChild(toggleButton);
+		div2.appendChild(msgbarContainer); }
+
+		div1.appendChild(div2);
+
 
 		// var usernameSpan = document.createElement("span")
 		// usernameSpan.innerHTML = username
@@ -1291,6 +1568,8 @@ window.snapKitInit = () => {
 		{% comment %} preloadImage(profile_image, profile_image_id) {% endcomment %}
 	}
 
+
+
 	function createConnectedDisconnectedElement(msg, msd_id, uniName, user_id) {
 		var chatLog = document.getElementById("id_chat_log")
 
@@ -1350,6 +1629,19 @@ window.snapKitInit = () => {
 				"page_number": pageNumber,
 			}));
 		}
+	}
+
+			// Function to be called on anchor tag click
+	function yourFunction(msg_id) {
+		// Your JavaScript code here
+		console.log("Anchor tag clicked!");
+		chatSocket.send(JSON.stringify({
+			"command": "delete_message",
+			"room_id": roomId,
+			"sender_id" : '{{request.user.id}}',
+			"msg_id" : msg_id,
+			
+		}));
 	}
 
 

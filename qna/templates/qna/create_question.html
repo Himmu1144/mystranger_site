@@ -37,10 +37,37 @@
       autofocus>
       {% comment %} polls optional {% endcomment %}
       <h6 class="text-secondary mt-4">Wanna add polls? (optional)</h6>
-      <input type="text" name="poll1" id="poll1" class="radius form-control mt-1" placeholder="tik tik option1">
-      <input type="text" name="poll2" id="poll2" class="radius form-control mt-1" placeholder="tik tac option2">
+      <div style="position:relative">
+      <input type="text" style="padding-right: 41px;" name="poll1" id="poll1" class="radius form-control mt-1" placeholder="tik tik option1" oninput="limitInput('poll1')" maxlength="22">
+      <span style="top: 12px;
+      font-size: 11px;
+      position: absolute;
+      right: 10px;" class="text-secondary"><span id="charCount-poll1">0</span>/<span id="maxChars-poll1">22</span></span>
+    </div>
+      <div style="position:relative">
+      <input type="text" style="padding-right: 41px;" name="poll2" id="poll2" class="radius form-control mt-1" placeholder="tik tac option2" oninput="limitInput('poll2')" maxlength="22">
+      <span style="top: 12px;
+      font-size: 11px;
+      position: absolute;
+      right: 10px;" class="text-secondary"><span id="charCount-poll2">0</span>/<span id="maxChars-poll2">22</span></span>
+    </div>
+      <div style="position:relative">
+      <input type="text" style="padding-right: 41px;" name="poll3" id="poll3" class="radius form-control mt-1" placeholder="wanna add more... option3" oninput="limitInput('poll3')" maxlength="22">
+      <span style="top: 12px;
+      font-size: 11px;
+      position: absolute;
+      right: 10px;" class="text-secondary"><span id="charCount-poll3">0</span>/<span id="maxChars-poll3">22</span></span>
+    </div>
+      <div style="position:relative">
+      <input type="text" style="padding-right: 41px;" name="poll4" id="poll4" class="radius form-control mt-1" placeholder="huff puff option4" oninput="limitInput('poll4')" maxlength="22">
+      <span style="top: 12px;
+      font-size: 11px;
+      position: absolute;
+      right: 10px;" class="text-secondary"><span id="charCount-poll4">0</span>/<span id="maxChars-poll4">22</span></span>
+    </div>
+      {% comment %} <input type="text" name="poll2" id="poll2" class="radius form-control mt-1" placeholder="tik tac option2">
       <input type="text" name="poll3" id="poll3" class="radius form-control mt-1" placeholder="wanna add more... option3">
-      <input type="text" name="poll4" id="poll4" class="radius form-control mt-1" placeholder="huff puff option4">
+      <input type="text" name="poll4" id="poll4" class="radius form-control mt-1" placeholder="huff puff option4"> {% endcomment %}
 
 
       <p class="text-secondary mt-2" style="font-size:14px;">if adding polls minimum of 2 options are required!</p>
@@ -49,5 +76,26 @@
     </div>
   </div>
 
+
+  
+<script>
+  function limitInput(id) {
+      var input = document.getElementById(id);
+      var charCount = document.getElementById("charCount-"+id);
+      var maxChars = 22;
+  
+      // Get the current input value
+      var inputText = input.value;
+  
+      // Update the character count
+      charCount.innerText = inputText.length;
+  
+      // Trim the input if it exceeds the maximum length
+      if (inputText.length > maxChars) {
+          input.value = inputText.slice(0, maxChars);
+          charCount.innerText = maxChars; // Update count to maxChars
+      }
+  }
+  </script>
 
   {% endblock body %}

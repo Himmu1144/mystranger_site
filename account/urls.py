@@ -10,7 +10,7 @@ from account.views import (
     registration_error,
     nearby_uni_stud,
     prompt_view,
-
+    resend_verif_view,
     
 )
 
@@ -27,5 +27,7 @@ urlpatterns = [
     path('nearby/uni-students/<uni_id>' , nearby_uni_stud , name="nearby-uni-stud"),
     path('registration/issueForm' , registration_error , name="reg-error"),
     path('prompt/view' , prompt_view , name="prompt"),
+    path('resend/verification_email' , resend_verif_view , name="resend-verif"),
+    
     
 ]

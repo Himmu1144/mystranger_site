@@ -341,11 +341,13 @@
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 				  <span aria-hidden="true">&times;</span>
 				</button>
+				{% if show_resend %}<span> If you haven't recieved the verification email than <a href="{% url "account:resend-verif" %}" style="color:#009cda;">click here</a></span>{% endif %}
 			  </div>
     {% comment %} <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li> {% endcomment %}
 	
     <!-- <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li> -->
     {% endfor %}
+	
 </ul>
 {% endif %}
 <form class="form-signin form" method="post">{% csrf_token %}

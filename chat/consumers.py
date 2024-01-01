@@ -15,6 +15,8 @@ from account.utils import LazyAccountEncoder
 from chat.constants import *
 from chat.utils import calculate_timestamp, LazyRoomChatMessageEncoder
 
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
 
@@ -54,6 +56,10 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             elif command == "status_check":
                 print('status_check command recieved : ')
                 await self.status_check_service()
+            elif command == "delete_message":
+                print('wow delete msg command is called! ')
+                room = await get_room_or_error(content['room_id'], self.scope["user"])
+                await self.delete_message_service(room,content['sender_id'], content['msg_id'])
             elif command == "get_room_chat_messages":
                 await self.display_progress_bar(True)
                 room = await get_room_or_error(content['room_id'], self.scope["user"])
@@ -128,11 +134,15 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         # room.save()
         Added = await Add_or_remove_from_room(True, room, self.scope['user'])
 
+        other_user_last_seen = await other_persons_last_seen(room,self.scope['user'])
+        print('bro did i got the timestamp - ', other_user_last_seen)
+
         # Instruct their client to finish opening the room
         await self.send_json({
             "join": str(room.id),
             "room_name" : group_name,
             'room_id' : str(room.id),
+            'last_seen': json.dumps(other_user_last_seen, cls=DjangoJSONEncoder),
         })
 
         count = await connected_users_count(room)
@@ -141,6 +151,8 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             status = "online"
         else:
             status = "offline"
+
+        
 
         if self.scope["user"].is_authenticated:
             # Notify the group that someone joined
@@ -154,6 +166,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     "name": self.scope["user"].name,
                     "user_id": self.scope["user"].id,
                     "status" : status,
+                    
                 }
             )
 
@@ -253,12 +266,12 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         if count > 1:
             # This means the jerk is online so messages sent are marked as read
             print('The connected_user_count is - ', count, " so marking msg as read")
-            await create_room_chat_message(room, self.scope["user"], message, True)
+            msg = await create_room_chat_message(room, self.scope["user"], message, True)
             read = True
         else:
             # This means the jerk is onffline so messages sent are marked as unread
             print('The connected_user_count is - ', count, " so marking msg as unread")
-            await create_room_chat_message(room, self.scope["user"], message, False)
+            msg = await create_room_chat_message(room, self.scope["user"], message, False)
             read = False
 
         await self.channel_layer.group_send(
@@ -270,6 +283,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 "user_id": self.scope["user"].id,
                 "message": message,
                 "read" : read,
+                "msg_id" : msg.id,
             }
         )
 
@@ -279,6 +293,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         """
         Called when someone has joined our chat.
         """
+        
         # Send a message down to the client
         print("ChatConsumer: chat_join: " + str(self.scope["user"].id))
         if event["name"]:
@@ -292,6 +307,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                     "user_id": event["user_id"],
                     "message": event["name"] + " connected.",
                     'status' : event['status'],
+                    
                 },
             )
 
@@ -331,6 +347,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 "message": event["message"],
                 "read": event["read"],
                 "natural_timestamp": timestamp,
+                'msg_id' : event['msg_id'],
             },
         )
 
@@ -364,6 +381,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 }
             )
 
+    
     async def status_check(self, event):
         
         # Send a message down to the client
@@ -393,6 +411,38 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 'id' : userId,
             }
         )
+
+    async def delete_message_service(self, room , sender_id, msg_id):
+
+        
+        # call a func that deletes the message
+        deleted = await del_msg(room,sender_id,msg_id)
+        
+        if self.scope["user"].is_authenticated:
+            # Notify the group that someone joined
+            await self.channel_layer.group_send(
+                room.group_name,
+                {
+                    "type": "msgdel.message",
+                    'deleted' : 'True',
+                    "deleter_id" : sender_id,
+                    "msg_id" : msg_id,
+                    
+                }
+            )
+        
+    async def msgdel_message(self, event):
+    
+        # Send a message down to the client
+        print("ChatConsumer: status_check: " + str(self.scope["user"].id))
+        await self.send_json(
+            {
+                "message_deleted": event['deleted'],
+                "deleter_id": event['deleter_id'],
+                "msg_id": event["msg_id"],
+            }, 
+        )
+
 
     async def user_typing(self, event):
         # Send the "user is typing" message to the recipient user
@@ -581,3 +631,28 @@ def Add_or_remove_from_room(Boolean, room,user):
 def connected_users_count(room):
     count = room.connected_users.all().count()
     return count
+
+@database_sync_to_async
+def other_persons_last_seen(room,user):
+    last_seen = None
+    try:
+        if room.user1 == user:
+            last_seen = room.user2.last_activity
+        else: 
+            last_seen = room.user1.last_activity
+
+    except Exception as e:
+        print('fuck')
+    return last_seen
+
+@database_sync_to_async
+def del_msg(room,sender_id,msg_id):
+    deleted = False
+    try:
+        msg_del = RoomChatMessage.objects.filter(id=msg_id,room=room).delete()
+        deleted = True
+
+    except Exception as e:
+        print('fuck')
+
+    return deleted

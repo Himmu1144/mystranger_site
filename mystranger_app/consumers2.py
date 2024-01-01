@@ -3,7 +3,7 @@ from mystranger_app.utils import generateOTP
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from django.contrib.auth.models import User
-from mystranger_app.models import WaitingArea, GroupConnect, Profile, University, UniversityProfile
+from mystranger_app.models import WaitingArea, GroupConnect, Profile, University, UniversityProfile , IceBreakers
 from django.db.models import Q
 import random
 import json
@@ -248,6 +248,10 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
                 
                 print(f'sending message to this group - {str(group_name)}')
 
+                # fetching a random icebreaker question
+                random_icebreaker_ques = await random_icebreaker()
+                print(random_icebreaker_ques, 'This is your random question')
+
                 try:
                     await self.channel_layer.group_send(
                         str(group_name),
@@ -263,6 +267,7 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
                             'random_user_email' : random_user_email,
                             'random_user_id' : random_user_id,
                             'response' : 'You are now connected with a stranger.',
+                            'icebreaker' : random_icebreaker_ques,
                         }
                     )
                 except Exception as e:
@@ -286,6 +291,7 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
                             'random_user_email' : random_user_email,
                             'random_user_id' : random_user_id,
                             'response' : 'You are now connected with a stranger.',
+                            'icebreaker' : random_icebreaker_ques,
                         }
                     )
                 except Exception as e:
@@ -331,6 +337,7 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
                 "random_user_id": event["random_user_id"],
                 "random_user": event["random_user"],
                 "response": event["response"],
+                "icebreaker": event["icebreaker"],
             },
         )
 
@@ -999,3 +1006,10 @@ def fetch_name(profile):
     uni_email = profile.user.university_name
     return name , id , uni_email
 
+@database_sync_to_async
+def random_icebreaker():
+    icebreakers = IceBreakers.objects.all()
+    if icebreakers:
+        random_question = random.choice(icebreakers)
+        return random_question.question
+    return None

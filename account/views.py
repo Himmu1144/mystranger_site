@@ -140,6 +140,7 @@ def login_view(request, *args, **kwargs):
                                 return render(request, 'home.html', context)
                         else:
                             messages.warning(request, 'Please Verify Your Account First!')
+                            context['show_resend'] = 'yup'
                             return render(request, 'account/login.html', context)
             else:
                 context['login_form'] = form
@@ -148,6 +149,37 @@ def login_view(request, *args, **kwargs):
         
     return render(request, 'account/login.html', context)
 
+
+def resend_verif_view(request, *args, **kwargs):
+  context = {}
+
+  if request.method == 'POST':
+    try:
+
+      email = request.POST.get('email')
+
+      try:
+          user = Account.objects.filter(email=email).first()
+          token_obj = AccountToken.objects.filter(user=user).first()
+          token = token_obj.auth_token
+          subject = 'Your account needs to be verified'
+          html_message = verif_email_content(token)
+          message = f'Hi paste the link to verify your account https://mystranger.in/account/verify/{token}'
+          from_email = 'info@mystranger.in'
+          recipient_list = [email]
+          send_mail(subject, message, from_email, recipient_list, html_message=html_message)
+          context['email_sent'] = 'verification email has been sent to your email, you can verify your account by clicking on the verification link. it can take upto 1 - 2 mins for the mail to reach you  '
+      except Exception as e:
+          print('The resend verif exception  - ', str(e))
+
+      
+      
+    except Exception as e:
+        print('unable to send email - ', str(e))
+      
+
+  return render(request, 'account/resend_verif.html', context)
+    
 
 def account_view(request, *args, **kwargs):
     """
