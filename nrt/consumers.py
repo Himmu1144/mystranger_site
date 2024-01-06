@@ -15,8 +15,9 @@ from account.utils import LazyAccountEncoder
 from chat.constants import *
 from chat.utils import calculate_timestamp, LazyRoomChatMessageEncoder
 
-from nrt.models import NrtPrivateChatRoom, NrtRoomChatMessage , Meetup
+from nrt.models import NrtPrivateChatRoom, NrtRoomChatMessage , Meetup , NrtIceBreakers
 from datetime import datetime
+import random
 
 
 
@@ -72,6 +73,10 @@ class NrtPrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 print('wow delete msg command is called! ')
                 room = await get_room_or_error(content['room_id'], self.scope["user"])
                 await self.delete_message_service(room,content['sender_id'], content['msg_id'])
+            elif command == "change_ice":
+                print('wow change_ice command is called! ')
+                room = await get_room_or_error(content['room'], self.scope["user"])
+                await self.change_icebreaker(room,content['id'])
             elif command == "get_room_chat_messages":
                 await self.display_progress_bar(True)
                 room = await get_room_or_error(content['room_id'], self.scope["user"])
@@ -595,6 +600,38 @@ class NrtPrivateChatConsumer(AsyncJsonWebsocketConsumer):
             }, 
         )
 
+    async def change_icebreaker(self, room , id):
+
+        
+        # call a func that changes the icebreaker
+        iceque = await change_icebreaker(room)
+        
+        
+        
+        if self.scope["user"].is_authenticated:
+            # Notify the group that someone joined
+            await self.channel_layer.group_send(
+                room.group_name,
+                {
+                    "type": "changeice.message",
+                    'ice_changed' : 'yes',
+                    'ice_ques' : iceque
+                    
+                }
+            )
+        
+    async def changeice_message(self, event):
+    
+        # Send a message down to the client
+        print("ChatConsumer: status_check: " + str(self.scope["user"].id))
+        await self.send_json(
+            {
+                "ice_changed": event['ice_changed'],
+                "ice_ques": event['ice_ques'],
+                
+            }, 
+        )
+
 
     async def user_typing(self, event):
         # Send the "user is typing" message to the recipient user
@@ -905,3 +942,21 @@ def del_msg(room,sender_id,msg_id):
         print('fuck')
 
     return deleted
+
+
+@database_sync_to_async
+def change_icebreaker(room):
+    icebreakers = NrtIceBreakers.objects.all()
+    if icebreakers:
+        random_question = random.choice(icebreakers)
+        try:
+            nrt_room = NrtPrivateChatRoom.objects.get(id=room.id)
+            print('so this is the nrt_room - ', nrt_room.icebreaker)
+            nrt_room.icebreaker = random_question.question
+            nrt_room.save()
+        except NrtPrivateChatRoom.DoesNotExist:
+            # Handle the case when the object doesn't exist
+            print('paji no room existo')
+
+        return random_question.question
+    return None

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 {% block body %}
 
 <style>
@@ -689,7 +690,9 @@
 								id="id_friend_img_{{x.friend.id}}" src="{% static 'codingwithmitch/dummy_image.png' %}">
 							{% endcomment %}
 							<div class="d-flex flex-row friends">
+								<span style="display: flex; flex-direction:column;">
 								<span class="username-span">{{x.friend.name}}</span>
+								<span class="text-secondary" style="font-size:10px; margin-left:5px;">Active {{x.friend.last_activity|naturaltime}}</span></span>
 								{% if x.unread_messages_count != 0 %}
 								<span class="friend-message-span notify-badge"
 									id="id_friend_count_{{x.friend.id}}">{{x.unread_messages_count}}</span>
@@ -1077,7 +1080,7 @@ window.snapKitInit = () => {
 				var formattedLastSeen = lastSeenMoment.fromNow();
 
 				// Update the HTML element with the formatted last seen time
-				lastSeenElement.innerHTML = formattedLastSeen;
+				lastSeenElement.innerHTML = 'last seen ' + formattedLastSeen;
 								
 
 			}

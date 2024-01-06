@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.core.paginator import Paginator
 from django.core.cache import cache
 
-from nrt.models import NrtPrivateChatRoom, NrtRoomChatMessage, AllActivatedUsers , Meetup , MeetupConnection
+from nrt.models import NrtPrivateChatRoom, NrtRoomChatMessage, AllActivatedUsers , Meetup , MeetupConnection, NrtIceBreakers
 
 class NrtPrivateChatRoomAdmin(admin.ModelAdmin):
 	list_display = ['id','user1', 'user2', 'created_at' ]
@@ -53,3 +53,4 @@ admin.site.register(NrtRoomChatMessage, NrtRoomChatMessageAdmin)
 admin.site.register(AllActivatedUsers)
 admin.site.register(Meetup)
 admin.site.register(MeetupConnection)
+admin.site.register(NrtIceBreakers)

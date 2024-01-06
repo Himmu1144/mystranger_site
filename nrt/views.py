@@ -11,7 +11,7 @@ from itertools import chain
 from chat.utils import find_or_create_private_chat
 from mystranger_app.models import Flags
 
-from nrt.models import NrtPrivateChatRoom, NrtRoomChatMessage, AllActivatedUsers, Meetup, MeetupConnection
+from nrt.models import NrtPrivateChatRoom, NrtRoomChatMessage, AllActivatedUsers, Meetup, MeetupConnection, NrtIceBreakers
 from mystranger_app.models import University
 from django.utils import timezone
 from datetime import timedelta
@@ -20,6 +20,9 @@ import random
 
 DEBUG = False
 
+
+def nrt_text_how_view(request, *args, **kwargs):
+    return render(request, 'nrt/nrt_text_how.html')
 
 def nrt_text_view(request, *args, **kwargs):
     
@@ -93,6 +96,21 @@ def nrt_text_view(request, *args, **kwargs):
                     # woah this user is a part of a room now we have to fetch its chats and messages show her/him
                     print('This use is a part already a part of the group handle it properly - ', room)
                     context['room'] = room
+
+                    'add ice breaker to the room first fetch a random icebreaker'
+                    if room.icebreaker:
+                        context['ice_ques'] = room.icebreaker
+                        context['hide_ice'] = 'yes'
+                    else:
+                        iceques = random_icebreaker()
+                        room.icebreaker = iceques
+                        room.save()
+                        if iceques:
+                            context['ice_ques'] = room.icebreaker
+                            context['hide_ice'] = 'no'
+
+                
+                    
                     if room.user1 == request.user:
                         # other_user_name = room.user2.name + ' | ' + room.user2.university_name
                         other_user_name = room.user2.name 
@@ -284,6 +302,18 @@ def nrt_text_view(request, *args, **kwargs):
 
                             context['room'] = super_chat_room
                             room = super_chat_room
+                            'add ice breaker to the room first fetch a random icebreaker'
+                            if room.icebreaker:
+                                context['ice_ques'] = room.icebreaker
+                                context['hide_ice'] = 'yes'
+                            else:
+                                iceques = random_icebreaker()
+                                room.icebreaker = iceques
+                                room.save()
+                                if iceques:
+                                    context['ice_ques'] = room.icebreaker
+                                    context['hide_ice'] = 'no'
+                            
                             if room.user1 == request.user:
                                 # other_user_name = room.user2.name + ' | ' + room.user2.university_name
                                 other_user_name = room.user2.name 
@@ -369,6 +399,17 @@ def nrt_text_view(request, *args, **kwargs):
                     # woah this user is a part of a room now we have to fetch its chats and messages show her/him
                     print('This use is a part already a part of the group handle it properly - ', room)
                     context['room'] = room
+                    'add ice breaker to the room first fetch a random icebreaker'
+                    if room.icebreaker:
+                        context['ice_ques'] = room.icebreaker
+                        context['hide_ice'] = 'yes'
+                    else:
+                        iceques = random_icebreaker()
+                        room.icebreaker = iceques
+                        room.save()
+                        if iceques:
+                            context['ice_ques'] = room.icebreaker
+                            context['hide_ice'] = 'yes'
                     if room.user1 == request.user:
                         # other_user_name = room.user2.name + ' | ' + room.user2.university_name
                         other_user_name = room.user2.name 
@@ -742,3 +783,10 @@ def meetup_percentage(room,user):
         print('exception while calculating meetup perci - ', str(e))
         percentage = 0   
     return percentage
+
+def random_icebreaker():
+    icebreakers = NrtIceBreakers.objects.all()
+    if icebreakers:
+        random_question = random.choice(icebreakers)
+        return random_question.question
+    return None

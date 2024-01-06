@@ -1107,6 +1107,195 @@
 	margin-bottom:5px;
   }
 
+  
+.section_our_solution .row {
+    align-items: center;
+  }
+  
+  .our_solution_category {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .our_solution_category .solution_cards_box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+	margin: 0px 1em;
+  }
+  .solution_cards_box .solution_card {
+    flex: 0 50%;
+    background: #fff;
+    box-shadow: 0 2px 4px 0 rgba(136, 144, 195, 0.2),
+      0 5px 15px 0 rgba(37, 44, 97, 0.15);
+    border-radius: 15px;
+    margin: 8px;
+    padding: 10px 15px;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    {% comment %} min-height: 90px; {% endcomment %}
+    transition: 0.7s;
+    margin: 4px;
+    padding: 8px;
+  }
+  {% if not request.user_agent.is_mobile %}
+  .solution_cards_box .solution_card:hover {
+    {% comment %} background: #309df0; {% endcomment %}
+    background: #009cda;
+    color: #fff;
+    transform: scale(1.1);
+    z-index: 9;
+  }
+  
+  
+  .solution_cards_box .solution_card:hover::before {
+    background: rgb(85 108 214 / 10%);
+    
+  }
+
+
+  
+  .solution_cards_box .solution_card:hover .solu_title h3,
+  .solution_cards_box .solution_card:hover .solu_description p {
+    color: #fff;
+  }
+
+  {% endif %}
+  
+  .solution_cards_box .solution_card:before {
+    content: "";
+    position: absolute;
+    background: rgb(85 108 214 / 5%);
+    width: 170px;
+    height: 400px;
+    z-index: -1;
+    transform: rotate(42deg);
+    right: -56px;
+    top: -23px;
+    border-radius: 35px;
+  }
+  
+  {% if not request.user_agent.is_mobile %}
+  .solution_cards_box .solution_card:hover .solu_description button {
+    background: #fff !important;
+    color: #309df0;
+  }
+  {% endif %}
+  
+  .solution_card .so_top_icon {
+  }
+  
+  .solution_card .solu_title h3 {
+    color: #212121;
+    font-size: 1.3rem;
+    margin-top: 13px;
+    margin-bottom: 13px;
+  }
+  
+  .solution_card .solu_description p {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .solution_card .solu_description button {
+    border: 0;
+    border-radius: 15px;
+    background: linear-gradient(
+      140deg,
+      #42c3ca 0%,
+      #42c3ca 50%,
+      #42c3cac7 75%
+    ) !important;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 5px 16px;
+  }
+  
+  .our_solution_content h1 {
+    text-transform: capitalize;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+  }
+  .our_solution_content p {
+  }
+  
+  .hover_color_bubble {
+    position: absolute;
+    background: rgb(54 81 207 / 15%);
+    width: 100rem;
+    height: 100rem;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    top: 16rem;
+    border-radius: 50%;
+    transform: rotate(-36deg);
+    left: -18rem;
+    transition: 0.7s;
+  }
+  
+  .solution_cards_box .solution_card:hover .hover_color_bubble {
+    top: 0rem;
+  }
+  
+  .solution_cards_box .solution_card .so_top_icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .solution_cards_box .solution_card .so_top_icon img {
+    width: 40px;
+    height: 50px;
+    object-fit: contain;
+  }
+  
+  /*start media query*/
+  @media screen and (min-width: 320px) {
+    .sol_card_top_3 {
+      position: relative;
+      top: 0;
+    }
+  
+    .our_solution_category {
+      width: 100%;
+      margin: 0 auto;
+    }
+  
+    .our_solution_category .solution_cards_box {
+      flex: auto;
+    }
+  }
+  @media only screen and (min-width: 768px) {
+    .our_solution_category .solution_cards_box {
+      flex: 1;
+    }
+  }
+  @media only screen and (min-width: 1024px) {
+    .sol_card_top_3 {
+      position: relative;
+      top: -3rem;
+    }
+    .our_solution_category {
+      width: 85%;
+      margin: 0 auto;
+    }
+
+    #icebreaker{
+        font-size:18px;
+    }
+
+  }
+  
+
 
 </style>
 
@@ -1161,6 +1350,7 @@
 				<h6 class="f-13">- Since blind dating is activated you can find yourself connected on a blind date</h6>
 				<h6 class="f-13">- If you were on a date and now its not connected/showing up then that means the other person has cancelled the date</h6>
 				<h6 class="f-13">- Only female can choose the location and time of the date</h6>
+				<h6 class="f-13">- Wanna know <a href="{% url "nrt-text-how" %}">how blind dates work?</a></h6>
 				{% comment %} <h6 class="f-13">- if you don't wanna continue connecting
 					then you can always deactivate this feature
 					any time you want to</h6> {% endcomment %}
@@ -1190,6 +1380,7 @@
 			<h6 class="f-13">- But only female can select the location and time of the date</h6>
 			<h6 class="f-13">- By activating this feature u r automatically going to be connected on blind dates if matched</h6>
 			<h6 class="f-13">- You can always deactivate this feature to stop getting connected on blind dates</h6>
+			<h6 class="f-13">- Wanna know <a href="{% url "nrt-text-how" %}">how blind dates work?</a></h6>
 		</div>
 
         <form class="b-activate-form" action="" method="post"> {% csrf_token %}
@@ -1423,6 +1614,97 @@
 					</div>
 				</div>
 				</div>
+
+				{% if hide_ice == 'yes' %}
+				<div class="show-deactive" style="border: none;">
+				
+					<p class="d-flex gap-1 d-link" style="justify-content:center;">
+						
+						<a class="" data-bs-toggle="collapse" href="#collapseExample3" role="button" aria-expanded="false" aria-controls="collapseExample">
+							<i class="fa-solid fa-angle-down" style="color: #009cda;"></i>
+						</a>
+						
+					</p>
+					<div class="collapse" id="collapseExample3">
+						
+						
+<div class="section_our_solution" id="ice-cont" style="display:inline;">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="our_solution_category">
+          <div class="solution_cards_box">
+            <div class="solution_card" id="prompt-car">
+              <div class="hover_color_bubble"></div>
+              
+              <div class="solu_title" style="display: flex;
+              align-items: center;
+              justify-content: center; flex-direction:column;">
+                <h6 id="icebreaker" style="font-size: 14px; margin-bottom: 0px;">{{ice_ques}}</h6>
+				<span style="margin-top: 4px;
+				font-weight: 600;
+				color: #ff943b;
+				font-size: 10px;" onclick="chanceicefunc()" id="change-ice-ques">change icebreaker</span>
+                
+  
+              </div>
+              {% comment %} <div class="solu_description">
+                <p style="margin-bottom: 4px;">
+                  {{prompt.answer}}
+                </p>
+                
+              </div> {% endcomment %}
+            </div>
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+
+  {% elif hide_ice == 'no' %}
+  								
+<div class="section_our_solution" id="ice-cont" style="display:inline;">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="our_solution_category">
+          <div class="solution_cards_box">
+            <div class="solution_card" id="prompt-car">
+              <div class="hover_color_bubble"></div>
+              
+              <div class="solu_title" style="display: flex;
+              align-items: center;
+              justify-content: center; flex-direction:column;">
+                <h6 id="icebreaker" style="font-size: 14px; margin-bottom: 0px;">{{ice_ques}}</h6>
+				<span style="margin-top: 4px;
+				font-weight: 600;
+				color: #ff943b;
+				font-size: 10px;" onclick="chanceicefunc('room.id')" id="change-ice-ques">change icebreaker</span>
+                
+  
+              </div>
+              {% comment %} <div class="solu_description">
+                <p style="margin-bottom: 4px;">
+                  {{prompt.answer}}
+                </p>
+                
+              </div> {% endcomment %}
+            </div>
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+
+
+	
+				</div>
+
+
 				<div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
 					<div class="spinner-border text-primary" id="id_chatroom_loading_spinner" role="status"
 						style="display: none; position: absolute; ">
@@ -1553,6 +1835,14 @@
 
 {% if room %}
 <script>
+
+	
+	var icequechange = document.getElementById("change-ice-ques")
+	if (icequechange != null){
+		icequechange.addEventListener("click", function(){
+			chanceicefunc();
+		})
+	}
 
 	var sendFriendRequestBtn = document.getElementById("send_req_btn")
 	if (sendFriendRequestBtn != null){
@@ -1943,6 +2233,13 @@ if(data.message_deleted){
         setMsgNotificationsAsRead()
     }
 
+	if(data.ice_changed){
+		var icea = document.getElementById('icebreaker')
+		if(icea){
+			icea.innerHTML = data.ice_ques
+		}
+	}
+
 	if (data.date_req){
 		console.log('got the req by - ', data.user_id + ' {{request.user.gender}}')
 		var current_user_gender = '{{request.user.gender}}'
@@ -2217,6 +2514,20 @@ if (chatSocket.readyState == WebSocket.OPEN) {
 } else if (chatSocket.readyState == WebSocket.CONNECTING) {
     console.log("ChatSocket connecting..")
 }
+
+
+
+function chanceicefunc(){
+	if ("{{request.user.is_authenticated}}") {
+		chatSocket.send(JSON.stringify({
+			"command": "change_ice",
+			'id': "{{request.user.pk}}", 
+			"room": roomId,
+
+		}));	
+}
+}
+
 
 function reqmeetup(){
 

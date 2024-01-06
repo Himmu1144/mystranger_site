@@ -222,11 +222,23 @@ def account_view(request, *args, **kwargs):
           for question in questions:
               # my_answers_recieved_count += question.answers.filter(parent=None).count()
               my_answers_recieved_count +=  Answer.objects.filter(question=question, parent=None).count()
+
               # print(my_answers_recieved_count)
 
           # print('The asception was here or here -')
+            
+          # all the posts this person has vibed on
+          questions = PublicChatRoom.objects.all()
+          my_vibe_count = 0
+          for question in questions:
+            for poll in question.polls.all():
+              if request.user in poll.polled.all():
+                  my_vibe_count += 1
 
-          context['vibe_score'] = my_answers_count + my_answers_recieved_count
+          all_vibes = my_vibe_count
+          print('these are the no. of vibes i did - ', all_vibes)
+
+          context['vibe_score'] = my_answers_count + my_answers_recieved_count + all_vibes
           print('The fuckin wibe score - ', context['vibe_score'])
           
         except Exception as e:
@@ -840,7 +852,7 @@ def send_email_view(request, email, token):
         subject = 'Your account needs to be verified'
         html_message = verif_email_content(token)
         message = f'Hi paste the link to verify your account http://mystranger.in/account/verify/{token}'
-        from_email = 'info@mystranger.in'
+        from_email = 'MyStrangerTeam@mystranger.in'
         recipient_list = [email]
         send_mail(subject, message, from_email, recipient_list, html_message=html_message)
         

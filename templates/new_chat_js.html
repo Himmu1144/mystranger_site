@@ -184,6 +184,7 @@ init()
                     window.stranger = data.random_user_name
                     window.stranger_id = data.random_user_id
                     window.stranger_email = data.random_user_email
+                    window.stranger_gender = data.random_user_gender
                     createOffer()
                     console.log('offer created')
                 }
@@ -192,18 +193,23 @@ init()
                     window.stranger = data.user1_self_name
                     window.stranger_id = data.user1_self_id
                     window.stranger_email = data.user1_self_email
+                    window.stranger_gender = data.user1_self_gender
                 }
 
                 {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + window.stranger_email {% endcomment %}
                 {% comment %} document.getElementById('strangerName').innerHTML = window.stranger {% endcomment %}
 
 
-                {% if not request.user_agent.is_mobile %}
-                    {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>' {% endcomment %}
+                {% comment %} {% if not request.user_agent.is_mobile %}
+                    document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>'
                     document.getElementById('strangerName').innerHTML = window.stranger 
                 {% else %}
                     document.getElementById('strangerName').innerHTML = window.stranger
-                {% endif %}
+                {% endif %} {% endcomment %}
+
+                console.log('stranger gender is - ', window.stranger_gender)
+                document.getElementById('strangerName').innerHTML = "Stranger"
+               
 
                 {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>' {% endcomment %}
                 document.getElementById('report_btn').disabled = false;

@@ -7,6 +7,7 @@ class NrtPrivateChatRoom(models.Model):
 
     user1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='nrt_user1')
     user2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='nrt_user2')
+    icebreaker			= models.CharField(max_length=2005, unique=False, blank=False, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     connected_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="nrt_connected_users")
@@ -76,7 +77,7 @@ class AllActivatedUsers(models.Model):
         return is_user_removed 
 
     def __str__(self):
-        return f'all activated list {self.pk}'
+        return f'all activated list - {self.users.all().count()}'
 
 class Meetup(models.Model):
     user1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='meetup_user1', null=True)
@@ -107,3 +108,10 @@ class MeetupConnection(models.Model):
     
     def __str__(self):
         return f'connection between {self.user1} and {self.user2} at {self.connection_time}'
+
+class NrtIceBreakers(models.Model):
+    question			= models.CharField(max_length=2005, unique=False, blank=False,)
+    timestamp           = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.question

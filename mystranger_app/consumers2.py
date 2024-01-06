@@ -196,10 +196,10 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
             '''
 
             group_name = await create_group(user1, random_user)
-            random_user_name, random_user_id , random_user_email = await fetch_name(random_user) 
-            user1_self_name , user1_self_id , user1_self_email = await fetch_name(user1)
+            random_user_name, random_user_id , random_user_email, random_user_gender = await fetch_name(random_user) 
+            user1_self_name , user1_self_id , user1_self_email , user1_self_gender = await fetch_name(user1)
 
-            
+            print('paji this is the random_user_gender - ', random_user_gender)
 
             if group_name:
 
@@ -268,6 +268,8 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
                             'random_user_id' : random_user_id,
                             'response' : 'You are now connected with a stranger.',
                             'icebreaker' : random_icebreaker_ques,
+                            'random_user_gender' : random_user_gender,
+                            'user1_self_gender' : user1_self_gender,
                         }
                     )
                 except Exception as e:
@@ -292,6 +294,9 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
                             'random_user_id' : random_user_id,
                             'response' : 'You are now connected with a stranger.',
                             'icebreaker' : random_icebreaker_ques,
+                            'random_user_gender' : random_user_gender,
+                            'user1_self_gender' : user1_self_gender,
+
                         }
                     )
                 except Exception as e:
@@ -338,6 +343,9 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
                 "random_user": event["random_user"],
                 "response": event["response"],
                 "icebreaker": event["icebreaker"],
+                'random_user_gender' : event['random_user_gender'],
+                'user1_self_gender' : event['user1_self_gender'],
+
             },
         )
 
@@ -1004,7 +1012,8 @@ def fetch_name(profile):
     name = profile.user.name
     id = profile.user.id
     uni_email = profile.user.university_name
-    return name , id , uni_email
+    gender = profile.user.gender
+    return name , id , uni_email , gender
 
 @database_sync_to_async
 def random_icebreaker():

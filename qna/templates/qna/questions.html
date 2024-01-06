@@ -408,7 +408,7 @@
   }
 
     /* Media query for tablet width 320px */
-  @media only screen and (min-width: 300px) and (max-width: 500px) { 
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
 
 	.nearby-container{
         width:unset;
@@ -735,8 +735,8 @@ setOnScrollListener(); // Initial scroll listener attachment
 
     function openShareModal(postId) {
         {% comment %} var dynamicLink = `https://example.com/post/${postId}`; {% endcomment %}
-        {% comment %} var dynamicLink = `https://mystranger.in/vibes/question/${postId}/`; {% endcomment %}
-        var dynamicLink = `http://127.0.0.1:8000/vibes/question/${postId}/?question=true`;
+        var dynamicLink = `https://mystranger.in/vibes/question/${postId}/?question=true`;
+        {% comment %} var dynamicLink = `http://127.0.0.1:8000/vibes/question/${postId}/?question=true`; {% endcomment %}
         document.getElementById('shareLink').value = dynamicLink;
         $('#shareModal').modal('show');
       }

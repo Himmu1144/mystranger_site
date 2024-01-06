@@ -117,6 +117,7 @@
                     window.stranger = data.random_user_name
                     window.stranger_id = data.random_user_id
                     window.stranger_email = data.random_user_email
+                    window.stranger_gender = data.random_user_gender
                     // createOffer()
                     // console.log('offer created')
                 }
@@ -125,14 +126,25 @@
                     window.stranger = data.user1_self_name
                     window.stranger_id = data.user1_self_id
                     window.stranger_email = data.user1_self_email
+                    window.stranger_gender = data.user1_self_gender
                 }
 
-                {% if not request.user_agent.is_mobile %}
+                {% comment %} {% if not request.user_agent.is_mobile %}
                     document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>'
                     document.getElementById('strangerName').innerHTML = window.stranger 
                 {% else %}
                     document.getElementById('strangerName').innerHTML = window.stranger
-                {% endif %}
+                    {% endif %} {% endcomment %}
+                    
+                    console.log('stranger gender is - ', window.stranger_gender)
+                    if(window.stranger_gender == 'M'){
+                        document.getElementById('strangerName').innerHTML = "Stranger " + '<span style="font-size:11px" class="text-secondary">(Him)</span>'
+                    } else if(window.stranger_gender == 'F'){
+                        document.getElementById('strangerName').innerHTML = "Stranger " + '<span style="font-size:11px" class="text-secondary">(Her)</span>'
+                    } else{
+                        document.getElementById('strangerName').innerHTML = "Stranger"
+                    }
+                    
 
                 // Setting up the icebreaker if it exists
                 console.log('Ice breaker - ', data.icebreaker)

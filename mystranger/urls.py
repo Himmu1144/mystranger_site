@@ -38,6 +38,7 @@ urlpatterns = [
     path('new_chat/', new_chat_view , name='new-chat' ),
     path('new_chat_text/', new_chat_text_view , name='new-chat-text' ),
     path('nrt_text/', nrt_text_view , name='nrt-text' ),
+    path('nrt_text/how', nrt_text_how_view , name='nrt-text-how' ),
 
     
     

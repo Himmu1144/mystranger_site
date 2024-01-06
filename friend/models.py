@@ -196,7 +196,7 @@ class FriendRequest(models.Model):
 		# Create notification for SENDER
 		self.notifications.create(
 			target=self.sender,
-			verb=f"{self.receiver.name} declined your friend request.",
+			verb=f"Stranger has declined your friend request.",
 			from_user=self.receiver,
 			redirect_url=f"#",
 			content_type=content_type,
@@ -219,14 +219,14 @@ class FriendRequest(models.Model):
 		# Create notification for SENDER
 		self.notifications.create(
 			target=self.sender,
-			verb=f"You cancelled the friend request to {self.receiver.name}.",
+			verb=f"You cancelled the friend request to sent to the stranger",
 			from_user=self.receiver,
 			redirect_url=f"#",
 			content_type=content_type,
 		)
 
 		notification = Notification.objects.get(target=self.receiver, content_type=content_type, object_id=self.id)
-		notification.verb = f"{self.sender.name} cancelled the friend request sent to you."
+		notification.verb = f"Stranger cancelled the friend request sent to you."
 		notification.read = False
 		notification.save()
 

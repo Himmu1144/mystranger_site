@@ -276,5 +276,5 @@ class Polls(models.Model):
 		
 	
 	def __str__(self):
-		return self.option
+		return f'{self.option} and {self.polled.all().count()} votes' 
 

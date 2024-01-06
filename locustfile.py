@@ -21,6 +21,9 @@ class MyUser(HttpUser):
     @task
     def connect_to_websocket5(self):
         self.client.get("/chat/")
+    @task
+    def connect_to_websocket5(self):
+        self.client.get("/nrt_text/")
 
     # Add more tasks as needed
 

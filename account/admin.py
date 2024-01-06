@@ -10,7 +10,7 @@ class AccountAdmin(UserAdmin):
 	list_display = ('email','name','date_joined', 'last_login', 'is_admin','is_staff','is_verified','last_activity')
 	search_fields = ('email','name',)
 	readonly_fields=('id', 'date_joined', 'last_login')
-	ordering = ['email']
+	ordering = ['-date_joined']
 
 	filter_horizontal = ()
 	list_filter = ()
@@ -20,7 +20,7 @@ class DeleteAccountAdmin(admin.ModelAdmin):
 	list_display = ('email','timestamp')
 	search_fields = ('email','name',)
 	readonly_fields=('id', 'timestamp')
-	ordering = ['timestamp']
+
 
 	filter_horizontal = ()
 	list_filter = ()
@@ -30,7 +30,17 @@ class RegErrorAccountAdmin(admin.ModelAdmin):
 	list_display = ('email','timestamp')
 	search_fields = ('email','uni_name')
 	readonly_fields=('id', 'timestamp')
-	ordering = ['timestamp']
+	
+
+	filter_horizontal = ()
+	list_filter = ()
+	fieldsets = ()
+
+class AccountTokenAdmin(admin.ModelAdmin):
+	list_display = ('user', 'created_at')
+	search_fields = ('user__email','user__name')
+	readonly_fields=('id',)
+	
 
 	filter_horizontal = ()
 	list_filter = ()
@@ -38,7 +48,7 @@ class RegErrorAccountAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Account, AccountAdmin)
-admin.site.register(AccountToken)
+admin.site.register(AccountToken, AccountTokenAdmin)
 admin.site.register(RegistrationError,RegErrorAccountAdmin)
 admin.site.register(deleted_account,DeleteAccountAdmin)
 admin.site.register(Prompt)

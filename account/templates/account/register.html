@@ -202,7 +202,7 @@
 
 
 /* Media query for tablet width 320px */
-  @media only screen and (min-width: 300px) and (max-width: 500px) { 
+  @media only screen and (min-width: 300px) and (max-width: 600px) { 
 
 	.alert{
     padding: 0.55rem 0.5rem;
@@ -255,8 +255,8 @@
 
 </style>
 <div class="alert alert-info alert-dismissible fade show reg-notice-top" role="alert">
-  <p style="margin-bottom:2px; margin-top:0px; font-size:13px;" class="notice-for-reg" ><strong>Your Safety is Our Priority - </strong> "Since this site is only for college students, We need your college email id to verify that you're a student. |  The site is 100% safe & secure. your data is in safe hands"</p>
-  <p style="margin-bottom:2px; margin-top:0px; font-size:13px; display:none;" class="notice-for-reg-phone" ><strong>Your Safety is Our Priority - </strong> The site is 100% safe & secure. </p>
+  <p style="margin-bottom:2px; margin-top:0px; font-size:13px;" class="notice-for-reg" >If you haven't recieved verification mail than <a href="{% url "account:resend-verif" %}" style="color:#009cda;">click here</a></p>
+  <p style="margin-bottom:2px; margin-top:0px; font-size:13px; display:none;" class="notice-for-reg-phone" >If you haven't recieved verification mail than <a href="{% url "account:resend-verif" %}" style="color:#009cda;">click here</a></p>
   <p style="font-size:12px; margin-bottom:0px;" class="notice-for-reg"> "If you are facing any trouble regarding registration than please fill this <a href="{% url "account:reg-error" %}">Form</a> | We are going to fix it within few hours or hopefully minutes."</p>
   <p style="font-size:12px; margin-bottom:0px; display:none;" class="notice-for-reg-phone">Facing any problem during  registration? than please fill this <a href="{% url "account:reg-error" %}">Form</a></p>
   
@@ -264,6 +264,7 @@
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
+
 <div class="container-fluid main-cont">
   <div class='rectangle'>
     <div class='box1'>
@@ -641,7 +642,7 @@
     var emailAddress = email.value;
     console.log(universityName)
     if (universityName === '' && (emailAddress.endsWith('.edu') || emailAddress.endsWith('.edu.in') || emailAddress.endsWith('.ac.in')) == true ){
-      alert('Please Select Your University')
+      alert('The site automatically fetches the location of your university from your email address. if you are seeing this that means you university is not showing in the map this can be because the map is not loaded properly so please refresh the page and make sure your university is showing up on the map')
       return false; // Prevent form submission
     }
 
