@@ -15,6 +15,7 @@
         position: fixed;
         bottom: 0;
         width: 100%;
+        {% comment %} z-index:4000; {% endcomment %}
     }
     {% comment %} {% endif %} {% endcomment %}
 
@@ -182,7 +183,7 @@
     }
 
     .nearby-container{
-        max-height: 85vh;
+        max-height: 80vh;
         overflow-y: scroll;
         {% comment %} border:2px solid green; {% endcomment %}
         width:100%;
@@ -198,10 +199,11 @@
     .card-header{
         display: flex;
         justify-content: space-between;
-        height: 80px;
+        
         align-items: center;
         {% comment %} background:whitesmoke; {% endcomment %}
-        background:fafaf8;
+        {% comment %} background:fafaf8; {% endcomment %}
+        background: #343A40;
         padding-top:1em;
         padding-bottom:1em;
         border-radius: 14px 14px 0px 0px!important;
@@ -228,7 +230,7 @@
     }
 
     .btn:hover{
-        background-color: #343a40!important;
+        background-color: white!important;
         cursor: default;
     }
 
@@ -267,7 +269,7 @@
 
 
     .card-header{
-        min-height:80px;
+       
         height:auto;
     }
 
@@ -340,7 +342,7 @@
 
     .dots{
         background: none!important;
-        color: #343a40!important;
+        color: #white!important;
         border: none;
     }
 
@@ -540,12 +542,30 @@
 }
 
 </style>
-<p style="text-align:center;" class="mb-0" ><a class="mt-4" href="{% url 'qna:create-post' %}">Create question</a></p>
+<div style="display:flex; justify-content:center; flex-direction:column; align-items:center;">
+<p style="text-align:center;" class="mb-0" ><a class="mt-4" href="{% url 'confessions:create-postc' %}">Create a confession</a>
+</p>
+<span class="" style="font-size:12px"><a style="" class="text-secondary" href="{% url "confessions:cworking" %}">how it works?</a></span>
+</div>
+
+<!-- search.html -->
+<div class="input-group" style="display:flex; justify-content:center; align-items:center;">
+    <form action="{% url 'confessions:search-view' %}" method="GET">
+        <div class="form-outline d-flex" data-mdb-input-init>
+            <input type="search" name="q" id="search-focus" style="margin-top:8px;" class="form-control" placeholder="search using token" />
+            <button type="submit" class="btn btn-dark" style="margin-left: 8px; margin-top:8px;" data-mdb-ripple-init>
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        
+    </form>
+</div>
+
 <div class="nearby-container" id="scroll-conti">
 
     <div class="container">
         <div id="comments-container">
-            {% include 'qna/question_partial.html' %}
+            {% include 'confessions/question_partialc.html' %}
         </div>
         
         
@@ -577,26 +597,28 @@
                 <a href="?page={{ the_questions.paginator.num_pages }}">last &raquo;</a>
             {% endif %}
         </span>
-    </div>
+    </div>shareLink
      {% endcomment %}
-     {% if request.user_agent.is_mobile %}
-     <div class="footer">
-         <!-- Your footer content goes here -->
-         <div style="display:flex; width:20%; justify-content:space-between; align-items:center; margin:auto; padding:4px;">
-             <a style="cursor: pointer;" href="{% url "qna:pika" %}"><span><i class="fa-solid fa-volleyball" style="color:#009cda;"></i></span></a>
-             <a style="cursor: pointer;" href="{% url "confessions:pikac" %}"><span><i class="fa-solid fa-fire"  style="color:#009cda;"></i></span></a></div>
-         </div>
-     
-         {% else %}
-     
-         <div class="footer">
-             <!-- Your footer content goes here -->
-             <div style="display:flex; width:20%; justify-content:space-between; align-items:center; margin:auto; padding:4px;">
-                 <a style="cursor: pointer;" href="{% url "qna:pika" %}"><span><i class="fa-solid fa-volleyball" style="color:#009cda;"></i><span style="margin-left:0.5em; color:#009cda;">Vibes</span></span></a>
-                 <a style="cursor: pointer;" href="{% url "confessions:pikac" %}"><span><i class="fa-solid fa-fire"  style="color:#009cda;"></i> <span style="margin-left:0.5em; color:#009cda;" >Confessions</span></span></a></div>
-             </div>
-     
-     {% endif %}
+
+  
+{% if request.user_agent.is_mobile %}
+<div class="footer">
+    <!-- Your footer content goes here -->
+    <div style="display:flex; width:20%; justify-content:space-between; align-items:center; margin:auto; padding:4px;">
+        <a style="cursor: pointer;" href="{% url "qna:pika" %}"><span><i class="fa-solid fa-volleyball" style="color:#009cda;"></i></span></a>
+        <a style="cursor: pointer;" href="{% url "confessions:pikac" %}"><span><i class="fa-solid fa-fire"  style="color:#009cda;"></i></span></a></div>
+    </div>
+
+    {% else %}
+
+    <div class="footer">
+        <!-- Your footer content goes here -->
+        <div style="display:flex; width:20%; justify-content:space-between; align-items:center; margin:auto; padding:4px;">
+            <a style="cursor: pointer;" href="{% url "qna:pika" %}"><span><i class="fa-solid fa-volleyball" style="color:#009cda;"></i><span style="margin-left:0.5em; color:#009cda;">Vibes</span></span></a>
+            <a style="cursor: pointer;" href="{% url "confessions:pikac" %}"><span><i class="fa-solid fa-fire"  style="color:#009cda;"></i> <span style="margin-left:0.5em; color:#009cda;" >Confessions</span></span></a></div>
+        </div>
+
+{% endif %}
 
 <!-- Bootstrap Modal -->
 <div class="modal" tabindex="-1" role="dialog" id="shareModal">
@@ -625,6 +647,16 @@
 
 
 <script>
+
+    // Add this event listener to your existing JavaScript
+searchFocus.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        searchFocus.closest('form').submit();
+    }
+});
+
+
     var nextPage = 2;  // Initialize next page
 
 function loadMoreComments() {
@@ -709,7 +741,7 @@ setOnScrollListener(); // Initial scroll listener attachment
 		$.ajax({
 			type: 'POST',
 			dataType: "json",
-			url: "{% url 'qna:addAnswer' %}",
+			url: "{% url 'confessions:addAnswerc' %}",
 			timeout: 5000,
 			data: payload,
 			success: function(data) {
@@ -765,8 +797,8 @@ setOnScrollListener(); // Initial scroll listener attachment
 
     function openShareModal(postId) {
         {% comment %} var dynamicLink = `https://example.com/post/${postId}`; {% endcomment %}
-        var dynamicLink = `https://mystranger.in/vibes/question/${postId}/?question=true`;
-        {% comment %} var dynamicLink = `http://127.0.0.1:8000/vibes/question/${postId}/?question=true`; {% endcomment %}
+        {% comment %} var dynamicLink = `https://mystranger.in/confessions/question/${postId}/?question=true`; {% endcomment %}
+        var dynamicLink = `http://127.0.0.1:8000/confessions/question/${postId}/?question=true`;
         document.getElementById('shareLink').value = dynamicLink;
         $('#shareModal').modal('show');
       }
@@ -839,10 +871,10 @@ function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
         console.log(textva)
 
         if (textva == 'see more answers'){
-            btn_txt.innerHTML = 'see less answers'
+            btn_txt.innerHTML = 'see less comments'
             {% comment %} console.log('see less answers') {% endcomment %}
-        } else if (textva == 'see less answers'){
-            btn_txt.innerHTML = 'see more answers'
+        } else if (textva == 'see more answers'){
+            btn_txt.innerHTML = 'see more comments'
             {% comment %} console.log('see more answers') {% endcomment %}
         }
     }
@@ -857,7 +889,7 @@ function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
 		$.ajax({
 			type: 'POST',
 			dataType: "json",
-			url: "{% url 'qna:addAnswer' %}",
+			url: "{% url 'confessions:addAnswerc' %}",
 			timeout: 5000,
 			data: payload,
 			success: function(data) {
@@ -891,7 +923,7 @@ function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
 		$.ajax({
 			type: 'POST',
 			dataType: "json",
-			url: "{% url 'qna:addAnswer' %}",
+			url: "{% url 'confessions:addAnswerc' %}",
 			timeout: 5000,
 			data: payload,
 			success: function(data) {
@@ -934,7 +966,7 @@ function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
 		$.ajax({
 			type: 'POST',
 			dataType: "json",
-			url: "{% url 'qna:addAnswer' %}",
+			url: "{% url 'confessions:addAnswerc' %}",
 			timeout: 5000,
 			data: payload,
 			success: function(data) {
@@ -975,7 +1007,7 @@ function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
 		$.ajax({
 			type: 'POST',
 			dataType: "json",
-			url: "{% url 'qna:addAnswer' %}",
+			url: "{% url 'confessions:addAnswerc' %}",
 			timeout: 5000,
 			data: payload,
 			success: function(data) {
@@ -1007,7 +1039,7 @@ function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
 		$.ajax({
 			type: 'POST',
 			dataType: "json",
-			url: "{% url 'qna:addAnswer' %}",
+			url: "{% url 'confessions:addAnswerc' %}",
 			timeout: 5000,
 			data: payload,
 			success: function(data) {
@@ -1048,7 +1080,7 @@ function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
         $.ajax({
 			type: 'POST',
 			dataType: "json",
-			url: "{% url "qna:addAnswer" %}",
+			url: "{% url "confessions:addAnswerc" %}",
 			timeout: 5000,
 			data: formData,
             processData: false, // Set processData and contentType to false
@@ -1077,7 +1109,7 @@ function onFriendRequestCancelled(send_req_btn, cancel_req_btn){
                         var existingDiv = document.getElementById(ansElemental); // Replace with the actual ID of your existing div
 
                         // Insert the new card before the existing div
-                        existingDiv.parentNode.insertBefore(newCard, existingDiv);
+                        existingDiv.insertAdjacentElement('afterend', newCard);
 
 				}
                 if(data['status'] == "Replied"){

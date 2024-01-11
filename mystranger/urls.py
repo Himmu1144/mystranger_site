@@ -58,6 +58,7 @@ urlpatterns = [
 
     path('account/', include('account.urls', namespace='account')),
     path('vibes/', include('qna.urls', namespace='qna')),
+    path('confessions/', include('confessions.urls', namespace='confessions')),
 
     # Friend System
     path('friend/', include('friend.urls', namespace='friend')),

@@ -77,6 +77,8 @@ class Account(AbstractBaseUser):
     is_verified = models.BooleanField(default=False)
     last_activity = models.DateTimeField(verbose_name='last activity', default=timezone.now)
 
+    confesser_id = models.CharField(max_length=100, default='None', null=True)
+
     GENDER_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),

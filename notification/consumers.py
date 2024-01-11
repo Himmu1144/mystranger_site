@@ -20,6 +20,7 @@ from mystranger_app.models import University, UniversityProfile
 from chat.exceptions import ClientError
 from account.models import Account
 from qna.models import Answer
+from confessions.models import CAnswer
 
 
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
@@ -329,8 +330,9 @@ def get_general_notifications(user, page_number):
         friend_request_ct = ContentType.objects.get_for_model(FriendRequest)
         friend_list_ct = ContentType.objects.get_for_model(FriendList)
         answer_list_ct = ContentType.objects.get_for_model(Answer)
+        Canswer_list_ct = ContentType.objects.get_for_model(CAnswer)
         notifications = Notification.objects.filter(target=user, content_type__in=[
-                                                    friend_request_ct, friend_list_ct, answer_list_ct]).order_by('-timestamp')
+                                                    friend_request_ct, friend_list_ct, answer_list_ct, Canswer_list_ct]).order_by('-timestamp')
         print('These are the general notifs - ')
         # print(notifications)
         p = Paginator(notifications, DEFAULT_NOTIFICATION_PAGE_SIZE)
@@ -429,8 +431,9 @@ def refresh_general_notifications(user, oldest_timestamp, newest_timestamp):
         friend_request_ct = ContentType.objects.get_for_model(FriendRequest)
         friend_list_ct = ContentType.objects.get_for_model(FriendList)
         answer_list_ct = ContentType.objects.get_for_model(Answer)
+        Canswer_list_ct = ContentType.objects.get_for_model(CAnswer)
         notifications = Notification.objects.filter(target=user, content_type__in=[
-                                                    friend_request_ct, friend_list_ct, answer_list_ct], timestamp__gte=oldest_ts, timestamp__lte=newest_ts).order_by('-timestamp')
+                                                    friend_request_ct, friend_list_ct, answer_list_ct, Canswer_list_ct], timestamp__gte=oldest_ts, timestamp__lte=newest_ts).order_by('-timestamp')
 
         s = LazyNotificationEncoder()
         payload['notifications'] = s.serialize(notifications)
@@ -454,9 +457,11 @@ def get_new_general_notifications(user, newest_timestamp):
         friend_request_ct = ContentType.objects.get_for_model(FriendRequest)
         friend_list_ct = ContentType.objects.get_for_model(FriendList)
         answer_list_ct = ContentType.objects.get_for_model(Answer)
+        Canswer_list_ct = ContentType.objects.get_for_model(CAnswer)
         notifications = Notification.objects.filter(target=user, content_type__in=[
-                                                    friend_request_ct, friend_list_ct, answer_list_ct], timestamp__gt=timestamp, read=False).order_by('-timestamp')
+                                                    friend_request_ct, friend_list_ct, answer_list_ct, Canswer_list_ct], timestamp__gt=timestamp, read=False).order_by('-timestamp')
         s = LazyNotificationEncoder()
+        payload['notifications'] = s.serialize(notifications)
         payload['notifications'] = s.serialize(notifications)
     else:
         raise ClientError("User must be authenticated to get notifications.")
@@ -471,8 +476,9 @@ def get_unread_general_notification_count(user):
         friend_request_ct = ContentType.objects.get_for_model(FriendRequest)
         friend_list_ct = ContentType.objects.get_for_model(FriendList)
         answer_list_ct = ContentType.objects.get_for_model(Answer)
+        Canswer_list_ct = ContentType.objects.get_for_model(CAnswer)
         notifications = Notification.objects.filter(target=user, content_type__in=[
-                                                    friend_request_ct, friend_list_ct, answer_list_ct], read=False)
+                                                    friend_request_ct, friend_list_ct, answer_list_ct, Canswer_list_ct], read=False)
 
         unread_count = 0
         if notifications:

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'chat',
     'notification',
     'qna',
+    'confessions',
     'nrt',
 
     # Third party apps 

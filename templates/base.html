@@ -682,6 +682,20 @@ input:focus, textarea:focus, select:focus {
             <li>
               
               <a class=" p-2 nav-msg account-nav" style='text-decoration:none;'
+          href="{% url 'confessions:pikac' %}">
+        
+              
+                <div class="icon">
+                  <span class="fa-solid fa-fire"></span>
+                </div>
+                Confessions
+              </a>
+            </li>
+
+
+            <li>
+              
+              <a class=" p-2 nav-msg account-nav" style='text-decoration:none;'
           href="{% url 'nrt-text' %}">
               
                 <div class="icon">
@@ -860,6 +874,7 @@ input:focus, textarea:focus, select:focus {
               right: 10px !important;"></span>
               <div class="d-flex flex-direction-row mr-4 ml-2">
                 <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'qna:pika' %}">Vibes</a>
+                
                 <a class="text-light p-2 nav-msg" style='text-decoration:none;' href="{% url 'chat:private-chat-room' %}">Messages</a></div>
                 <a class="text-light p-2 nav-msg2" style='text-decoration:none;' href="{% url 'qna:pika' %}"><i class="fa-solid fa-volleyball" style="color: #ffffff;"></i></a> 
               </div>
@@ -903,6 +918,19 @@ input:focus, textarea:focus, select:focus {
                     <span class="fas fa-sign-out-alt"></span>
                   </div>
                   Log out
+                </a>
+              </li>
+
+              <li>
+              
+                <a class=" p-2 nav-msg account-nav" style='text-decoration:none;'
+            href="{% url 'confessions:pikac' %}">
+          
+                
+                  <div class="icon">
+                    <span class="fa-solid fa-fire"></span>
+                  </div>
+                  Confessions
                 </a>
               </li>
 

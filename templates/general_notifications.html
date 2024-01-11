@@ -116,6 +116,11 @@
 							refreshFriendListCard(card, notification)
 							break;
 
+							case "CAnswer":
+							//console.log('refreshing friendlist card')
+							refreshFriendListCard(card, notification)
+							break;
+
 						default:
 							break;
 						// code block
@@ -211,6 +216,12 @@
 				break;
 
 			case "Answer":
+				notificationContainer = document.getElementById("id_general_notifications_container")
+				card = createFriendListElement(notification)
+				notificationContainer.appendChild(card)
+				break;
+
+			case "CAnswer":
 				notificationContainer = document.getElementById("id_general_notifications_container")
 				card = createFriendListElement(notification)
 				notificationContainer.appendChild(card)
@@ -600,6 +611,12 @@
 				break;
 
 			case "Answer":
+				notificationContainer = document.getElementById("id_general_notifications_container")
+				card = createFriendListElement(notification)
+				notificationContainer.insertBefore(card, notificationContainer.childNodes[0]);
+				break;
+
+			case "CAnswer":
 				notificationContainer = document.getElementById("id_general_notifications_container")
 				card = createFriendListElement(notification)
 				notificationContainer.insertBefore(card, notificationContainer.childNodes[0]);
