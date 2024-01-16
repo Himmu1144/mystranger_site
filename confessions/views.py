@@ -203,9 +203,13 @@ def create_post_view(request):
             return redirect('confessions:create-postc')
 
         question = request.POST.get('question')
+        # taggiemail = request.POST.get('taggiemail')
         taggiemail = request.POST.get('taggiemail')
-        taggieinfo = request.POST.get('taggieinfo')
+        taggiemode = request.POST.get('selecti')
         taggiename = request.POST.get('taggiename')
+
+        print('the taggie ode - ',taggiemode)
+        # print('the taggie info - ',taggieinfo)
         
 
         # poll1 = request.POST.get('poll1')
@@ -214,7 +218,7 @@ def create_post_view(request):
         # poll4 = request.POST.get('poll4')
 
         
-        if taggiemail or taggieinfo:
+        if taggiemail:
             confesser_id = my_unique_confession_id(request.user)
             print('This is the confesser id - ', confesser_id)
             roomv = CPublicChatRoom(question = question, owner = user, confesserid = confesser_id)
@@ -229,15 +233,12 @@ def create_post_view(request):
             if taggiemail:
                 # later on filter whether its abusive or not but for now just send it -
                 '''
-                Here we gotta send an email to the taggie at the given email
+                Here we gotta send an email to the taggie at the given info
                 ''' 
-                roomv.taggie_email = taggiemail
+                roomv.taggie_info = taggiemail
+                roomv.taggie_email = taggiemode
                 roomv.save()
-                pass
             
-            if taggieinfo:
-                roomv.taggie_info = taggieinfo
-                roomv.save()
 
             answer = CAnswer(question = roomv, user = user, content=question, confesserid = confesser_id)
             answer.save()

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'nrt',
 
     # Third party apps 
+    'webpush',
     'mptt',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -62,6 +63,12 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     
 ]
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "BEYVWr6VZf-HIpz8gRUVsoKdJAD2RFXUKx-Oi2LQlLrzS5mau2A9lDNvzJkC3WZaF-UcT2_GN-t1xCR3CbW72As",
+    "VAPID_PRIVATE_KEY":"AqQtlD20krqFftC1U_WPtqZhzRFKTCGZ1Vux_OTqgZI",
+    "VAPID_ADMIN_EMAIL": "info@mystranger.in"
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -24,6 +24,7 @@ from django.contrib import messages
 from qna.models import Answer, PublicChatRoom
 from django.db.models import Count
 from django.db.models import F, Case, When, Value, IntegerField
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -112,7 +113,7 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-
+@csrf_exempt
 def login_view(request, *args, **kwargs):
 
     context = {}

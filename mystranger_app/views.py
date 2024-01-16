@@ -6,6 +6,125 @@ from account.models import Account , deleted_account
 from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 
+from django.http.response import JsonResponse, HttpResponse
+from django.views.decorators.http import require_GET, require_POST
+from django.http.response import HttpResponse
+from django.views.decorators.http import require_GET
+from django.shortcuts import get_object_or_404
+
+from django.views.decorators.csrf import csrf_exempt
+from webpush import send_user_notification
+import json
+from django.conf import settings
+from django.http import HttpResponse
+import requests
+
+from django.http import HttpResponse
+import os
+
+
+def service_worker(request):
+    file_path = os.path.join(os.path.dirname(__file__), 'firebase-messaging-sw.js')
+    print()
+    with open(file_path, 'rb') as f:
+        response = HttpResponse(f.read(), content_type='application/javascript')
+        response['Content-Disposition'] = 'inline; filename=firebase-messaging-sw.js'
+        return response
+
+@require_GET
+def home(request):
+    
+    user = request.user
+    return render(request, 'homii.html', {user: user})
+
+
+# @require_POST
+# @csrf_exempt
+# def send_push(request):
+#     try:
+#         body = request.body
+#         data = json.loads(body)
+
+#         if 'head' not in data or 'body' not in data or 'id' not in data:
+#             return JsonResponse(status=400, data={"message": "Invalid data format"})
+
+#         user_id = data['id']
+#         user = get_object_or_404(Account, pk=user_id)
+#         print('i am the user, ', user)
+#         # payload = {'head': data['head'], 'body': data['body']}
+#         payload = {'head': 'Test Head', 'body': 'Test Body'}
+        
+#         send_user_notification(user=user, payload=payload, ttl=1000)
+#         print('notif pushed - ')
+
+#         return JsonResponse(status=200, data={"message": "Web push successful"})
+#     except TypeError:
+#         return JsonResponse(status=500, data={"message": "An error occurred"})
+
+# def send(request):
+#     resgistration  = [
+#     ]
+#     send_notification(resgistration , 'Code Keen added a new video' , 'Code Keen new video alert')
+#     return HttpResponse("sent")
+
+
+# def send_notification(registration_ids , message_title , message_desc):
+#     fcm_api = "BL5fFXV5nBLXhDblD0qWii5Pg7ED211JJQxweRVBAg9qS1RrhhfO36L7PvpnVtbkCpiNNc18VSeisDGrBpobYqs"
+#     url = "https://fcm.googleapis.com/fcm/send"
+    
+#     headers = {
+#     "Content-Type":"application/json",
+#     "Authorization": 'key='+fcm_api}
+
+#     payload = {
+#         "registration_ids" :registration_ids,
+#         "priority" : "high",
+#         "notification" : {
+#             "body" : message_desc,
+#             "title" : message_title,
+#             "image" : "https://i.ytimg.com/vi/m5WUPHRgdOA/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDwz-yjKEdwxvKjwMANGk5BedCOXQ",
+#             "icon": "https://yt3.ggpht.com/ytc/AKedOLSMvoy4DeAVkMSAuiuaBdIGKC7a5Ib75bKzKO3jHg=s900-c-k-c0x00ffffff-no-rj",
+            
+#         }
+#     }
+
+#     result = requests.post(url,  data=json.dumps(payload), headers=headers )
+#     print(result.json())
+
+
+
+
+
+# def showFirebaseJS(request):
+#     data='importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js");' \
+#          'importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js"); ' \
+#          'var firebaseConfig = {' \
+#          '        apiKey: "AIzaSyDyNyMD0b0BHTzMj-mULfQW9qc2lwh6CmU",' \
+#          '        authDomain: "mystranger4.firebaseapp.com",' \
+#          '        projectId: "mystranger4",' \
+#          '        storageBucket: "mystranger4.appspot.com",' \
+#          '        messagingSenderId: "547419092017",' \
+#          '        appId: "1:547419092017:web:3db968cbd00da61eff9110",' \
+#          '        measurementId: "G-3HZ2RQV1PT"' \
+#          ' };' \
+#          'firebase.initializeApp(firebaseConfig);' \
+#          'const messaging=firebase.messaging();' \
+#          'messaging.setBackgroundMessageHandler(function (payload) {' \
+#          '    console.log(payload);' \
+#          '    const notification=JSON.parse(payload);' \
+#          '    const notificationOption={' \
+#          '        body:notification.body,' \
+#          '        icon:notification.icon' \
+#          '    };' \
+#          '    return self.registration.showNotification(payload.notification.title,notificationOption);' \
+#          '});'
+    
+#     response = HttpResponse(data, content_type='application/javascript')
+#     response['Content-Disposition'] = 'inline; filename=firebase-messaging-sw.js'
+#     return response
+
+    # return HttpResponse(data,content_type="text/javascript")
+
 
 # Create your views here.
 def home_view(request):

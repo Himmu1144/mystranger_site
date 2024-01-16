@@ -26,7 +26,46 @@
   {% comment %}
   <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script> {% endcomment %}
 
+
+  {% comment %} <script type="module">
+   // Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+ apiKey: "AIzaSyDyNyMD0b0BHTzMj-mULfQW9qc2lwh6CmU",
+      authDomain: "mystranger4.firebaseapp.com",
+      projectId: "mystranger4",
+      storageBucket: "mystranger4.appspot.com",
+      messagingSenderId: "547419092017",
+      appId: "1:547419092017:web:3db968cbd00da61eff9110",
+      measurementId: "G-3HZ2RQV1PT"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const messaging = getMessaging(app);
+
+// Now you can use the getToken function
+getToken(messaging, { vapidKey: 'BL5fFXV5nBLXhDblD0qWii5Pg7ED211JJQxweRVBAg9qS1RrhhfO36L7PvpnVtbkCpiNNc18VSeisDGrBpobYqs' }).then((currentToken) => {
+  if (currentToken) {
+    console.log(currentToken);
+  } else {
+    console.log('No registration token available. Request permission to generate one.');
+  }
+}).catch((err) => {
+  console.log('An error occurred while retrieving token. ', err);
+});
+
+  </script>
+   {% endcomment %}
+
   <script src="https://kit.fontawesome.com/7b372b72ba.js" crossorigin="anonymous"></script>
+
+  {% block tailwind %}{% endblock tailwind %}
 
   <!-- Markdown it -->
 

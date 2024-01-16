@@ -29,20 +29,25 @@ from account.views import (
 
 from nrt.views import *
 from qna.views import *
+from django.views.generic import TemplateView
 
 handler404 = 'mystranger_app.views.error_404_view'
 
 urlpatterns = [
     path('evilstranger666/', admin.site.urls),
-    path('', home_view, name='home' ),
+    # path('', home_view, name='home' ),
     path('new_chat/', new_chat_view , name='new-chat' ),
     path('new_chat_text/', new_chat_text_view , name='new-chat-text' ),
     path('nrt_text/', nrt_text_view , name='nrt-text' ),
     path('nrt_text/how', nrt_text_how_view , name='nrt-text-how' ),
 
-    
-    
-    
+    path('', home),
+    path('firebase-messaging-sw.js', service_worker, name='service_worker'),
+
+    # path('send_push', send_push),
+    # path('webpush/', include('webpush.urls')),
+    # path('sw.js', TemplateView.as_view(template_name='sw.js', content_type='application/x-javascript')),
+    # path('firebase-messaging-sw.js/',showFirebaseJS,name="show_firebase_js"),
 
 
     path('search/', account_search_view, name="search"),
