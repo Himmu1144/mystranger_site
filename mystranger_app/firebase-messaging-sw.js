@@ -71,17 +71,30 @@ const messaging = firebase.messaging();
   messaging.setBackgroundMessageHandler(function(payload) {
     console.log('Received background message ', payload);
     // Customize notification here
-    var notificationTitle = 'Background Message Title';
+    var notificationTitle = payload.title;
     var notificationOptions = {
-      body: 'Background Message body',
-      icon: '/firebase-logo.png'
+      body: payload.body,
+      icon: '/firebase-logo.png',
+      data: {
+        // Put your data here
+        url: payload.data.url
+      }
     };
   
     return self.registration.showNotification(notificationTitle,
       notificationOptions);
   });
-  
+  // Handle notification click
+self.addEventListener('notificationclick', (event) => {
+  // Close the notification
+  event.notification.close();
 
+  // Get the URL to redirect to
+  const urlToRedirect = event.notification.data.url;
+
+  // Open the specific URL in a new window/tab
+  event.waitUntil(clients.openWindow(urlToRedirect));
+});
 // messaging.onMessage(payload => {
 //     console.log("Message received. ", payload);
 //     const { title,...options } = payload.notification;

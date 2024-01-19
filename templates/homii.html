@@ -176,13 +176,12 @@ pushForm.addEventListener('submit', async function (e) {
         import { getMessaging , getToken, onMessage} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
         const firebaseConfig = {
-        apiKey: "AIzaSyDyNyMD0b0BHTzMj-mULfQW9qc2lwh6CmU",
-        authDomain: "mystranger4.firebaseapp.com",
-        projectId: "mystranger4",
-        storageBucket: "mystranger4.appspot.com",
-        messagingSenderId: "547419092017",
-        appId: "1:547419092017:web:3db968cbd00da61eff9110",
-        measurementId: "G-3HZ2RQV1PT"
+        apiKey: "AIzaSyBvIfbBWmexblwSfutARVkA6bXZsa_ETpc",
+  authDomain: "notification-bcea2.firebaseapp.com",
+  projectId: "notification-bcea2",
+  storageBucket: "notification-bcea2.appspot.com",
+  messagingSenderId: "303828079465",
+  appId: "1:303828079465:web:4a61dcdffbd69eb64863f8"
     };
 
 
@@ -205,8 +204,10 @@ pushForm.addEventListener('submit', async function (e) {
                     
                     console.log(permission);
                     try {
-                    getToken(messaging, {vapidKey: "BL5fFXV5nBLXhDblD0qWii5Pg7ED211JJQxweRVBAg9qS1RrhhfO36L7PvpnVtbkCpiNNc18VSeisDGrBpobYqs"}).then(currentToken =>{
+                    getToken(messaging, {vapidKey: "BCphnZek9fdpVvqDaM7rKZ9kCSWcZTc_n2GzX8MLMdnVA4n859RP06KCY_8Hk-Vg-ZkQ2GLMaiRQAU4fZ2WRVhc"}).then(currentToken =>{
                         console.log(currentToken);
+                       document.getElementById('hawas').innerHTML = currentToken
+
                     })
                         
                     } catch (error) {
@@ -229,6 +230,7 @@ pushForm.addEventListener('submit', async function (e) {
 <body>
     <h1>firebase web push - </h1>
     <button onclick="SubscribeUser()">Subscribe</button>
+    <h6 class="" id ="hawas"></h6>
 
     <script>
 

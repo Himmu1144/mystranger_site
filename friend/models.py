@@ -9,7 +9,43 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from chat.utils import find_or_create_private_chat
 from notification.models import Notification
+from mystranger_app.utils import send_notification_fb
+from firebase_admin import messaging
 
+
+# def send_web_push(registration_token, title, body, url):
+#     # Define the webpush configuration
+#     webpush_config = messaging.WebpushConfig(
+#         notification=messaging.WebpushNotification(
+#             title=title,
+#             body=body,
+#             icon='/images/icon.png'  # Optional
+#         )
+# 		# ,
+#         # fcm_options={
+#         #     'link': url
+#         # }
+#     )
+
+#     # Create the message
+#     message = messaging.Message(
+#         webpush=webpush_config,
+#         token=registration_token
+#     )
+
+#     # Send the message
+#     response = messaging.send(message)
+#     print('Successfully sent message:', response)
+
+
+# from django.templatetags.static import static
+# from django.contrib.sites.models import Site
+
+# # Get the current site
+# current_site = Site.objects.get_current()
+
+# # Generate the logo URL
+# logo_url = current_site.domain + static('images/msico.ico')
 
 
 class FriendList(models.Model):
@@ -41,6 +77,7 @@ class FriendList(models.Model):
 				content_type=content_type,
 			)
 			self.save()
+			# send_notification_fb(user_id=id, title="Notification Title", message="Notification message", data=None)
 
 		# Create a private chat (or activate an old one)
 			chat = find_or_create_private_chat(self.user, account)
@@ -164,6 +201,41 @@ class FriendRequest(models.Model):
 					verb=f"{self.receiver.name} accepted your friend request.",
 					content_type=content_type,
 				)
+				# redirect_url=f"{domain_name}/account/{self.receiver.pk}/"
+				# message=f"{self.receiver.name} accepted your friend request."
+				# print(message, 'this is the msg')
+				# send_notification_fb(
+				# 	user_id=self.sender.id,
+				# 	title="MyStranger.in",
+				# 	message=message,
+				# 	data={
+				# 		"click_action": redirect_url,  # Replace with your URL
+				# 	}
+				# )
+
+				# print('sent the accept frnd req-notif')
+
+				redirect_url=f"{domain_name}/account/{self.receiver.pk}/"
+				message=f"{self.receiver.name} accepted your friend request."
+				registration_token = self.sender.ntoken
+				message = messaging.Message(
+					notification=messaging.Notification(
+						title='MyStranger.in',
+						body=message,
+					),
+					data={
+						'url': redirect_url,
+						# 'logo': logo_url,
+					},
+					token=registration_token,
+				)
+
+
+				# Send a message to the device corresponding to the provided
+				# registration token.
+				response = messaging.send(message)
+				print('Successfully sent the accept firend req message:', response)
+
 
 
 				sender_friend_list.add_friend(self.receiver)
@@ -230,6 +302,39 @@ class FriendRequest(models.Model):
 		notification.read = False
 		notification.save()
 
+		# redirect_url=f"{domain_name}/account/{self.receiver.pk}/"
+		# message=f"{self.receiver.name} cancelled your friend request."
+		# print(message, 'this is the msg')
+		# send_notification_fb(
+		# 	user_id=self.sender.id,
+		# 	title="MyStranger.in",
+		# 	message=message,
+		# 	data={
+		# 		"click_action": redirect_url,  # Replace with your URL
+		# 	}
+		# )
+
+		# redirect_url=f"{domain_name}/account/{self.sender.pk}/"
+		# message=f"You cancelled the friend request to sent to the stranger"
+		# registration_token = self.sender.ntoken
+		# message = messaging.Message(
+		# 	notification=messaging.Notification(
+		# 		title='MyStranger.in',
+		# 		body=message,
+		# 	),
+		# 	data={
+		# 		'url': redirect_url,
+		# 		# 'logo': logo_url,
+		# 	},
+		# 	token=registration_token,
+		# )
+
+		# response = messaging.send(message)
+		# print('Successfully sent the friend req msg message:', response)
+
+
+		print('cancel the accept frnd req-notif')
+
 	@property
 	def get_cname(self):
 		"""
@@ -247,3 +352,65 @@ def create_notification(sender, instance, created, **kwargs):
 			verb=f"{instance.sender.name} sent you a friend request.",
 			content_type=instance,
 		)
+
+		redirect_url=f"{domain_name}/account/{instance.sender.pk}/"
+		message=f"{instance.sender.name} sent you a friend request."
+		registration_token = instance.receiver.ntoken
+		message = messaging.Message(
+			notification=messaging.Notification(
+				title='MyStranger.in',
+				body=message,
+				# click_action=redirect_url,
+			),
+			data={
+				'url': redirect_url,
+				# 'logo': logo_url,
+			},
+			token=registration_token,
+		)
+		print('thi is the rediri url -', redirect_url)
+		response = messaging.send(message)
+
+
+		
+
+		print('Successfully sent the friend req msg message:', response)
+
+		
+		# Call the function
+		# send_web_push(
+		# 	registration_token=registration_token,
+		# 	title='MyStranger.in',
+		# 	body=message,
+		# 	url='https://www.mystranger.in/'
+		# )
+
+		# redirect_url=f"{domain_name}/account/{instance.sender.pk}/"
+		# message=f"{instance.sender.name} sent you a friend request."
+		# registration_token = instance.receiver.ntoken
+		# # print(message, 'this is the msg')
+		# send_notification_fb(
+		# 	user_id=instance.sender.id,
+		# 	title="MyStranger.in",
+		# 	message="mai chutia hu",
+		# 	data={
+		# 		"click_action": redirect_url,  # Replace with your URL
+		# 	}
+		# )
+
+		# print('sent the accept frnd req-notif')
+
+		# See documentation on defining a message payload.
+
+		# we gotta fetch the registration token of the person whom we are sending this notif
+
+
+		# message = messaging.Message(
+		# 	notification=messaging.Notification(
+		# 		title='MyStranger.in',
+		# 		body=message,
+		# 	),
+		# 	token=registration_token,
+		# )
+
+		

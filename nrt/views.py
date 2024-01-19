@@ -27,6 +27,7 @@ def nrt_text_how_view(request, *args, **kwargs):
 def nrt_text_view(request, *args, **kwargs):
     
     context = {}
+    context['is_active'] = 'nrt'
     user = request.user
 
     if request.user.is_authenticated:

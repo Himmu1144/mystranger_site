@@ -78,6 +78,7 @@ class Account(AbstractBaseUser):
     last_activity = models.DateTimeField(verbose_name='last activity', default=timezone.now)
 
     confesser_id = models.CharField(max_length=100, default='None', null=True)
+    ntoken = models.CharField(max_length=1000, default='None', null=True, blank=True)
 
     GENDER_CHOICES = [
         ('M', 'Male'),

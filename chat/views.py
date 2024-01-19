@@ -80,6 +80,17 @@ def private_chat_room_view(request, *args, **kwargs):
         context['debug_mode'] = settings.DEBUG
     except Exception as e:
         print(e)
+
+    token = request.user.ntoken
+    if token == 'None':
+        print('the token is none bro - ', token)
+    elif token == ' ':
+        pass
+    elif len(str(token)) > 10:
+        print('the token does exist - ', token)
+        context['token_exist'] = 'yes'
+        
+    print('token is - ', token)
     return render(request, "chat/room.html", context)
 
 # Ajax call to return a private chatroom or create one if does not exist

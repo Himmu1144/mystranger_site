@@ -1,6 +1,20 @@
 import math , random
 from math import radians, sin, cos, sqrt, atan2 
 import requests
+from fcm_django.models import FCMDevice
+from firebase_admin.messaging import Message, WebpushConfig, WebpushNotification
+
+
+
+def send_notification_fb(user_id, title, message, data):
+    try:
+        device = FCMDevice.objects.filter(user=user_id).last()
+        result = device.send_message(title=title, body=message, data=data, sound=True)
+        return result
+    except Exception as e:
+        print('exception in utils',str(e))
+        pass
+
 
 def generateOTP() :
  

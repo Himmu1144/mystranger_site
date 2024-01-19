@@ -663,15 +663,21 @@
 		{% else %}
 
 		var countElement = document.getElementById("id_msg_notifications_count_mobile")
+		var countElement2 = document.getElementById("id_msg_notifications_count")
 		
 		if(count > 0){
 			countElement.innerHTML = count
 			countElement.style.background = "red"
 			countElement.style.display = "block"
+			countElement2.innerHTML = count
+			countElement2.style.background = "red"
+			countElement2.style.display = "block"
 		}
 		else{
 			countElement.style.background = "transparent"
 			countElement.style.display = "none"
+			countElement2.style.background = "transparent"
+			countElement2.style.display = "none"
 		}
 
 		{% endif %}

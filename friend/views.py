@@ -7,6 +7,7 @@ from account.models import Account
 from friend.models import FriendRequest, FriendList
 from django.utils import timezone
 from datetime import timedelta
+from django.views.decorators.csrf import csrf_exempt
 
 def friends_list_view(request, *args, **kwargs):
 	context = {}
@@ -56,6 +57,7 @@ def friend_requests(request, *args, **kwargs):
 		print(e)
 	return render(request, "friend/friend_requests.html", context)
 
+@csrf_exempt
 def send_friend_request(request, *args, **kwargs):
 	user = request.user
 	payload = {}
@@ -84,24 +86,25 @@ def send_friend_request(request, *args, **kwargs):
 					"""
 					# all_friend_requests = FriendRequest(sender=user, receiver=receiver)
 					 # Calculate the timestamp for 24 hours ago
-					twenty_four_hours_ago = timezone.now() - timedelta(hours=12)
+					# twenty_four_hours_ago = timezone.now() - timedelta(hours=12)
 
-					# Query for friend requests sent by the user in the past 24 hours
-					sent_requests = FriendRequest.objects.filter(
-						sender=user,
-						timestamp__gte=twenty_four_hours_ago
-					).order_by('-timestamp')
+					# # Query for friend requests sent by the user in the past 24 hours
+					# sent_requests = FriendRequest.objects.filter(
+					# 	sender=user,
+					# 	timestamp__gte=twenty_four_hours_ago
+					# ).order_by('-timestamp')
 
-					sent_requests_count = sent_requests.count()
-					print('this is the friend req count - ', sent_requests_count)
-					if sent_requests_count > 5:
-						raise Exception("To maintain a positive and respectful community, each user is limited to sending a maximum of 5 friend requests within a 12-hour period. This measure is in place to prevent spamming and ensure a quality experience for everyone.  If you have reached the limit, kindly wait for some time before sending additional friend requests.")
+					# sent_requests_count = sent_requests.count()
+					# print('this is the friend req count - ', sent_requests_count)
+					# if sent_requests_count > 5:
+					# 	raise Exception("To maintain a positive and respectful community, each user is limited to sending a maximum of 5 friend requests within a 12-hour period. This measure is in place to prevent spamming and ensure a quality experience for everyone.  If you have reached the limit, kindly wait for some time before sending additional friend requests.")
 
 					# If none are active create a new friend request
 					friend_request = FriendRequest(sender=user, receiver=receiver)
 					friend_request.save()
 					payload['response'] = "Friend request sent."
 				except Exception as e:
+					print('we are getting an exceptionhere - ', str(e))
 					payload['response'] = str(e)
 			except FriendRequest.DoesNotExist:
 				# There are no friend requests so create one.
@@ -117,6 +120,7 @@ def send_friend_request(request, *args, **kwargs):
 		payload['response'] = "You must be authenticated to send a friend request."
 	return HttpResponse(json.dumps(payload), content_type="application/json")
 
+@csrf_exempt
 def accept_friend_request(request, *args, **kwargs):
 	user = request.user
 	payload = {}
@@ -142,6 +146,7 @@ def accept_friend_request(request, *args, **kwargs):
 		payload['response'] = "You must be authenticated to accept a friend request."
 	return HttpResponse(json.dumps(payload), content_type="application/json")
 
+@csrf_exempt
 def remove_friend(request, *args, **kwargs):
 	user = request.user
 	payload = {}
@@ -162,6 +167,7 @@ def remove_friend(request, *args, **kwargs):
 		payload['response'] = "You must be authenticated to remove a friend."
 	return HttpResponse(json.dumps(payload), content_type="application/json")
 
+@csrf_exempt
 def decline_friend_request(request, *args, **kwargs):
 	user = request.user
 	payload = {}
@@ -186,6 +192,7 @@ def decline_friend_request(request, *args, **kwargs):
 		payload['response'] = "You must be authenticated to decline a friend request."
 	return HttpResponse(json.dumps(payload), content_type="application/json")
 
+@csrf_exempt
 def cancel_friend_request(request, *args, **kwargs):
 	user = request.user
 	payload = {}

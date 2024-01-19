@@ -35,13 +35,14 @@ handler404 = 'mystranger_app.views.error_404_view'
 
 urlpatterns = [
     path('evilstranger666/', admin.site.urls),
-    # path('', home_view, name='home' ),
+    path('', home_view, name='home' ),
     path('new_chat/', new_chat_view , name='new-chat' ),
     path('new_chat_text/', new_chat_text_view , name='new-chat-text' ),
     path('nrt_text/', nrt_text_view , name='nrt-text' ),
     path('nrt_text/how', nrt_text_how_view , name='nrt-text-how' ),
 
-    path('', home),
+    # path('notif-token/', save_token, name="notif-token"),
+    path('notif-token/', notif_token_view, name="notif-token"),
     path('firebase-messaging-sw.js', service_worker, name='service_worker'),
 
     # path('send_push', send_push),

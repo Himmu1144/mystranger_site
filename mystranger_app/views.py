@@ -21,6 +21,10 @@ import requests
 
 from django.http import HttpResponse
 import os
+from fcm_django.models import FCMDevice
+from django_user_agents.utils import get_user_agent
+
+
 
 
 def service_worker(request):
@@ -31,11 +35,74 @@ def service_worker(request):
         response['Content-Disposition'] = 'inline; filename=firebase-messaging-sw.js'
         return response
 
-@require_GET
-def home(request):
+@csrf_exempt
+def notif_token_view(request):
     
-    user = request.user
-    return render(request, 'homii.html', {user: user})
+    if request.method=='POST':
+
+        try:
+            token = request.POST.get('token')
+            print('The token is -', token)
+
+            user = request.user
+
+            my_ac = Account.objects.get(id=request.user.id)
+            my_ac.ntoken = token
+            my_ac.save()
+
+            print('the token is saved into db - ', token)
+
+            response_data = {
+                        'status' : 'success',
+                        'message': 'token added',
+                        'token' : token,
+                    }
+            
+        except Exception as e :
+                print('error fetching the answer')
+                response_data = {
+                'status' : 'error',
+                'message': str(e),
+            }
+    return HttpResponse(json.dumps(response_data), content_type="application/json")      
+
+
+@csrf_exempt
+def save_token(request):
+
+    if request.method == 'POST':
+
+        try:
+            token = request.POST.get('token')
+            # device_type = request.POST.get('device_type')  # 'web', 'mobile', etc.
+            user = request.user  # get the currently logged in user
+            user_agent = get_user_agent(request)
+            if user_agent.is_mobile:
+                device_type = 'mobile'
+            elif user_agent.is_tablet:
+                device_type = 'tablet'
+            else:
+                device_type = 'desktop'
+
+
+            device = FCMDevice.objects.create(user=user, registration_id=token, type=device_type)
+            print('the token is saved into db')
+
+            response_data = {
+                        'status' : 'success',
+                        'message': 'token added',
+                        'token' : token,
+                    }
+            
+        except Exception as e :
+                print('error fetching the answer - ', str(e))
+                response_data = {
+                'status' : 'error',
+                'message': str(e),
+            }
+
+        return HttpResponse(json.dumps(response_data), content_type="application/json")   
+
 
 
 # @require_POST
@@ -130,6 +197,7 @@ def home(request):
 def home_view(request):
 
     context = {}
+    context['is_active'] = 'home'
     if request.user.is_authenticated:
         user = request.user
         user.update_last_activity()

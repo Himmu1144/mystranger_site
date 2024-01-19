@@ -31,6 +31,7 @@ from django.views.decorators.csrf import csrf_exempt
 def register_view(request, *args, **kwargs):
 
     context = {}
+    context['hide_footer'] = 'yas'
     try:
         user = request.user
         if user.is_authenticated:
@@ -117,6 +118,7 @@ def logout_view(request):
 def login_view(request, *args, **kwargs):
 
     context = {}
+    context['hide_footer'] = 'yas'
     
     try:
         user = request.user
@@ -153,6 +155,7 @@ def login_view(request, *args, **kwargs):
 
 def resend_verif_view(request, *args, **kwargs):
   context = {}
+  context['hide_footer'] = 'yas'
 
   if request.method == 'POST':
     try:
@@ -193,6 +196,9 @@ def account_view(request, *args, **kwargs):
     """
     context = {}
     user_id = kwargs.get("user_id")
+    if str(request.user.id) == str(user_id): 
+      context['is_active'] = 'account'
+    # print('req', type(request.user.id),type(user_id))
     try:
         account = Account.objects.get(pk=user_id, is_verified = True)
         print('why is it showing md there - ',account)

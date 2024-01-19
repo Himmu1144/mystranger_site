@@ -53,3 +53,6 @@
 //         })
 //     );
 // });
+
+{% comment %} console.log('sw rocks')
+self.addEventListener('fetch', function(event) {}); {% endcomment %}

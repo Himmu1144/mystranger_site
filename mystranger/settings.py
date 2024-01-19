@@ -13,6 +13,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
+import firebase_admin
+from firebase_admin import credentials
+
+cred = credentials.Certificate("mystranger_app/notification-bcea2-firebase-adminsdk-yizuw-0089572436.json")
+firebase_admin.initialize_app(cred)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -52,7 +58,9 @@ INSTALLED_APPS = [
     'nrt',
 
     # Third party apps 
+    # 'django.contrib.sites',
     'webpush',
+    "fcm_django",
     'mptt',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,6 +71,13 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     
 ]
+
+# SITE_ID = 1
+
+
+FCM_DJANGO_SETTINGS = {
+    "FCM_SERVER_KEY": "AAAARr2Qk2k:APA91bFeV95ErXJu1jwBLHjEp4wMUkIf2ANbHpbIUWdZZJCCG_FCEu_KbkmNLv6pREXNM1a1mfU8iF0HtR6NagSlVWY1a_g-H8TNjIBjX6XWhWwrZgsatJtJlzLOBX-GQvkf5av2PIz1"
+}
 
 WEBPUSH_SETTINGS = {
     "VAPID_PUBLIC_KEY": "BEYVWr6VZf-HIpz8gRUVsoKdJAD2RFXUKx-Oi2LQlLrzS5mau2A9lDNvzJkC3WZaF-UcT2_GN-t1xCR3CbW72As",

@@ -32,6 +32,7 @@ def pikac_view(request):
         user.update_last_activity()
 
     context = {}
+    
 
     # question_answers = [] # ['{question' : {answers}}]
 
@@ -177,6 +178,7 @@ def pikac_view(request):
         
    
     # context['question_top2_answers'] = my_list
+    context['is_active'] = 'confessions'
 
     return render(request, "confessions/questions.html", context)
 

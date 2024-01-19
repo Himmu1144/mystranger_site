@@ -27,6 +27,7 @@ def pika_view(request):
 
     context = {}
 
+
     # question_answers = [] # ['{question' : {answers}}]
 
     # questions = PublicChatRoom.objects.all()
@@ -171,6 +172,8 @@ def pika_view(request):
         
    
     # context['question_top2_answers'] = my_list
+    context['is_active'] = 'qna'
+    # print('this is my fuckin context - ', context)
 
     return render(request, "qna/questions.html", context)
 
