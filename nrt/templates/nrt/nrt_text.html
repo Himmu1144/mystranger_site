@@ -537,7 +537,7 @@
 	}
 
 	.b-activate-form{
-		margin-bottom: 3em;
+		{% comment %} margin-bottom: 3em; {% endcomment %}
     justify-content: center;
     display: flex;
     margin-top: 0.5em;
@@ -1748,12 +1748,22 @@
 
 		{% elif find_me_date %}
             
-		<div class="b-activate-form">
+		<div class="b-activate-form" style="flex-direction: column;
+		display: flex;
+		justify-content: center;
+		margin-bottom: 3em;">
 		<form class="b-activate-form" action="" method="post"> {% csrf_token %}
             {% comment %} <input type="text" name="form_type" value="form1" hidden> {% endcomment %}
             <button class="btn b-activate" style="font-size: 12px;
 			width: 140px;" name='find_me_date' style="color:white;" type="submit">Find A Date For Me</button>
         </form>
+		<a style="margin-top: 4px;
+		text-align: center;
+		font-size: 13px;
+		color: #009cda;
+		text-decoration: none;
+		background-color: transparent;
+	}" href="{% url "nrt-text-wow" %}">Want to Go on a blind date with someone you know?</a>
 	</div>
 
        {% endif %}

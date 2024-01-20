@@ -21,6 +21,10 @@ import random
 DEBUG = False
 
 
+def nrt_text_wow_view(request, *args, **kwargs):
+    return render(request, 'nrt/newf.html')
+
+
 def nrt_text_how_view(request, *args, **kwargs):
     return render(request, 'nrt/nrt_text_how.html')
 

@@ -40,6 +40,7 @@ urlpatterns = [
     path('new_chat_text/', new_chat_text_view , name='new-chat-text' ),
     path('nrt_text/', nrt_text_view , name='nrt-text' ),
     path('nrt_text/how', nrt_text_how_view , name='nrt-text-how' ),
+    path('nrt_text/wow', nrt_text_wow_view , name='nrt-text-wow' ),
 
     # path('notif-token/', save_token, name="notif-token"),
     path('notif-token/', notif_token_view, name="notif-token"),

@@ -7,6 +7,9 @@
 {% endblock tailwind %}
 {% load static %}
 {% block body %}
+<div class="image-cont w-full text-center">
+    <img src="{% static 'images/knp.png' %}" width="100px" alt="" srcset="">
+</div>
 
 <style>
 
@@ -429,27 +432,29 @@ body {
  
 {% endif %}
 <div class="tw-p-2 tw-mb-2 tw-rounded-3 mobile">
-    <div class="container-fluid tw-py-5" style="padding-top:0px!important;">
+    <div class="container-fluid">
       
     <div class="imge" style="display: flex;
     justify-content:center;
     margin: auto;
-    margin-bottom: 1em;"><img width="64px;" src="{% static "images/kgi.png" %}" alt=""></div>
+    margin-bottom: 1em;">
+    {% comment %} <img width="64px;" src="{% static "images/kgi.png" %}" alt=""> {% endcomment %}
+</div>
       
-      <form action="" method="post"> {% csrf_token %}
+      <form> {% csrf_token %}
       {% comment %} <input type="text"  class="radius form-control" placeholder="Confess without being judged" required
       autofocus> {% endcomment %}
       <div>
         <div class="tw-bg-[#343A40] tw-rounded-[10px] tw-h-16">
-        <h4 class="tw-display-8 tw-text-white phone-font tw-text-center tw-translate-y-2">Confess anything anonymously-</h4>
+        <h4 class="tw-display-8 tw-text-white phone-font tw-text-center tw-translate-y-2">Blind date with someone you know</h4>
         </div>
-        <textarea name="question" id="question" class="radius form-control tw-rounded-[20px] tw-z-100 tw-drop-shadow-lg -tw-translate-y-6" style="font-size:14px;" placeholder="please enter your message..." cols="30" rows="2" required autofocus></textarea>
+        <textarea name="question" id="question" class="radius form-control tw-rounded-[20px] tw-z-100 tw-drop-shadow-lg -tw-translate-y-6" style="font-size:14px;" placeholder="please enter your message for them..." cols="30" rows="2" required autofocus></textarea>
       </div>
       
       
       <div x-data="{ open: false }">
         <p class="tw-flex tw-flex-col tw-gap-1 tw-text-sm" style="font-size:12px; margin-bottom: 0px;">
-          <span>We are going to send this message to the receiver anonymously. This is what they are going to receive.</span>
+          <span>We are going to send this message to the receiver anonymously (don't worry they are not going to know your name). This is what they are going to receive.</span>
           
           <p>
   <a style="font-size:13px;" class="tw-text-[#009cda]" id="collapseButton" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
@@ -460,8 +465,8 @@ body {
   <div class="card card-body tw-drop-shadow-lg">
     <div class="">
             <p style="font-size:13px;" >Hi Receiver's Name,</p>
-            <p style="font-size:13px;">Someone you know has confessed this about you on mystranger.in</p>
-            <p style="font-size:13px;">Message - "<span style="font-size:13px;" id="output"></span>"</p>            <p style="font-size:13px;" class="mt-6">You can respond to their confession by visiting mystranger.in now. You can only reply to their confession using the below link because it contains your unique token for that particular confession - "https://mystranger.in/confessions/questions/29/?question=True&Taggie_token=Token"</p>
+            <p style="font-size:13px;">Someone you know has requested a blind date with you on mystranger.in</p>
+            <p style="font-size:13px;">Message - "<span style="font-size:13px;" id="output"></span>"</p>            <p style="font-size:13px;" class="mt-6">You can connect with them for 24 hrs by visiting mystranger.in now. Use this token to form the connection with them - Token = 'the token'. "</p>
           </div>
   </div>
 </div>
@@ -523,9 +528,6 @@ body {
       width: 60%;" name="taggiemail" id="taggiemail" class="radius tw-p-2 tw-rounded-[10px] tw-z-100 tw-drop-shadow-lg tw-flex-initial " placeholder="reciever's whatsapp no.">
       </div>
     </div>
-    <p style="margin-bottom: 0px;
-    font-size: 12px;
-    margin-top: 6px;" class="text-secondary">it can take upto 1 hr - 24 hrs for your message to reach them.</p>
       
       {% comment %} <label class="switch">
           <input type="checkbox">
@@ -546,7 +548,9 @@ body {
       <p class="text-secondary mt-2" style="font-size:12px;">You can add multiple id's of the same person (Taggie) to make sure your confession reaches them</p>
       <p class="text-secondary mt-2" style="font-size:12px;">It can take upto 1 hr to 24 hrs for your confession to reach the taggie.</p> {% endcomment %}
       <div style="display:flex; justify-content:center;">
-      <button class="btn btn-sm bg-dark mt-4 tw-w-20 tw-rounded-[15px]" style="color:white; margin-top: 0px!important;" type="Submit">Send</button></div>
+      <button class="btn btn-sm bg-dark mt-4 tw-w-20 tw-rounded-[15px]" style="color:white; width: 130px;
+      margin-top: 16px!important;">Comming Soon</button></div>
+      <p class="text-secondary" style="font-size:12px; text-align:center;">This Feature is going to be available on site after 22 jan</p>
     </form>
     </div>
   </div>
