@@ -683,6 +683,48 @@
 		{% endif %}
 	}
 
+	function setUnreadBdMessageNotificationsCount(count){
+
+		{% if request.user_agent.is_mobile %}
+			var countElement = document.getElementById("id_msg_bd_notifications_count_mob")
+			var countElement2 = document.getElementById("bd-notif")
+			{% comment %} console.log('changing the count mob to - ', countElement) {% endcomment %}
+			if(count > 0){
+				{% comment %} console.log('changed the count mob elemental - bhenkelode') {% endcomment %}
+				countElement.innerHTML = count 
+				{% comment %} countElement.value = count + 'bhenkelode' {% endcomment %}
+				countElement.style.background = "red"
+				countElement.style.display = "block"
+				console.log('doing the dots display block')
+				countElement2.style.display = "block"
+			}
+			else{
+				countElement.style.background = "transparent"
+				countElement.style.display = "none"
+				countElement2.style.display = "none"
+			}
+
+		{% else %}
+
+			var countElement = document.getElementById("id_msg_bd_notifications_count")
+				{% comment %} console.log('changing the count to - ', countElement) {% endcomment %}
+				if(count > 0){
+					{% comment %} console.log('changed the count laptop elemental - bhenkelode') {% endcomment %}
+					countElement.innerHTML = count
+					{% comment %} countElement.value = count + 'bhenkelode' {% endcomment %}
+					countElement.style.background = "red"
+					countElement.style.display = "block"
+				}
+				else{
+					countElement.style.background = "transparent"
+					countElement.style.display = "none"
+				}
+
+			
+		{% endif %}
+
+	}
+
 </script>
 
 <!-- Send to consumer -->
@@ -699,6 +741,7 @@
 			setInterval(getNewGeneralNotifications, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getUnreadGeneralNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(getUnreadMessageNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
+			setInterval(getUnreadBdMessageNotificationsCount, GENERAL_NOTIFICATION_INTERVAL)
 			setInterval(refreshActiveCount, GENERAL_NOTIFICATION_INTERVAL)
 			{% comment %} setInterval(video_count, GENERAL_NOTIFICATION_INTERVAL)  {% endcomment %}
 			
@@ -735,6 +778,14 @@
 			}));
 		}
 	}
+	function getUnreadBdMessageNotificationsCount(){
+		console.log('the fucking command for bd msg count is send')
+		if("{{request.user.is_authenticated}}"){
+			notificationSocket.send(JSON.stringify({
+				"command": "get_unread_bd_notifications_count",
+			}));
+		}
+	}
 
 	/*
 		Sets all the notifications currently visible as "read"
@@ -753,6 +804,7 @@
 		countElement.style.background = "transparent"
 		countElement.style.display = "none"
 		getUnreadMessageNotificationsCount()
+		getUnreadBdMessageNotificationsCount()
 	}
 
 	

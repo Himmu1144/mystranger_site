@@ -364,11 +364,12 @@ def create_notification(sender, instance, created, **kwargs):
 			),
 			data={
 				'url': redirect_url,
-				# 'logo': logo_url,
+				'tag' : 'look',
+				'logo': 'static/images/msico.ico',
 			},
 			token=registration_token,
 		)
-		print('thi is the rediri url -', redirect_url)
+		print('thi is the rediri url with tag - look', redirect_url)
 		response = messaging.send(message)
 
 

@@ -669,6 +669,9 @@ input:focus, textarea:focus, select:focus {
     #id_msg_notifications_count{
       font-size:13px;
     }
+    #id_msg_bd_notifications_count{
+      font-size:13px;
+    }
 
    
 
@@ -827,7 +830,11 @@ input:focus, textarea:focus, select:focus {
               
               <a class=" p-2 nav-msg account-nav" style='text-decoration:none;'
           href="{% url 'nrt-text' %}">
-              
+          <span id="id_msg_bd_notifications_count_mob" class="notify-badge msg-notif msg-notif-mob" style="
+          background: red;
+          display: block;
+          top: 2.3em;
+          right: 2em!important;"></span>
                 <div class="icon">
                   <span class="fa-solid fa-user"></span>
                 </div>
@@ -1068,7 +1075,11 @@ input:focus, textarea:focus, select:focus {
               
                 <a class=" p-2 nav-msg account-nav" style='text-decoration:none;'
             href="{% url 'nrt-text' %}">
-                
+            <span id="id_msg_bd_notifications_count" class="notify-badge msg-notif" style="
+            background: red;
+            display: block;
+            top: 2.7em;
+            right: 2em!important; "></span>
                   <div class="icon">
                     <span class="fa-solid fa-user"></span>
                   </div>
@@ -1343,7 +1354,18 @@ $.ajax({
 
           <a style="cursor: pointer;" href="{% url "confessions:pikac" %}"><span><i class="fa-solid fa-fire"  style="{% if is_active == 'confessions' %} color:#009cda; {% else %}color:#FFFFFF;{% endif %} font-size: 20px; text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;"></i></span></a>
           
-          <a style="cursor: pointer;" href="{% url "nrt-text" %}"><span><i class="fa-solid fa-heart"  style="{% if is_active == 'nrt' %} color:#009cda; {% else %}color:#FFFFFF;{% endif %} font-size: 20px; text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;"></i></span></a>
+          <a style="cursor: pointer; position:relative;" href="{% url "nrt-text" %}"><span><i class="fa-solid fa-heart"  style="{% if is_active == 'nrt' %} color:#009cda; {% else %}color:#FFFFFF;{% endif %} font-size: 20px; text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;"></i>
+          </span> <span id="bd-notif" style="
+          height: 6px;
+          display:none;
+          /* font-size: 10px; */
+          right: -9px;
+          position: absolute;
+          top: -3px;
+          background: red;
+          border: 1px solid red;
+          width: 6px;
+          border-radius: 100px;"></span> </a>
           <a style="cursor: pointer;" {% if request.user.is_authenticated %}href="{% url "account:view" user_id=request.user.id %}"{% else %}href="#"{% endif %}><span><i class="fa-solid fa-user"  style="{% if is_active == 'account' %} color:#009cda; {% else %}color:#FFFFFF;{% endif %} font-size: 20px; text-shadow: 2px 0 0 #000, 0 2px 0 #000, -2px 0 0 #000, 0 -2px 0 #000;"></i></span></a>
           </div>
       </div>
@@ -1417,6 +1439,11 @@ $.ajax({
         setUnreadMessageNotificationsCount(data['count'])
       }
 
+      if (data.general_bd_msg_type == 9) {
+        console.log('Got the unread blind dates message notifications count -', data)
+        setUnreadBdMessageNotificationsCount(data['count'])
+      }
+
 
 
       if (data.general_msg_type == 5) {
@@ -1459,6 +1486,7 @@ $.ajax({
       getFirstGeneralNotificationsPage()
       getUnreadGeneralNotificationsCount()
       getUnreadMessageNotificationsCount()
+      getUnreadBdMessageNotificationsCount()
       callAddcounts()
       startVideoCount()
       startTextCount()

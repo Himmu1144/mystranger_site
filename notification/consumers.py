@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 
 from friend.models import FriendRequest, FriendList
 from chat.models import RoomChatMessage, PrivateChatRoom
+from nrt.models import  NrtRoomChatMessage , NrtPrivateChatRoom
 from notification.utils import LazyNotificationEncoder
 from notification.constants import *
 from notification.models import Notification
@@ -127,6 +128,16 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 if payload != None:
                     payload = json.loads(payload)
                     await self.send_unread_msg_notification_count(payload['count'])
+                else:
+                    # print('bc no payload', payload)
+                    pass
+            elif command == "get_unread_bd_notifications_count":
+                # print('The command is here to get bd notifs ------------------------------')
+                payload = await get_unread_bd_message_notification_count(self.scope["user"])
+                if payload != None:
+                    payload = json.loads(payload)
+                    # print('the fucking bd payload - ', payload['count'])
+                    await self.send_unread_bd_msg_notification_count(payload['count'])
                 else:
                     # print('bc no payload', payload)
                     pass
@@ -312,6 +323,18 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json(
             {
                 "general_msg_type": GENERAL_MSG_TYPE_GET_UNREAD_MSG_NOTIFICATIONS_COUNT,
+                "count": count,
+            },
+        )
+
+    async def send_unread_bd_msg_notification_count(self, count):
+        """
+        Send the number of unread "general" msg notifications count to the template
+        """
+        GENERAL_MSG_TYPE_GET_UNREAD_MSG_NOTIFICATIONS_COUNT = 9
+        await self.send_json(
+            {
+                "general_bd_msg_type": GENERAL_MSG_TYPE_GET_UNREAD_MSG_NOTIFICATIONS_COUNT,
                 "count": count,
             },
         )
@@ -525,6 +548,33 @@ def get_unread_message_notification_count(user):
             else:
                 friend = room.user1
             unread_messages_count = RoomChatMessage.objects.filter(
+                Q(room=room) & Q(user=friend) & Q(read=False)).count()
+            count += unread_messages_count
+        payload['count'] = count
+        # print('The total unread msg for user - ', user, 'is - ', count)
+        return json.dumps(payload)
+
+    else:
+        raise ClientError("User must be authenticated to get notifications.")
+    return None
+
+@database_sync_to_async
+def get_unread_bd_message_notification_count(user):
+    payload = {}
+    if user.is_authenticated:
+        rooms1 = NrtPrivateChatRoom.objects.filter(user1=user, is_active=True)
+        rooms2 = NrtPrivateChatRoom.objects.filter(user2=user, is_active=True)
+
+    # 2. merge the lists
+        rooms = list(chain(rooms1, rooms2))
+        count = 0
+        for room in rooms:
+            # Figure out which user is the "other user" (aka friend)
+            if room.user1 == user:
+                friend = room.user2
+            else:
+                friend = room.user1
+            unread_messages_count = NrtRoomChatMessage.objects.filter(
                 Q(room=room) & Q(user=friend) & Q(read=False)).count()
             count += unread_messages_count
         payload['count'] = count

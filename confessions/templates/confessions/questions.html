@@ -183,6 +183,7 @@
     }
 
     .nearby-container{
+        margin-bottom:4em;
         max-height: 80vh;
         overflow-y: scroll;
         {% comment %} border:2px solid green; {% endcomment %}
@@ -426,6 +427,7 @@
 
 	.nearby-container{
         width:unset;
+        margin-bottom: 4em!important;
     }
 
     .container{
@@ -541,7 +543,17 @@
     animation: spinner-border .75s linear infinite;
 }
 
+.new-textarea {
+    resize: none; /* Disable textarea resizing by user */
+    height: 36px; /* Initial height */
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    transition: height 0.3s; /* Add smooth transition for height changes */
+  }
+
 </style>
+{% comment %} <div class="blah" style="background:black; height:94svh">
+
+</div> {% endcomment %}
 <div style="display:flex; justify-content:center; flex-direction:column; align-items:center;">
 <p style="text-align:center;" class="mb-0" ><a class="mt-4" href="{% url 'confessions:create-postc' %}">Create a confession</a>
 </p>
@@ -654,6 +666,14 @@
 
 
 <script>
+
+    function resizeTextarea(textarea) {
+        textarea.style.height = 'auto'; // Reset height to auto to calculate scrollHeight
+        textarea.style.height = (textarea.scrollHeight > 60 ? 60 : textarea.scrollHeight) + 'px';
+      }
+
+
+    var searchFocus = document.getElementById('search-focus')
 
     // Add this event listener to your existing JavaScript
 searchFocus.addEventListener('keydown', (e) => {

@@ -539,6 +539,13 @@
     animation: spinner-border .75s linear infinite;
 }
 
+.new-textarea {
+    resize: none; /* Disable textarea resizing by user */
+    height: 36px; /* Initial height */
+    overflow-y: hidden; /* Hide vertical scrollbar */
+    transition: height 0.3s; /* Add smooth transition for height changes */
+  }
+
 </style>
 <p style="text-align:center;" class="mb-0" ><a class="mt-4" href="{% url 'qna:create-post' %}">Create question</a></p>
 <div class="nearby-container" id="scroll-conti">
@@ -626,6 +633,13 @@
 
 
 <script>
+
+    function resizeTextarea(textarea) {
+        textarea.style.height = 'auto'; // Reset height to auto to calculate scrollHeight
+        textarea.style.height = (textarea.scrollHeight > 60 ? 60 : textarea.scrollHeight) + 'px';
+      }
+
+
     var nextPage = 2;  // Initialize next page
 
 function loadMoreComments() {

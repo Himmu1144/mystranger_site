@@ -304,7 +304,9 @@
                                 <form class="answer-form" id="repform-{{node.id}}" onsubmit="submitForm(event, 'repform-{{node.id}}', 'null', 'reply-{{node.pk}}' , 'id_chat_message_input_answer-{{node.id}}' )" action="" method='post'> {% csrf_token %}
                                     <input hidden  type="text" name='question-id' id="question-{{question.0.id}}" value="{{question.0.id}}">
                                         <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
-                                        <textarea style="margin-bottom: 1em;" class="flex-grow-1 quora-textarea reply-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
+                                        <textarea oninput="resizeTextarea(this)" style="margin-bottom: 1em;" class="flex-grow-1 quora-textarea reply-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
+                                        {% comment %} <textarea id="expandingTextarea" ></textarea> {% endcomment %}
+
                                         <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
                                     </form>
                                 
@@ -555,7 +557,7 @@
                                 <form class="answer-form" id="repform-{{node.id}}" onsubmit="submitForm(event, 'repform-{{node.id}}', 'null', 'reply-{{node.pk}}', 'id_chat_message_input_answer-{{node.id}}')" action="" method='post'> {% csrf_token %}
                                     <input hidden  type="text" name='question-id' id="question-{{question.0.id}}" value="{{question.0.id}}">
                                         <input hidden type="text" name='answer-id' id="parent-{{node.id}}" value="{{node.id}}">
-                                        <textarea class="flex-grow-1 quora-textarea reply-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
+                                        <textarea oninput="resizeTextarea(this)" class="flex-grow-1 quora-textarea reply-textarea" placeholder="Reply on stranger's answer" name="id_chat_message_input" id="id_chat_message_input_answer-{{node.id}}"></textarea>
                                         <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>reply</span></button>
                                     </form>
                                 
@@ -603,7 +605,7 @@
                     {% comment %} {% if not question.0.polls.all %} {% endcomment %}
                     <form class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
                         <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
-                        <textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
+                        <textarea oninput="resizeTextarea(this)" class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
 
                             <button class="btn btn-sm btn-answer btn-dark" type="Submit"><span>Add answer</span></button>
 

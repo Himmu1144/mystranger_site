@@ -10,6 +10,7 @@ from chat.models import PrivateChatRoom, RoomChatMessage
 from itertools import chain
 from chat.utils import find_or_create_private_chat
 from mystranger_app.models import Flags
+from django.views.decorators.csrf import csrf_exempt
 
 DEBUG = False
 
@@ -95,7 +96,7 @@ def private_chat_room_view(request, *args, **kwargs):
 
 # Ajax call to return a private chatroom or create one if does not exist
 
-
+@csrf_exempt
 def create_or_return_private_chat(request, *args, **kwargs):
     user1 = request.user
     payload = {}

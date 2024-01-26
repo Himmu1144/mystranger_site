@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from notification.models import Notification
 from mystranger.settings import domain_name
 from django.db.models.signals import m2m_changed
+from firebase_admin import messaging
 
 
 class CPublicChatRoom(models.Model):
@@ -215,7 +216,7 @@ def create_notification(sender, instance, **kwargs):
 		# print(instance.parent, 'this tis the fuckin parent')
 		if instance.parent.user != instance.user:
 			if instance.user == instance.question.taggie:
-				name = 'Taggie'
+				name = 'Receiver'
 			else:
 				name="Stranger"
 			instance.notifications.create(
@@ -225,10 +226,35 @@ def create_notification(sender, instance, **kwargs):
 				verb=f"{name} replied this at your confession - {instance.content[:50]} ..." if len(instance.content) > 50 else f"{name} replied this at your Confession - {instance.content}",
 				content_type=instance,
 			)
+			try:
+				redirect_url=f"{domain_name}/account/{instance.parent.user.pk}/"
+				message=f"{name} replied this at your confession - {instance.content[:50]} ..." if len(instance.content) > 50 else f"{name} replied this at your Confession - {instance.content}"
+				registration_token = instance.parent.user.ntoken
+				message = messaging.Message(
+					notification=messaging.Notification(
+						title='MyStranger.in',
+						body=message,
+						# click_action=redirect_url,
+					),
+					data={
+						'url': redirect_url,
+						'logo': "static\images\msico.ico",
+					},
+					token=registration_token,
+				)
+				print('thi is the rediri url -', redirect_url)
+				response = messaging.send(message)
+
+
+				
+
+				print('Successfully sent the friend req msg message:', response)
+			except Exception as e:
+				print('error notifio - ', str(e))
 	else:
 		if instance.user != instance.question.owner:
 			if instance.user == instance.question.taggie:
-				name = 'Taggie'
+				name = 'Receiver'
 			else:
 				name="Stranger"
 			instance.notifications.create(
@@ -239,6 +265,33 @@ def create_notification(sender, instance, **kwargs):
 				verb=f"{name} said this at your confession - {instance.content[:50]} ..." if len(instance.content) > 50 else f"{name} said this at your Confession - {instance.content}",
 				content_type=instance,
 			)
+
+			try:
+				redirect_url=f"{domain_name}/account/{instance.question.owner}/"
+				message=f"{name} said this at your confession - {instance.content[:50]} ..." if len(instance.content) > 50 else f"{name} said this at your Confession - {instance.content}"
+				registration_token = instance.question.owner.ntoken
+				message = messaging.Message(
+					notification=messaging.Notification(
+						title='MyStranger.in',
+						body=message,
+						# click_action=redirect_url,
+					),
+					data={
+						'url': redirect_url,
+						'logo': "static\images\msico.ico",
+					},
+					token=registration_token,
+				)
+				print('thi is the rediri url -', redirect_url)
+				response = messaging.send(message)
+
+
+				
+
+				print('Successfully sent the friend req msg message:', response)
+			except Exception as e:
+				print('error notif - ', str(e))
+		
 		
 
 

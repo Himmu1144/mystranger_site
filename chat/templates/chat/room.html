@@ -44,6 +44,9 @@
     display: flex;
     justify-content: center;
 	padding: 3px 5px;
+	gap:10px;
+	
+
 	}
 	
 	.msg_bar_timestamp{
@@ -60,6 +63,11 @@
     display: flex;
     justify-content: center;
 	padding: 3px 5px;
+	
+	}
+
+	.msg_bar_timestamp.hidden {
+		display: none!important;
 	}
 	
 
@@ -667,6 +675,18 @@
 		margin-bottom:15px;
 	}
 
+	#myDiv {
+		 background-color: #f5f5f5;
+		 border: 1px solid #ddd;
+		 border-radius: 5px;
+		 padding: 5px;
+		position: absolute;
+		top: -60px;  /* Adjust based on height of div and input field */
+		left: 0;
+		width: 100%;
+		z-index: 1;  /* Ensure it overlaps the input field */
+}
+
   }
 
 </style>
@@ -1140,7 +1160,7 @@ window.snapKitInit = () => {
 
 					// var pathElements = document.querySelectorAll('.svg-path')
 					// pathElements.forEach(function(pathElement) {
-					// 	console.log("***********_____________________----------- updating the color of each element")
+					// 	console.log("*_----------- updating the color of each element")
 					// 	pathElement.style.fill = "#009cda"; // Change the fill color to your desired color
 					// });
 
@@ -1185,7 +1205,7 @@ window.snapKitInit = () => {
 
 					var pathElements = document.querySelectorAll('.svg-path')
 					pathElements.forEach(function(pathElement) {
-						console.log("***********_____________________----------- updating the color of each element")
+						console.log("*_----------- updating the color of each element")
 						pathElement.style.fill = "#009cda"; // Change the fill color to your desired color
 					});
 
@@ -1289,6 +1309,7 @@ window.snapKitInit = () => {
 	document.getElementById('id_chat_message_submit').onclick = function (e) {
 		const messageInputDom = document.getElementById('id_chat_message_input');
 		const message = messageInputDom.value;
+		
 		chatSocket.send(JSON.stringify({
 			"command": "send",
 			"message": message,
@@ -1445,6 +1466,7 @@ window.snapKitInit = () => {
 			newMessageDiv.classList.add("message-container1")
 		} else{
 			newMessageDiv.classList.add("message-container")
+			
 			// console.log('The user_id',user_id)
 			// console.log('The auth_user_id',auth_user_id)
 		}
@@ -1464,11 +1486,37 @@ window.snapKitInit = () => {
 		var div1 = document.createElement("div")
 		div1.classList.add("d-flex")
 		div1.classList.add("flex-column")
+		var replyButton = document.createElement("a");
+		replyButton.innerHTML = '<span style="color:#009cda;">reply</span>';
 		if (auth_user_id == user_id){
-			div1.classList.add("inside_msg_cont1")
+			div1.classList.add("inside_msg_cont1");
+			
+			replyButton.addEventListener("click", function () {
+			console.log("wanna click reply button?");
+  			// focus on the text area
+  			document.getElementById("id_chat_message_input").focus();
+			var text= document.getElementById("msgdiv-"+msg_id).firstChild.childNodes[1].firstChild.textContent;
+			console.log("Reply to "+text);
+			// Toggle the visibility by adding/removing a CSS class to the timestampContainer
+			{% comment %} timestampContainer.classList.toggle("hidden"); {% endcomment %}
+			// Call your JavaScript function here
+			replyFunction(msg_id,"yourself");
+		});
 
 		} else{
 			div1.classList.add("inside_msg_cont")
+			
+			replyButton.addEventListener("click", function () {
+			
+  			// focus on the text area
+  			document.getElementById("id_chat_message_input").focus();
+			var text= document.getElementById("msgdiv-"+msg_id).firstChild.childNodes[1].firstChild.textContent;
+			console.log("Reply to "+text);
+			// Toggle the visibility by adding/removing a CSS class to the timestampContainer
+			{% comment %} timestampContainer.classList.toggle("hidden"); {% endcomment %}
+			// Call your JavaScript function here
+			replyFunction(msg_id,"friend");
+		});
 
 		}
 
@@ -1488,6 +1536,8 @@ window.snapKitInit = () => {
 		} else {
 			timestampSpan.classList.add("msg_cont_timestamp");
 
+			
+
 		}
 
 		if (auth_user_id == user_id){
@@ -1496,10 +1546,11 @@ window.snapKitInit = () => {
 		
 		msgbarContainer.classList.add("hidden");
 			msgbarContainer.classList.add("msg_bar1_timestamp");
-		 
+	
 
 		
 		var toggleButton = document.createElement("a");
+		
 		{% comment %} toggleButton.innerHTML = '<i class="fa-solid fa-trash" style="color: #ff943b;"></i>'; {% endcomment %}
 		toggleButton.innerHTML = '<span style="color:#009cda;">unsend</span>';
 
@@ -1509,22 +1560,39 @@ window.snapKitInit = () => {
 			// Call your JavaScript function here
 			yourFunction(msg_id);
 		});
-		
 	}
+		 
+		
+
+
 		
 		// Add a click event listener to toggle the visibility of the timestamp
 		newMessageDiv.addEventListener("click", function () {
 			// Toggle the visibility by adding/removing a CSS class to the timestampSpan
 			timestampSpan.classList.toggle("hidden");
-			if (auth_user_id == user_id){
-			msgbarContainer.classList.toggle("hidden"); }
+			msgbarContainer.classList.toggle("hidden"); 
+			replyButton.classList.toggle("hidden");
+			
 		});
-
+		
 		div2.appendChild(timestampSpan);
+		
 		if (auth_user_id == user_id){
 		msgbarContainer.appendChild(toggleButton);
-		div2.appendChild(msgbarContainer); }
+		msgbarContainer.appendChild(replyButton);
 
+		div2.appendChild(msgbarContainer); }
+		else{
+			var msgbarContainer = document.createElement("div");
+			msgbarContainer.appendChild(replyButton);
+			replyButton.classList.add("msg_bar_timestamp");
+			replyButton.classList.toggle("hidden");
+			div2.appendChild(msgbarContainer); 
+		}
+
+		
+		
+		
 		div1.appendChild(div2);
 
 
@@ -1672,6 +1740,61 @@ window.snapKitInit = () => {
 			
 		}));
 	}
+	var divr1 = document.createElement("div");
+	function replyFunction(msg_id,name) {
+		
+  // Your JavaScript code here
+  var userx=name;
+
+  
+  var text1 = document.getElementById("msgdiv-" + msg_id).firstChild.childNodes[1].firstChild.textContent;
+  var textoo = document.createElement("span");
+  
+  textoo.textContent = text1;
+  textoo.id="replytext";
+  textoo.style.fontWeight = "bold";
+
+  
+  var divr = document.createElement("div");
+  divr.id = "myDiv";  // Apply CSS styles using this ID
+
+  var crossIcon = document.createElement("i");
+  crossIcon.classList.add("fas", "fa-times");  // Assuming Font Awesome is included
+  crossIcon.style.cursor = "pointer";  // Show a pointer cursor
+  divr.appendChild(crossIcon);
+
+
+  // Create text nodes and icon (assuming Font Awesome is included):
+  var replyIcon = document.createElement("i");
+  replyIcon.classList.add("fas", "fa-reply");
+  var textr = document.createElement("span");
+  {% comment %} textr.textContent = "{{request.user.name}}"; {% endcomment %}
+  textr.textContent = userx;
+  textr.id="replyme";
+  textr.style.fontWeight = "bold";  // Make username bold
+
+  // Create line breaks:
+  var br1 = document.createElement("br");
+  var br2 = document.createElement("br");
+
+  // Append nodes in the correct order:
+  divr.appendChild(replyIcon);
+  divr.appendChild(document.createTextNode(" Replying to "));
+  divr.appendChild(textr);
+  divr.appendChild(br1);
+  divr.appendChild(textoo);  // Append as a text node
+  divr.appendChild(br2);
+  divr1.appendChild(divr);
+	
+  {% comment %} document.getElementById("id_chat_message_input").insertAdjacentElement("beforebegin", divr); {% endcomment %}
+  document.getElementById("id_chat_message_input").parentNode.insertBefore(divr1, document.getElementById("id_chat_message_input"));
+
+  crossIcon.addEventListener("click", function() {
+    divr1.remove();  // Remove the div when clicked
+  });
+}
+
+
 
 
 	function handleMessagesPayload(messages, new_page_number) {

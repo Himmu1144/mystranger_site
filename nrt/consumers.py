@@ -14,6 +14,10 @@ from friend.models import FriendList
 from account.utils import LazyAccountEncoder
 from chat.constants import *
 from chat.utils import calculate_timestamp, LazyRoomChatMessageEncoder
+from django.utils import timezone
+from datetime import timedelta
+from firebase_admin import messaging
+from mystranger.settings import domain_name
 
 from nrt.models import NrtPrivateChatRoom, NrtRoomChatMessage , Meetup , NrtIceBreakers
 from datetime import datetime
@@ -715,7 +719,66 @@ def get_room_or_error(room_id, user):
 
 @database_sync_to_async
 def create_room_chat_message(room, user, message, read):
-    return NrtRoomChatMessage.objects.create(user=user, room=room, content=message, read=read)
+    rekage = message
+    try:
+        if read == False:
+            # This means the user is not online, now first we gotta check that whether i have received a message from this user within the past 10 minutes or not, if not then create a notification.
+
+            # in order to do that we gotta fetch all the messages sent by that user to me within 10 minutes
+
+            if room.user1 == user:
+                friend = room.user2
+            else:
+                friend = room.user1
+
+            # unread_messages = RoomChatMessage.objects.filter(
+            #     Q(room=room) & Q(user=friend) & Q(read=False))
+
+            # Get the current time
+            now = timezone.now()
+
+            # Calculate the time 10 minutes ago
+            ten_minutes_ago = now - timedelta(minutes=10)
+
+            # Fetch the messages
+            messages = NrtRoomChatMessage.objects.filter(
+                user=user,
+                room=room,
+                timestamp__gte=ten_minutes_ago
+            )
+
+            if messages.exists():
+                print("There are messages in the past 10 minutes so do nothing.")
+
+            else:
+                print("There are no messages in the past 10 minutes. so send a notification to the current user")
+                redirect_url=f"{domain_name}/chat/"
+                messagei=f"{user.name} sent you a message"
+                registration_token = friend.ntoken
+                message = messaging.Message(
+                    notification=messaging.Notification(
+                        title='MyStranger.in',
+                        body=messagei,
+                        # click_action=redirect_url,
+                    ),
+                    data={
+                        'url': redirect_url,
+                        # 'tag' : 'look',
+                        'logo': 'static/images/msico.ico',
+                    },
+                    token=registration_token,
+                )
+                print('thi is the rediri url with tag - look', redirect_url)
+                response = messaging.send(message)
+
+
+                print('Successfully sent the  msg message notif:', response)
+
+    except Exception as e:
+        print('error creating message notification - ', str(e))
+        
+
+    return NrtRoomChatMessage.objects.create(user=user, room=room, content=rekage, read=read)
 
 
 @database_sync_to_async

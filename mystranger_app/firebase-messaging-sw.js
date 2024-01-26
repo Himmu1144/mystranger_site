@@ -67,23 +67,45 @@ const messaging = firebase.messaging();
 
 
   
-  // Handle background messages
-  messaging.setBackgroundMessageHandler(function(payload) {
-    console.log('Received background message ', payload);
-    // Customize notification here
-    var notificationTitle = payload.title;
-    var notificationOptions = {
-      body: payload.body,
-      icon: '/firebase-logo.png',
-      data: {
-        // Put your data here
-        url: payload.data.url
-      }
-    };
+  // // Handle background messages
+  // messaging.setBackgroundMessageHandler(function(payload) {
+  //   console.log('Received background message ', payload);
+  //   // Customize notification here
+  //   var notificationTitle = payload.title;
+  //   var notificationOptions = {
+  //     body: payload.body,
+  //     icon: '/firebase-logo.png',
+  //     data: {
+  //       // Put your data here
+  //       url: payload.data.url
+  //     }
+  //   };
   
-    return self.registration.showNotification(notificationTitle,
-      notificationOptions);
-  });
+  //   return self.registration.showNotification(notificationTitle,
+  //     notificationOptions);
+  // });
+
+//   self.addEventListener('push', function(event) {
+//     var data = event.data.json();
+//     var tag = data.data.tag;
+//     var url = data.data.url;
+//     var logo = data.data.logo;
+//     var body = data.notification.body;
+
+//     event.waitUntil(
+//         self.registration.showNotification(data.notification.title, {
+//             body: body,
+//             icon: logo,
+//             tag: tag,
+//             data: {
+//                 url: url
+//             }
+//         })
+//     );
+// });
+
+
+
   // Handle notification click
 self.addEventListener('notificationclick', (event) => {
   // Close the notification
