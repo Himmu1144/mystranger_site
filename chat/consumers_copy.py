@@ -14,10 +14,6 @@ from friend.models import FriendList
 from account.utils import LazyAccountEncoder
 from chat.constants import *
 from chat.utils import calculate_timestamp, LazyRoomChatMessageEncoder
-from django.utils import timezone
-from datetime import timedelta
-from firebase_admin import messaging
-from mystranger.settings import domain_name
 
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -54,7 +50,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 await self.leave_room(content["room"])
             elif command == "send":
                 if len(content["message"].lstrip()) != 0:
-                    await self.send_room(content["room"], content["message"], content['rep_msg'], content['rep_name'],content['rep_id'])
+                    await self.send_room(content["room"], content["message"], content['rep_msg'], content['rep_name'])
             elif command == 'typing':
                 await self.send_typing(content['group_name'], content['userId'])
             elif command == "status_check":
@@ -249,7 +245,7 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
             "leave": str(room.id),
         })
 
-    async def send_room(self, room_id, message,rep_msg,rep_name,rep_id):
+    async def send_room(self, room_id, message, rep_msg,rep_name):
         """
         Called by receive_json when someone sends a message to a room.
         """
@@ -270,33 +266,32 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
         if count > 1:
             # This means the jerk is online so messages sent are marked as read
             print('The connected_user_count is - ', count, " so marking msg as read")
-            msg = await create_room_chat_message(room, self.scope["user"], message, True,rep_msg,rep_name,rep_id)
+            msg = await create_room_chat_message(room, self.scope["user"], message, True,rep_msg,rep_name)
             read = True
             if msg.parent == "":
                 print('This is not a fuckin reply')
                 parenti = 'Noneee'
                 parenti_name = "null",
-                parenti_id = 'null',
             else:
+
+
+                
                 print('this is indeed a fuckin reply')
                 parenti = msg.parent
                 parenti_name = msg.parent_name
-                parenti_id = msg.parent_id
         else:
             # This means the jerk is onffline so messages sent are marked as unread
             print('The connected_user_count is - ', count, " so marking msg as unread")
-            msg = await create_room_chat_message(room, self.scope["user"], message, False,rep_msg,rep_name,rep_id)
+            msg = await create_room_chat_message(room, self.scope["user"], message, False,rep_msg,rep_name)
             read = False
             if msg.parent == "":
                 print('This is not a fuckin reply')
                 parenti = 'Noneee'
                 parenti_name = "null",
-                parenti_id = 'null',
             else:
                 print('this is indeed a fuckin reply')
                 parenti = msg.parent
                 parenti_name = msg.parent_name
-                parenti_id = msg.parent_id
 
         await self.channel_layer.group_send(
             room.group_name,
@@ -310,7 +305,6 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 "msg_id" : msg.id,
                 'reply_msg': parenti,
                 "reply_name":parenti_name,
-                'reply_id': parenti_id
             }
         )
 
@@ -377,7 +371,6 @@ class PrivateChatConsumer(AsyncJsonWebsocketConsumer):
                 'msg_id' : event['msg_id'],
                 'reply_msg':event['reply_msg'],
                 'reply_name':event['reply_name'],
-                'reply_id':event['reply_id'],
             },
         )
 
@@ -586,74 +579,16 @@ def get_user_info(room, user):
 
 
 @database_sync_to_async
-def create_room_chat_message(room, user, message, read,rep_msg, rep_name,rep_id):
-    rekage = message
-    try:
-        pass
-        # if read == False:
-        #     # This means the user is not online, now first we gotta check that whether i have received a message from this user within the past 10 minutes or not, if not then create a notification.
+def create_room_chat_message(room, user, message, read, rep_msg, rep_name):
 
-        #     # in order to do that we gotta fetch all the messages sent by that user to me within 10 minutes
-
-        #     if room.user1 == user:
-        #         friend = room.user2
-        #     else:
-        #         friend = room.user1
-
-        #     # unread_messages = RoomChatMessage.objects.filter(
-        #     #     Q(room=room) & Q(user=friend) & Q(read=False))
-
-        #     # Get the current time
-        #     now = timezone.now()
-
-        #     # Calculate the time 10 minutes ago
-        #     ten_minutes_ago = now - timedelta(minutes=10)
-
-        #     # Fetch the messages
-        #     messages = RoomChatMessage.objects.filter(
-        #         user=user,
-        #         room=room,
-        #         timestamp__gte=ten_minutes_ago
-        #     )
-
-        #     if messages.exists():
-        #         print("There are messages in the past 10 minutes so do nothing.")
-
-        #     else:
-        #         print("There are no messages in the past 10 minutes. so send a notification to the current user")
-        #         redirect_url=f"{domain_name}/chat/"
-        #         messagei=f"{user.name} sent you a message"
-        #         registration_token = friend.ntoken
-        #         message = messaging.Message(
-        #             notification=messaging.Notification(
-        #                 title='MyStranger.in',
-        #                 body=messagei,
-        #                 # click_action=redirect_url,
-        #             ),
-        #             data={
-        #                 'url': redirect_url,
-        #                 # 'tag' : 'look',
-        #                 'logo': 'static/images/msico.ico',
-        #             },
-        #             token=registration_token,
-        #         )
-        #         print('thi is the rediri url with tag - look', redirect_url)
-        #         response = messaging.send(message)
-
-
-        #         print('Successfully sent the  msg message notif:', response)
-
-    except Exception as e:
-        print('error creating message notification - ', str(e))
-        
+    
     print('got the rep_msg - ', rep_msg)
     if rep_msg or rep_name:
         print('reply msg')
-        return RoomChatMessage.objects.create(user=user, room=room, content=rekage, read=read, parent=rep_msg, parent_name=rep_name,parent_id=rep_id)
+        return RoomChatMessage.objects.create(user=user, room=room, content=message, read=read, parent=rep_msg, parent_name=rep_name)
     else:
         print('normal msg')
-        return RoomChatMessage.objects.create(user=user, room=room, content=rekage, read=read)
-
+        return RoomChatMessage.objects.create(user=user, room=room, content=message, read=read)
 
 @database_sync_to_async
 def get_room_chat_messages(room, page_number):
@@ -704,7 +639,7 @@ def mark_room_read(user, room_id):
 def Add_or_remove_from_room(Boolean, room,user):
     if Boolean:
         users = room.connected_users.all()
-        print('***********************')
+        print('*')
         print('users - ', users)
         print(user not in users)
         if user not in users:

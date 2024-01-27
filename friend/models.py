@@ -215,26 +215,26 @@ class FriendRequest(models.Model):
 
 				# print('sent the accept frnd req-notif')
 
-				redirect_url=f"{domain_name}/account/{self.receiver.pk}/"
-				message=f"{self.receiver.name} accepted your friend request."
-				registration_token = self.sender.ntoken
-				message = messaging.Message(
-					notification=messaging.Notification(
-						title='MyStranger.in',
-						body=message,
-					),
-					data={
-						'url': redirect_url,
-						# 'logo': logo_url,
-					},
-					token=registration_token,
-				)
+				# redirect_url=f"{domain_name}/account/{self.receiver.pk}/"
+				# message=f"{self.receiver.name} accepted your friend request."
+				# registration_token = self.sender.ntoken
+				# message = messaging.Message(
+				# 	notification=messaging.Notification(
+				# 		title='MyStranger.in',
+				# 		body=message,
+				# 	),
+				# 	data={
+				# 		'url': redirect_url,
+				# 		# 'logo': logo_url,
+				# 	},
+				# 	token=registration_token,
+				# )
 
 
-				# Send a message to the device corresponding to the provided
-				# registration token.
-				response = messaging.send(message)
-				print('Successfully sent the accept firend req message:', response)
+				# # Send a message to the device corresponding to the provided
+				# # registration token.
+				# response = messaging.send(message)
+				# print('Successfully sent the accept firend req message:', response)
 
 
 
@@ -353,29 +353,29 @@ def create_notification(sender, instance, created, **kwargs):
 			content_type=instance,
 		)
 
-		redirect_url=f"{domain_name}/account/{instance.sender.pk}/"
-		message=f"{instance.sender.name} sent you a friend request."
-		registration_token = instance.receiver.ntoken
-		message = messaging.Message(
-			notification=messaging.Notification(
-				title='MyStranger.in',
-				body=message,
-				# click_action=redirect_url,
-			),
-			data={
-				'url': redirect_url,
-				'tag' : 'look',
-				'logo': 'static/images/msico.ico',
-			},
-			token=registration_token,
-		)
-		print('thi is the rediri url with tag - look', redirect_url)
-		response = messaging.send(message)
+		# redirect_url=f"{domain_name}/account/{instance.sender.pk}/"
+		# message=f"{instance.sender.name} sent you a friend request."
+		# registration_token = instance.receiver.ntoken
+		# message = messaging.Message(
+		# 	notification=messaging.Notification(
+		# 		title='MyStranger.in',
+		# 		body=message,
+		# 		# click_action=redirect_url,
+		# 	),
+		# 	data={
+		# 		'url': redirect_url,
+		# 		'tag' : 'look',
+		# 		'logo': 'static/images/msico.ico',
+		# 	},
+		# 	token=registration_token,
+		# )
+		# print('thi is the rediri url with tag - look', redirect_url)
+		# response = messaging.send(message)
 
 
 		
 
-		print('Successfully sent the friend req msg message:', response)
+		# print('Successfully sent the friend req msg message:', response)
 
 		
 		# Call the function

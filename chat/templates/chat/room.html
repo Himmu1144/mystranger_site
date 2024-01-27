@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load humanize %}
+{% block tailwind %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+{% endblock tailwind %}
 {% block body %}
 
 <style>
@@ -218,7 +224,7 @@
 
 	.chat-log {
 		/* height: 450px; */
-		max-height: 69vh;
+		max-height: 65svh;
 		overflow-x: hidden;
 		overflow-y: auto;
 		padding: 10px;
@@ -356,13 +362,7 @@
 	}
 
 	.inside_msg_cont{
-		{% comment %} padding-right: 4px;
-		background: #f0f2f2;
-		min-width: 90px;
-		min-height: 45px;
-		padding-left: 4px;
-		border-radius: 8px;
-		max-width:400px; {% endcomment %}
+		
 		position:relative;
 		padding-right: 4px;
     background: #ff943b;
@@ -370,16 +370,16 @@
     min-height: 37px;
     padding-left: 4px;
     border-radius: 10px;
-    font-weight: bold!important;
+	max-width:400px;
 	}
 
 	.inside_msg_cont p {
-		font-weight:600;
+		font-weight:500;
 		color:white;
 	}
 
 	.inside_msg_cont1 p {
-		font-weight:600;
+		font-weight:500;
 	}
 
 	.inside_msg_cont1{
@@ -390,6 +390,7 @@
 		padding-left: 4px;
 		border-radius: 8px;
 		max-width:400px; {% endcomment %}
+		max-width:400px;
 	position:relative;
 	padding-right: 4px;
     background: #e6e6e6;
@@ -397,7 +398,29 @@
     min-height: 37px;
     padding-left: 6px;
     border-radius: 10px;
-    font-weight: bold!important;
+    font-weight: 500!important;
+	}
+	.inside_msg_contr{
+		background: #d8d8d8;
+	position:relative;
+	padding-right: 10px;
+    
+    min-width: 61px;
+    min-height: 37px;
+    padding-left: 6px;
+    border-radius: 10px;
+    font-weight: 500;
+	padding-left: 0.8em;
+	margin-top:3px;
+	width:100%;
+	}
+	.dark_orange{
+		background: #f1862d!important;
+		color:white;
+		padding-left:0.8em!important;
+		width:100%;
+			
+
 	}
 
 	.inside_msg_cont1::before{
@@ -554,6 +577,131 @@
 	border: 1px solid rgb(205 205 205);
 	}
 
+
+
+	@media (max-width: 767px) {
+		#myDiv {
+		   background-color: #f5f5f5;
+	 border: 1px solid #ddd;
+	 border-radius: 5px;
+	 padding: 6px 15px 16px 15px;
+	position: absolute;
+	top: -71px;  /* Adjust based on height of div and input field */
+	{% comment %} left: 0; {% endcomment %}
+	width: 88%;
+	z-index: 1;  /* Ensure it overlaps the input field /  / Your mobile styles here */
+		}
+}
+@media (min-width: 767px) {
+		#myDiv {
+		   background-color: #f5f5f5;
+	 border: 1px solid #ddd;
+	 border-radius: 5px;
+	 padding: 5px;
+	position: absolute;
+	top: -72px;  /* Adjust based on height of div and input field */
+	
+	
+	display:inline-block;
+	z-index: 1;  /* Ensure it overlaps the input field /  / Your mobile styles here */
+		}
+}
+
+
+
+
+
+.chat-bubble { 
+background-color:#E6F8F1;
+padding:16px 28px;
+-webkit-border-radius: 20px;
+-webkit-border-bottom-left-radius: 2px;
+-moz-border-radius: 20px;
+-moz-border-radius-bottomleft: 2px;
+border-radius: 20px;
+border-bottom-left-radius: 2px;
+display: block;;
+
+}
+.typing {
+align-items: center;
+display: flex;
+height: 30px;
+
+
+}
+.typing .dot {
+animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
+{% comment %} background-color: #6CAD96 ;  {% endcomment %}
+background-color:#e6e6e6;
+border-radius: 50%;
+height: 7px;
+margin-right: 4px;
+vertical-align: middle;
+width: 7px;
+display: inline-block;
+}
+.typing .dot:nth-child(1) {
+animation-delay: 200ms;
+}
+.typing .dot:nth-child(2) {
+animation-delay: 300ms;
+}
+.typing .dot:nth-child(3) {
+animation-delay: 400ms;
+}
+.typing .dot:last-child {
+margin-right: 0;
+}
+
+@keyframes mercuryTypingAnimation {
+0% {
+transform: translateY(0px);
+{% comment %} background-color:#6CAD96;  {% endcomment %}
+background-color:#f1862d; 
+}
+28% {
+transform: translateY(-7px);
+{% comment %} background-color:#9ECAB9;  {% endcomment %}
+background-color:#f5bd8f; 
+}
+44% {
+transform: translateY(0px);
+{% comment %} background-color: #B5D9CB; {% endcomment %}
+background-color: #ff943b;
+}
+}
+
+@media (max-width: 767px) {
+#replytext {
+overflow: hidden;
+display: -webkit-box;
+-webkit-line-clamp: 1; /* Set the number of lines you want to display */
+-webkit-box-orient: vertical;
+text-overflow: ellipsis;
+
+}  
+}
+
+
+.my-lappy-textoo {
+overflow: hidden;
+display: -webkit-box;
+-webkit-line-clamp: 1; /* Set the number of lines you want to display */
+-webkit-box-orient: vertical;
+text-overflow: ellipsis;
+
+}  
+
+
+
+
+
+.truncate-text {
+display: -webkit-box;
+}
+
+
 	/* Media query for tablet width 320px */
   @media only screen and (min-width: 300px) and (max-width: 600px) {  
 	body{
@@ -675,19 +823,113 @@
 		margin-bottom:15px;
 	}
 
-	#myDiv {
-		 background-color: #f5f5f5;
+@media (max-width: 767px) {
+            #myDiv {
+               background-color: #f5f5f5;
+		 border: 1px solid #ddd;
+		 border-radius: 10px!important;
+		 padding: 5px;
+		position: absolute;
+		top: -72px;  /* Adjust based on height of div and input field */
+		{% comment %} left: 0; {% endcomment %}
+		width: 88%;
+		z-index: 1;  /* Ensure it overlaps the input field /  / Your mobile styles here */
+            }
+  }
+@media (min-width: 767px) {
+            #myDiv {
+               background-color: #f5f5f5;
 		 border: 1px solid #ddd;
 		 border-radius: 5px;
 		 padding: 5px;
-		position: absolute;
-		top: -60px;  /* Adjust based on height of div and input field */
+		 position: absolute;
+		 bottom: 3em;
+		top: -72px;  /* Adjust based on height of div and input field */
 		left: 0;
-		width: 100%;
-		z-index: 1;  /* Ensure it overlaps the input field */
-}
-
+		
+		display:inline-block;
+		z-index: 1;  /* Ensure it overlaps the input field /  / Your mobile styles here */
+            }
   }
+
+  @media (max-width: 767px) {
+	#replytext {
+	  overflow: hidden;
+	  display: -webkit-box;
+	  -webkit-line-clamp: 1; /* Set the number of lines you want to display */
+	  -webkit-box-orient: vertical;
+	  text-overflow: ellipsis;
+	  
+	}  
+	 }
+	
+	
+	.my-lappy-textoo {
+	  overflow: hidden;
+	  display: -webkit-box;
+	  -webkit-line-clamp: 1; /* Set the number of lines you want to display */
+	  -webkit-box-orient: vertical;
+	  text-overflow: ellipsis;
+	  
+	}  
+	
+	
+	
+	
+	
+	.truncate-text {
+	  display: -webkit-box;
+	}
+
+	.typing {
+		align-items: center;
+		display: flex;
+		height: 30px;
+		
+		
+	  }
+	  .typing .dot {
+		animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
+		{% comment %} background-color: #6CAD96 ;  {% endcomment %}
+		background-color:#e6e6e6;
+		border-radius: 50%;
+		height: 7px;
+		margin-right: 4px;
+		vertical-align: middle;
+		width: 7px;
+		display: inline-block;
+	  }
+	  .typing .dot:nth-child(1) {
+		animation-delay: 200ms;
+	  }
+	  .typing .dot:nth-child(2) {
+		animation-delay: 300ms;
+	  }
+	  .typing .dot:nth-child(3) {
+		animation-delay: 400ms;
+	  }
+	  .typing .dot:last-child {
+		margin-right: 0;
+	  }
+	  
+	  @keyframes mercuryTypingAnimation {
+		0% {
+		  transform: translateY(0px);
+		  {% comment %} background-color:#6CAD96;  {% endcomment %}
+		  background-color:#f1862d; 
+		}
+		28% {
+		  transform: translateY(-7px);
+		  {% comment %} background-color:#9ECAB9;  {% endcomment %}
+		  background-color:#f5bd8f; 
+		}
+		44% {
+		  transform: translateY(0px);
+		  {% comment %} background-color: #B5D9CB; {% endcomment %}
+		  background-color: #ff943b;
+	    }
+	  }
+	}
 
 </style>
 
@@ -698,7 +940,13 @@
 		
 		<div class="left-column video">
 			
-			<button id="notif-btn" style='dispaly:block;' onclick="SubscribeUser()">Click here to turn on the notifications</button>
+			<button id="notif-btn" style='dispaly:block; color: #009cad;
+			border: 1px solid #313131;
+			dispaly: block;
+			font-size: 14px;
+			background: transparent;
+			padding: 4px;
+			border-radius: 21px;' onclick="SubscribeUser()">Click here to turn on the notifications</button>
     <h6 class="" id =""></h6>
 			<div class="card left-card">
 				<div class="d-flex flex-row align-items-center card-header">
@@ -764,7 +1012,7 @@
 						<h4 class="ml-2" id="id_other_username"></h4>
 						<span class="text-secondary ml-2" id="last_seen" style="font-size:10px;"></span>
 					</a>
-					<span id="typing" class="typo d-none">typing...</span>
+					
 				</div>
 					<div id='online_dot' class="online-dot-display"><span class="online-dot">
 						</span><span style="
@@ -804,13 +1052,21 @@
 								</button></a> {% endcomment %}
 							<!-- <textarea disabled class="flex-grow-1 chat-message-input"
 									id="id_chat_message_input"></textarea> -->
-									<div class="txtarea-cont">
-
-										<textarea class="flex-grow-1 video-textarea" id="id_chat_message_input" placeholder="say something..."></textarea>
-										<button class="chat-message-submit-button send-button send-btn-cont" id="send_button">
-											<span id="id_chat_message_submit" class="material-icons send-btn">send
-											</span>
-										</button>
+									<div style="transform: translateX(-30px); width:30px; ">
+										<div id="typing" class="typing d-none">
+									<div class="dot"></div>
+									<div class="dot"></div>
+									<div class="dot"></div>
+									</div>
+									</div>
+												<div class="txtarea-cont">
+			
+													<textarea class="flex-grow-1 video-textarea" id="id_chat_message_input" placeholder="say something..."></textarea>
+													<button class="chat-message-submit-button send-button send-btn-cont" id="send_button">
+														<span id="id_chat_message_submit" class="material-icons send-btn">send
+														</span>
+													</button>
+												</div>
 									</div>
 						</div>
 					
@@ -868,7 +1124,9 @@
 	}(document, 'script', 'bitmojikit-sdk'));
   </script>
 <script src="{% static 'collections/collections.min.js' %}"></script> {% endcomment %}
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
 <script>
 
 	
@@ -1134,6 +1392,8 @@ window.snapKitInit = () => {
 			// user info coming in from backend
 			if (data.user_info) {
 				handleUserInfoPayload(data.user_info)
+				window.friend_name = data.user_info.name
+				console.error('Got the name - ', window.friend_name)
 
 			}
 
@@ -1185,7 +1445,7 @@ window.snapKitInit = () => {
 			// Handle getting a message
 			if (data.msg_type == 0 || data.msg_type == 1 || data.msg_type == 2) {
 				console.log(data)
-				console.log("The authenticated user id is - ", auth_user_id)
+				console.log("The authenticated user id is - ", auth_user_id,data)
 
 				appendChatMessage(data, false, true, auth_user_id,data.read)
 					
@@ -1228,16 +1488,25 @@ window.snapKitInit = () => {
 
 			if (data.isTyping) {
 				// Display "user is typing" message
+				console.error("typing");
 				if (data.id != auth_user_id){
 					const typingIndicator = document.getElementById('typing');
-					typingIndicator.classList.remove("d-none");
-			
-					// Add a timeout to remove the message after a few seconds
-					setTimeout(() => {
+
+					if (typingIndicator.classList.contains("d-none")) {
+						console.error("removed d-none");
+							typingIndicator.classList.remove("d-none");
+
+							setTimeout(() => {
 						typingIndicator.classList.add("d-none");
 					}, 3000); // Remove the message after 1 seconds (adjust as needed)
+						}
+			
+					// Add a timeout to remove the message after a few seconds
+					
 			}
-        } 
+        }
+
+
 
 
 			if(data.message_deleted){
@@ -1308,11 +1577,43 @@ window.snapKitInit = () => {
 
 	document.getElementById('id_chat_message_submit').onclick = function (e) {
 		const messageInputDom = document.getElementById('id_chat_message_input');
+		
+		var rep_msg = document.getElementById('replytext');
+		var rep_name = document.getElementById('replyme');
+		{% comment %} console.error('the jhkw ', window.textoo.innerHTML,window.textr.innerHTML); {% endcomment %}
+		if(rep_msg || rep_name){
+			window.rep_msg =  window.textoo.innerHTML;
+			window.rep_name = window.textr.innerHTML;
+		} else {
+			window.rep_msg = null;
+			window.rep_name = null;
+		}
 		const message = messageInputDom.value;
+
+		console.error('this is the rep_id ', window.rep_id)
+		
+		
+
+		if ($('#myDiv').length) {
+			console.log("Element with ID 'myDiv' exists. Removing...");
+			$('#myDiv').remove();
+		} else {
+			console.log("Element with ID 'myDiv' does not exist.");
+		}
+		
+		if(window.rep_id){
+			console.log('we have a reply - ',window.rep_id)
+		}else{
+			console.log('no rep - ', window.rep_id)
+			window.rep_id = null
+		}
 		
 		chatSocket.send(JSON.stringify({
 			"command": "send",
 			"message": message,
+			"rep_msg": window.rep_msg,
+			'rep_name': window.rep_name,
+			'rep_id': window.rep_id,
 			"room": roomId
 		}));
 		messageInputDom.value = '';
@@ -1323,7 +1624,12 @@ window.snapKitInit = () => {
 
 
     const inputField = document.getElementById('id_chat_message_input');
-    inputField.addEventListener('input', () => {
+    inputField.addEventListener('input', (event) => {
+
+		if(event.data == null){
+			console.log('no typing')
+			return;
+		}
 
 		// console.log('The onchange function is getting called')
         // Send a "typing" event to the server using WebSocket
@@ -1395,7 +1701,7 @@ window.snapKitInit = () => {
 	function handleUserInfoPayload(user_info) {
 		
 		document.getElementById("id_other_username").innerHTML = user_info['name'] + ' | ' + user_info['uniName'].slice(0,12) + '...' 
-		
+		console.log("other user is "+user_info['name']);
 		document.getElementById("id_user_info_container").href = "{% url 'account:view' user_id=4586463456756486676 %}".replace("4586463456756486676", user_info['id'])
 
 
@@ -1415,6 +1721,15 @@ window.snapKitInit = () => {
 		uniName = data['uniName']
 		timestamp = data['natural_timestamp']
 		readMsg = data['read']
+		reply_msg = data['reply_msg']
+		reply_name = data['reply_name']
+		reply_id = data['reply_id']
+		if(reply_msg){
+		console.error("You see your friend replied to: "+reply_name);
+		console.error("You see your friend replied:  "+reply_msg);
+		
+		}
+
 		// console.log("append chat message: " + messageType)
 
 		// username = uName + " | " + uniName + " :"
@@ -1427,9 +1742,10 @@ window.snapKitInit = () => {
 				username = uName + ": "
 				msg = message + '\n'
 				if (read == null){
-					createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage, auth_user_id,readMsg) 
+					
+					createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage, auth_user_id,readMsg,reply_msg,reply_name,reply_id) 
 				} else if (read == true || read == false || read == 'True' || read == "False"){
-					createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage, auth_user_id,read) 
+					createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage, auth_user_id,read,reply_msg,reply_name,reply_id) 
 				}
 				break;
 			case 1:
@@ -1449,10 +1765,25 @@ window.snapKitInit = () => {
 	/*
 		Build a new ChatMessage element and append to the list
 	*/
-	function createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage,auth_user_id,read) {
+	function createChatMessageElement(msg, msg_id, username, uniName, user_id, timestamp, maintainPosition, isNewMessage,auth_user_id,read,reply_msg,reply_name,reply_id) {
 
 		// console.log("***************************************************************************************************************************************************************************************** The value of read is - ",read)
-
+		var reply_message = reply_msg
+		if (reply_message && reply_message.length > 100) {
+  // Trim the string to 300 characters and add trailing dots
+  var truncatedreply = reply_message.substring(0, 100) + "...";
+  
+  // Use the truncatedString as needed
+  console.log('yess its biggg',truncatedreply);
+	window.reply_msg=truncatedreply
+	reply_msg = truncatedreply
+} else {
+  // If the string is already 300 characters or less, use the original string
+  console.log('lillllyyyy ',reply_message);
+		window.reply_msg=reply_msg
+	
+}
+		console.error('this is the rep_msg and rep_name',reply_msg,reply_name,reply_id)
 		var chatLog = document.getElementById("id_chat_log")
 
 		var newMessageDiv = document.createElement("div")
@@ -1486,39 +1817,70 @@ window.snapKitInit = () => {
 		var div1 = document.createElement("div")
 		div1.classList.add("d-flex")
 		div1.classList.add("flex-column")
-		var replyButton = document.createElement("a");
-		replyButton.innerHTML = '<span style="color:#009cda;">reply</span>';
 		if (auth_user_id == user_id){
 			div1.classList.add("inside_msg_cont1");
 			
-			replyButton.addEventListener("click", function () {
-			console.log("wanna click reply button?");
-  			// focus on the text area
-  			document.getElementById("id_chat_message_input").focus();
-			var text= document.getElementById("msgdiv-"+msg_id).firstChild.childNodes[1].firstChild.textContent;
-			console.log("Reply to "+text);
-			// Toggle the visibility by adding/removing a CSS class to the timestampContainer
-			{% comment %} timestampContainer.classList.toggle("hidden"); {% endcomment %}
-			// Call your JavaScript function here
-			replyFunction(msg_id,"yourself");
-		});
+			//starts
+			// Make the element draggable with touch events
+
+			if (auth_user_id == user_id){
+				div1.classList.add("inside_msg_cont1");
+			
+				// ... your other code ...
+			
+				// Apply draggable to the newly added element
+				$(div1).draggable({
+					axis: 'x',
+					containment: '.message-container1',
+					revert: true,
+					stop: function (event, ui) {
+						var left = ui.position.left;
+						var width = $(this).width();
+						var parentWidth = $(this).parent().width();
+						if (left < -width / 5) {
+							var messageText = $(this).find('.msg-p').text().trim();
+							var messageId = $(this).closest('.message-container1').attr('id');
+							replyFunction(messageId.replace("msgdiv-", ""), "You");
+						}
+					}
+				});
+			}
+			
+			
+			
+			
+						//ends
+			
+
+			
 
 		} else{
 			div1.classList.add("inside_msg_cont")
 			
-			replyButton.addEventListener("click", function () {
 			
-  			// focus on the text area
-  			document.getElementById("id_chat_message_input").focus();
-			var text= document.getElementById("msgdiv-"+msg_id).firstChild.childNodes[1].firstChild.textContent;
-			console.log("Reply to "+text);
-			// Toggle the visibility by adding/removing a CSS class to the timestampContainer
-			{% comment %} timestampContainer.classList.toggle("hidden"); {% endcomment %}
-			// Call your JavaScript function here
-			replyFunction(msg_id,"friend");
-		});
 
+			$(div1).draggable({
+				axis: 'x',
+				containment: '.message-container',
+				revert: true,
+				stop: function (event, ui) {
+					// Get the current position of the element
+					var left = ui.position.left;
+					// Get the width of the element using $(this)
+					var width = $(this).width();
+					// Get the width of the parent element
+					var parentWidth = $(this).parent().width();
+					// Check if the element is dragged more than half of its width to the right
+					if (left > width / 5) {
+						// Call the function you want
+						var messageText = $(this).find('.msg-p').text().trim();
+						var messageId = $(this).closest('.message-container').attr('id');
+						replyFunction(messageId.replace("msgdiv-", ""),window.friend_name);
+			        }
+			    }
+			});
 		}
+		
 
 		var div2 = document.createElement("div")
 		div2.classList.add("d-flex")
@@ -1542,6 +1904,8 @@ window.snapKitInit = () => {
 
 		if (auth_user_id == user_id){
 		var msgbarContainer = document.createElement("div");
+		
+
 		msgbarContainer.classList.add("timestamp-span");
 		
 		msgbarContainer.classList.add("hidden");
@@ -1561,36 +1925,137 @@ window.snapKitInit = () => {
 			yourFunction(msg_id);
 		});
 	}
+
 		 
 		
 
 
-		
 		// Add a click event listener to toggle the visibility of the timestamp
 		newMessageDiv.addEventListener("click", function () {
 			// Toggle the visibility by adding/removing a CSS class to the timestampSpan
 			timestampSpan.classList.toggle("hidden");
 			msgbarContainer.classList.toggle("hidden"); 
-			replyButton.classList.toggle("hidden");
+			
 			
 		});
 		
 		div2.appendChild(timestampSpan);
 		
 		if (auth_user_id == user_id){
+		
 		msgbarContainer.appendChild(toggleButton);
-		msgbarContainer.appendChild(replyButton);
+		
+		
+if(reply_name=='None' || reply_name==null || reply_name=='null')
+			{ console.log('nope not a reply -----------------------------------------------------------')
+			}else{
 
-		div2.appendChild(msgbarContainer); }
-		else{
-			var msgbarContainer = document.createElement("div");
-			msgbarContainer.appendChild(replyButton);
-			replyButton.classList.add("msg_bar_timestamp");
-			replyButton.classList.toggle("hidden");
-			div2.appendChild(msgbarContainer); 
-		}
+
+		var replybarContainer = document.createElement("div");
+		replybarContainer.classList.add("inside_msg_contr");
+		
+
+		if(window.reply_msg){
+		if(reply_name=="yourself"){
+				reply_name="You";
+			}
+		replybarContainer.appendChild(document.createTextNode(reply_name));
+		replybarContainer.appendChild(document.createElement("br"));
+		replybarContainer.appendChild(document.createTextNode(reply_msg));
+		 // Add click event listener
+		 replybarContainer.addEventListener("click", function() {
+			// Your click event handling logic here
+			
+			var targetElement = document.getElementById("msgdiv-"+reply_id);
+			console.error('replybarContainer clicked!','msgdiv-'+reply_id,targetElement);
+			
+        
+			if (targetElement) {
+				// Change background color to grey
+				targetElement.style.backgroundColor = 'grey';
+				targetElement.scrollIntoView({
+					behavior: "smooth",
+				});
+
+				 // Restore the background color to transparent after 2 seconds with a transition
+				 setTimeout(function() {
+					targetElement.style.transition = 'background-color 2s ease';
+					targetElement.style.backgroundColor = 'transparent';
+				}, 0); // Using a small timeout to ensure that the transition property is applied after the initial style change
+			
+
+			}
+
+		}); 
 
 		
+		}
+		div2.appendChild(replybarContainer); }
+		
+			div2.appendChild(msgbarContainer);
+		 }
+		else{
+
+
+			var msgbarContainer = document.createElement("div");
+			
+			div2.appendChild(msgbarContainer); 
+
+			if(reply_name=='None' || reply_name==null || reply_name=='null')
+			{
+				console.log('not a reply')
+				} else {
+			
+
+			
+			
+			var replybarContainer = document.createElement("div");
+		replybarContainer.classList.add("inside_msg_contr");
+		if(window.reply_msg){
+			if(reply_name=="You"){    
+				reply_name= window.friend_name;
+			} else{
+				reply_name = 'You'
+			}
+		replybarContainer.appendChild(document.createTextNode(reply_name));
+		replybarContainer.appendChild(document.createElement("br"));
+		replybarContainer.appendChild(document.createTextNode(reply_msg));
+		replybarContainer.classList.add("dark_orange");
+		  // Add click event listener
+		  replybarContainer.addEventListener("click", function() {
+			// Your click event handling logic here
+			
+			var targetElement = document.getElementById("msgdiv-"+reply_id);
+			console.error('replybarContainer clicked!','msgdiv-'+reply_id,targetElement);
+			
+        
+			if (targetElement) {
+				// Change background color to grey
+				targetElement.style.backgroundColor = 'grey';
+				targetElement.scrollIntoView({
+					behavior: "smooth",
+				});
+
+				 // Restore the background color to transparent after 2 seconds with a transition
+				 setTimeout(function() {
+					targetElement.style.transition = 'background-color 2s ease';
+					targetElement.style.backgroundColor = 'transparent';
+				}, 0); // Using a small timeout to ensure that the transition property is applied after the initial style change
+			
+
+			}
+
+		}); 
+		}
+		
+		div2.appendChild(replybarContainer);  
+	
+	}
+
+
+			div2.appendChild(msgbarContainer);
+		}
+
 		
 		
 		div1.appendChild(div2);
@@ -1742,55 +2207,96 @@ window.snapKitInit = () => {
 	}
 	var divr1 = document.createElement("div");
 	function replyFunction(msg_id,name) {
-		
+		if (document.getElementById('myDiv')!==null){
+			console.log("removed!!!");
+			document.getElementById('myDiv').remove();
+		}else{
+			console.log("not removed",document.getElementById('myDiv'));
+		}
+		document.getElementById('id_chat_message_input').focus();
   // Your JavaScript code here
-  var userx=name;
+  window.userx=name;
 
   
   var text1 = document.getElementById("msgdiv-" + msg_id).firstChild.childNodes[1].firstChild.textContent;
-  var textoo = document.createElement("span");
+  window.textoo = document.createElement("span");
   
   textoo.textContent = text1;
   textoo.id="replytext";
-  textoo.style.fontWeight = "bold";
+  textoo.classList.add('truncate-text')
+  textoo.classList.add('my-lappy-textoo')
+  window.rep_id = msg_id
 
   
   var divr = document.createElement("div");
   divr.id = "myDiv";  // Apply CSS styles using this ID
 
   var crossIcon = document.createElement("i");
-  crossIcon.classList.add("fas", "fa-times");  // Assuming Font Awesome is included
+  crossIcon.classList.add("fas", "fa-times"); 
   crossIcon.style.cursor = "pointer";  // Show a pointer cursor
+  
+
+
+if (window.innerWidth <= 600) {
+      crossIcon.style.position = "absolute";
+      
+    }
+crossIcon.style.right = "10px";
+crossIcon.style.top = "10px";
+crossIcon.style.margin = "5px"
   divr.appendChild(crossIcon);
 
 
   // Create text nodes and icon (assuming Font Awesome is included):
   var replyIcon = document.createElement("i");
   replyIcon.classList.add("fas", "fa-reply");
-  var textr = document.createElement("span");
+  replyIcon.style.fontSize = "10px";
+  window.textr = document.createElement("span");
   {% comment %} textr.textContent = "{{request.user.name}}"; {% endcomment %}
   textr.textContent = userx;
   textr.id="replyme";
-  textr.style.fontWeight = "bold";  // Make username bold
+ // Make username bold
 
-  // Create line breaks:
-  var br1 = document.createElement("br");
-  var br2 = document.createElement("br");
-
+  // Create line breaks:@
+  {% comment %} var br1 = document.createElement("br");
+  var br2 = document.createElement("br"); {% endcomment %}
+  var replto=document.createElement("div");
   // Append nodes in the correct order:
   divr.appendChild(replyIcon);
-  divr.appendChild(document.createTextNode(" Replying to "));
   divr.appendChild(textr);
-  divr.appendChild(br1);
+  textr.style.margin = "5px";
+  textr.style.fontSize = "12px";
+  {% comment %} divr.appendChild(br1); {% endcomment %}
   divr.appendChild(textoo);  // Append as a text node
-  divr.appendChild(br2);
+  textoo.style.marginLeft="15px";
+  {% comment %} divr.appendChild(br2); {% endcomment %}
   divr1.appendChild(divr);
-	
+  divr.style.borderRadius="15px";
+  divr.style.padding="10px 15px";
+
+  {% if not request.user_agent.is_mobile %}
+ 
+  divr.style.position="absolute";
+  divr.style.bottom="3.5em";
+  divr.style.background="#efefef";
+  divr.style.width="95%";
+  divr.style.borderRadius="10px";
+
+  textoo.style.overflow = 'hidden';
+  textoo.style.display = '-webkit-box';
+  textoo.style.webkitBoxOrient = 'vertical';
+  textoo.style.webkitLineClamp = '1';
+  textoo.style.textOverflow = 'ellipsis';
+
+ 
+  {% endif %}
+  
   {% comment %} document.getElementById("id_chat_message_input").insertAdjacentElement("beforebegin", divr); {% endcomment %}
   document.getElementById("id_chat_message_input").parentNode.insertBefore(divr1, document.getElementById("id_chat_message_input"));
 
   crossIcon.addEventListener("click", function() {
-    divr1.remove();  // Remove the div when clicked
+    document.getElementById('myDiv').remove();  // Remove the div when clicked
+	
   });
 }
 
@@ -1803,6 +2309,7 @@ window.snapKitInit = () => {
 			// console.log("The messages are ------------ ",messages)
 			messages.forEach(function (message) {
 				appendChatMessage(message, true, false, auth_user_id,null)
+				console.error(message)
 			})
 		}
 		else {

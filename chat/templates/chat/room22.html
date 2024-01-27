@@ -193,7 +193,7 @@
 	.send-btn {
 		position: absolute;
 		right: 13px;
-		top: 13px!important;
+		top: 12px!important;
 	}
 
 	.send-btn-cont {
@@ -210,7 +210,7 @@
 
 	.chat-log {
 		/* height: 450px; */
-		max-height: 69vh;
+		max-height: 66svh;
 		overflow-x: hidden;
 		overflow-y: auto;
 		padding: 10px;
@@ -233,12 +233,12 @@
 	}
 
 	.message-container {
-		margin-top: 10px;
+		margin-top: 14px;
 		justify-content: start;
 		position: relative;
 	}
 	.message-container1 {
-		margin-top: 10px;
+		margin-top: 14px;
 		justify-content: end;
 		position: relative;
 	}
@@ -354,7 +354,8 @@
 		min-height: 45px;
 		padding-left: 4px;
 		border-radius: 8px;
-		max-width:400px; {% endcomment %}
+		 {% endcomment %}
+		 max-width:400px;
 		position:relative;
 		padding-right: 4px;
     background: #ff943b;
@@ -362,16 +363,16 @@
     min-height: 37px;
     padding-left: 4px;
     border-radius: 10px;
-    font-weight: bold!important;
+    font-weight: 500!important;
 	}
 
 	.inside_msg_cont p {
-		font-weight:600;
+		font-weight:500;
 		color:white;
 	}
 
 	.inside_msg_cont1 p {
-		font-weight:600;
+		font-weight:500;
 	}
 
 	.inside_msg_cont1{
@@ -381,7 +382,8 @@
 		min-height: 45px;
 		padding-left: 4px;
 		border-radius: 8px;
-		max-width:400px; {% endcomment %}
+		 {% endcomment %}
+	max-width:400px;
 	position:relative;
 	padding-right: 4px;
     background: #e6e6e6;
@@ -389,7 +391,7 @@
     min-height: 37px;
     padding-left: 6px;
     border-radius: 10px;
-    font-weight: bold!important;
+    font-weight: 500!important;
 	}
 
 	.inside_msg_cont1::before{
@@ -578,7 +580,7 @@
 
 	.main-container{
 		/* height: 90vh; */
-		height: calc(100svh - 113px);
+		height: calc(100svh - 105px);
 		flex: unset;
 	}
 
@@ -626,9 +628,9 @@
 		font-size: 15px;
 	}
 
-	{% comment %} .video-textarea{
+	.video-textarea{
 		height: 46px;
-	} {% endcomment %}
+	}
 
 	.send-btn{
 		font-size: 18px;
@@ -673,25 +675,24 @@
 
   }
 
-
-  .new-textarea {
-    resize: none; /* Disable textarea resizing by user */
-    height: 36px; /* Initial height */
-    overflow-y: hidden; /* Hide vertical scrollbar */
-    transition: height 0.3s; /* Add smooth transition for height changes */
-  }
-
 </style>
 
 
 
 <div class="main-container">
 	<div class="row cont-row">
-		
 		<div class="left-column video">
-			
-			<button id="notif-btn" style='dispaly:block;' onclick="SubscribeUser()">Click here to turn on the notifications</button>
-    <h6 class="" id =""></h6>
+{% comment %} {% if request.user.pk == 1349 or request.user.pk == 150 or request.user.pk == 283 or request.user.pk == 175 or request.user.pk == 176 %} {% endcomment %}
+			<button id="notif-btn" style='dispaly:block; color: #009cad;
+			border: 1px solid #313131;
+			dispaly: block;
+			font-size: 14px;
+			background: transparent;
+			padding: 4px;
+			border-radius: 21px;' onclick="SubscribeUser()">Click here to turn on the notifications</button>
+    <h6 class="" id =""></h6> 
+	{% comment %} {% endif %} {% endcomment %}
+
 			<div class="card left-card">
 				<div class="d-flex flex-row align-items-center card-header">
 					<h3>Friends</h3>
@@ -707,8 +708,8 @@
 							{% endcomment %}
 							<div class="d-flex flex-row friends">
 								<span style="display: flex; flex-direction:column;">
-								<span class="username-span">{{x.friend.name}}</span>
-								<span class="text-secondary" style="font-size:10px; margin-left:5px;">Active {{x.friend.last_activity|naturaltime}}</span></span>
+									<span class="username-span">{{x.friend.name}}</span>
+									<span class="text-secondary" style="font-size:10px; margin-left:5px;">Active {{x.friend.last_activity|naturaltime}}</span></span>
 								{% if x.unread_messages_count != 0 %}
 								<span class="friend-message-span notify-badge"
 									id="id_friend_count_{{x.friend.id}}">{{x.unread_messages_count}}</span>
@@ -861,15 +862,16 @@
   </script>
 <script src="{% static 'collections/collections.min.js' %}"></script> {% endcomment %}
 
-<script>
 
- function resizeTextarea(textarea) {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+
+<script type="text/javascript">
+
+	function resizeTextarea(textarea) {
         textarea.style.height = 'auto'; // Reset height to auto to calculate scrollHeight
         textarea.style.height = (textarea.scrollHeight > 60 ? 60 : 40) + 'px';
       } 
-
-
-	
 
 	if (Notification.permission === "granted") {
 		{% if token_exist == 'yes' %}
@@ -888,12 +890,6 @@
 	  }
 	  
 
-</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-
-
-<script type="text/javascript">
 {% comment %} /* Setup Bitmoji Kit Web here */
 window.snapKitInit = () => {
 	const bitmojiWebPickerIconClass = "bitmojiStickerPicker";
@@ -1071,8 +1067,8 @@ window.snapKitInit = () => {
 		// Correctly decide between ws:// and wss://
 		
 		var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-		var ws_path = ws_scheme + '://' + window.location.host + "/mchat/" + roomId + "/"; 
-		{% comment %} var ws_path = ws_scheme + '://' + window.location.host + ":8001/mchat/" + roomId + "/"; // production {% endcomment %}
+		{% comment %} var ws_path = ws_scheme + '://' + window.location.host + "/mchat/" + roomId + "/";  {% endcomment %}
+		var ws_path = ws_scheme + '://' + window.location.host + ":8001/mchat/" + roomId + "/"; // production
 
 
 		// console.log("Connecting to " + ws_path);
@@ -1793,8 +1789,8 @@ window.snapKitInit = () => {
 	
 
 	var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-	var ws2_path = ws_scheme + '://' + window.location.host + "/mchat-notif/"; // development
-	{% comment %} var ws2_path = ws_scheme + '://' + window.location.host + ":8001/mchat-notif/"; // production {% endcomment %}
+	{% comment %} var ws2_path = ws_scheme + '://' + window.location.host + "/mchat-notif/"; // development {% endcomment %}
+	var ws2_path = ws_scheme + '://' + window.location.host + ":8001/mchat-notif/"; // production
 
 
 	// console.log("Connecting to " + ws_path);
