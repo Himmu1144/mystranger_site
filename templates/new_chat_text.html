@@ -133,8 +133,9 @@ body {
     } */
 
     .bottom-header {
+        position: relative;
         margin: auto;
-        width: 70%;
+        width: 72%;
         display: flex;
         {% comment %} position: absolute; {% endcomment %}
         {% comment %} bottom: 0.5em; {% endcomment %}
@@ -654,6 +655,53 @@ body {
     overflow-x:hidden;
   }
 
+  .typing {
+    align-items: center;
+    display: flex;
+    height: 30px;
+    
+    
+    }
+    .typing .dot {
+    animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
+    {% comment %} background-color: #6CAD96 ;  {% endcomment %}
+    background-color:#e6e6e6;
+    border-radius: 50%;
+    height: 7px;
+    margin-right: 4px;
+    vertical-align: middle;
+    width: 7px;
+    display: inline-block;
+    }
+    .typing .dot:nth-child(1) {
+    animation-delay: 200ms;
+    }
+    .typing .dot:nth-child(2) {
+    animation-delay: 300ms;
+    }
+    .typing .dot:nth-child(3) {
+    animation-delay: 400ms;
+    }
+    .typing .dot:last-child {
+    margin-right: 0;
+    }
+    
+    @keyframes mercuryTypingAnimation {
+    0% {
+    transform: translateY(0px);
+    {% comment %} background-color:#6CAD96;  {% endcomment %}
+    background-color:#f1862d; 
+    }
+    28% {
+    transform: translateY(-7px);
+    {% comment %} background-color:#9ECAB9;  {% endcomment %}
+    background-color:#f5bd8f; 
+    }
+    44% {
+    transform: translateY(0px);
+    {% comment %} background-color: #B5D9CB; {% endcomment %}
+    background-color: #ff943b;
+    }
 
 </style>
 
@@ -680,7 +728,6 @@ body {
             <div class="right-header">
                 <div class="box1">
                     <p><strong id="strangerName">Stranger</strong></p>
-                    <span id="typing" class="typo d-none">typing...</span>
                 </div>
                 <div class="d-flex box2">
                 </span> <span  id="text-count" class="text_count" style=""></span>
@@ -770,9 +817,17 @@ body {
                 <div class="d-flex chat-log" id="id_chat_log">
 
                 </div>
-                {% comment %} <div><span id="typing" class="typo d-none">Stranger is typing...</span></div> {% endcomment %}
                 <div class="bottom-header">
                     <!-- <div class="bottom2"> -->
+
+                        <div style="transform: translateX(-30px); width:30px; left: -0.5em; position: absolute; bottom:2em; ">
+                            <div id="typing" class="typing d-none">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        </div>
+                        </div>    
+
                         <button class="btn btn-dark skip-btn" id="skip_button">
                             <span id="skip">Skip</span>
                         </button>

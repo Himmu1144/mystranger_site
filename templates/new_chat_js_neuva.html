@@ -2,39 +2,25 @@
 {% include 'friend/snippets/cancel_friend_request.html' %}
 <script type="text/javascript">
 
-    const video = document.getElementById('remote');
-    const loadingSpinner = document.querySelector('.loading-spinner');
+    {% comment %} const video = document.getElementById('remote'); {% endcomment %}
+    {% comment %} const loadingSpinner = document.querySelector('.loading-spinner');
 
     video.addEventListener('loadedmetadata', () => {
         if (video.getAttribute('src')) {
             loadingSpinner.style.display = 'none';
         }
-    }); 
+    }); {% endcomment %}
 
-    {% comment %} const our_video = document.getElementById("ours");{% endcomment %}
-    const remote_video = document.getElementById("remote"); 
-
-    let peerConnection;
-    let localStream;
-    let remoteStream;
-
-    // Create an array to store ICE candidates
-    let iceCandidates = [];
+    // const our_video = document.getElementById("ours");
+    // const remote_video = document.getElementById("remote");
     // let stream;
     // let rtcpeerconnection;
-    // {% comment %} const constraints = {
+    // const constraints = {
     //     'video': true,
-    //    'audio': false
-    //  } {% endcomment %}
+    //     'audio': false
+    // }
 
     // Contains the stun server URL we will be using.
-    let servers = {
-    iceServers:[
-        {
-            urls:['stun:stun1.1.google.com:19302', 'stun:stun2.1.google.com:19302']
-        }
-    ]
-}
     // let iceServers = {
     //     iceServers: [
     //         { urls: "stun:stun.services.mozilla.com" },
@@ -42,304 +28,13 @@
     //     ],
     // };
 
-    // {% comment %} navigator.mediaDevices.getUserMedia(constraints).then(s => {
-    //      stream = s;
+    // navigator.mediaDevices.getUserMedia(constraints).then(s => {
+    //     stream = s;
     //     our_video.srcObject = s;
     //     our_video.onloadedmetadata = () => {
     //         our_video.play()
     //     }
-    // }) {% endcomment %}
-
-    // let init = async () => { 
-    //     local_video = document.getElementById("ours");
-        
-    //     localStream = await navigator.mediaDevices.getUserMedia({video:true, audio:true}).then(stream =>{
-    //         localStream = stream;
-    //         local_video.srcObject = localStream;
-    //         local_video.muted = true;
-    //         console.log('Both audio and video access granted');
-    //     }).catch(error =>{
-    //         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false }).then(stream =>{
-    //         localStream = stream;
-    //         local_video.srcObject = localStream;
-    //         local_video.muted = true;
-    //         console.log('Video access granted, but audio access denied');
-    //         document.getElementById('audio-error').style.display = 'block'
-    //         }).catch(error =>{
-    //             console.error('Error with both video & audio access:', error);
-    //         })
-    //     })
-        
-    // } 
-
-    
-    let init = async () => { 
-        try {
-            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            console.log('Both audio and video access granted');
-        } catch (error) {
-            console.error('Error with audio and video access:', error);
-            try {
-                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-                console.log('Video access granted, but audio access denied');
-                document.getElementById('audio-error').style.display = 'block'
-                // You can display a message to the user indicating that audio is not available.
-            } catch (error) {
-                console.error('Error with video access:', error);
-                document.getElementById('video-error').style.display = 'block'
-                // Handle the case where both audio and video access failed.
-                // You may want to inform the user and take appropriate action.
-            }
-        }
-
-        if (localStream) {
-            document.getElementById("ours").srcObject = localStream;
-            document.getElementById("ours").muted = true
-
-            // Now you can use localStream for your WebRTC connection.
-        }
-    };
-
-    init()
-
-    let createPeerConnection = async (groupName) => {
-
-        
-        peerConnection = new RTCPeerConnection(servers)
-
-        remoteStream = new MediaStream()
-        document.getElementById("remote").srcObject = remoteStream;
-
-        localStream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, localStream)
-    })
-
-        peerConnection.ontrack = async (event) => {
-            event.streams[0].getTracks().forEach((track) => {
-                remoteStream.addTrack(track)
-            })
-        }
-
-        // peerConnection.onicecandidate = async (event) => {
-        //     if(event.candidate){
-        //         // document.getElementById(sdpType).value = JSON.stringify(peerConnection.localDescription)
-        //         // client.sendMessageToPeer({text:JSON.stringify({'type':'candidate', 'candidate':event.candidate})}, MemberId)
-        //         // await peerConnection.setLocalDescription(peerConnection.localDescription);
-        //         console.log('ice sent by - ', window.user)
-        //         chatSocket.send(
-        //             JSON.stringify({
-        //                 command: "candidate",
-        //                 candidate: event.candidate,
-        //                 iscreated: window.user,
-        //                 group: groupName,
-        //             })
-        //         );
-        //     } 
-        // }
-
-    }
-
-    
-
-    let createOffer = async (groupName) => {
-
-        if (!localStream) {
-            await init();  // Ensure localStream is initialized if not already
-        }
-
-        try {
-
-
-            createPeerConnection(groupName)
-            
-            let offer = await peerConnection.createOffer()
-            await peerConnection.setLocalDescription(offer)
-            console.log('This is my fuckin offer -- ', offer)
-
-            // now gets all the ice candidates and when they are all gathered then send the offer
-
-            peerConnection.onicecandidate = async (event) => {
-                if(event.candidate){
-                    
-                    console.log('ice candidate generated by - ', window.user)
-                     // Collect ICE candidates
-                    iceCandidates.push(event.candidate);
-                    
-                } else{
-
-                    chatSocket.send(
-                        JSON.stringify({
-                            command: "offer",
-                            offer: peerConnection.localDescription,
-                            icecandidates: iceCandidates,
-                            group: groupName,
-                        })
-                    ); 
-
-                    console.log(offer)
-                    console.log('ice candidates - ',iceCandidates)
-
-                }
-            }
-
-
-        } catch (error) {
-                console.error('Error during offer creation:', error);
-            }
-
-    }
-
-
-
-    let createAnswer = async (offer, groupName, icecandidatis) => { 
-
-        if (!localStream) {
-            await init();  // Ensure localStream is initialized if not already
-        }
-
-        try{
-
-            createPeerConnection(groupName)
-
-            console.log('Before setRemoteDescription:', peerConnection.signalingState);
-            await peerConnection.setRemoteDescription(offer)
-            console.log('###### remote discription set for user2 (offer added) now can add ice on user2 -no ice adding above this for user2.', peerConnection.signalingState)
-            
-
-            let answer = await peerConnection.createAnswer()
-            await peerConnection.setLocalDescription(answer)
-            console.log('This is my fuckin answer ----', answer)
-
-            // Add received ICE candidates to the peerConnection
-            if (icecandidatis && icecandidatis.length > 0) {
-                icecandidatis.forEach((candidate) => {
-
-
-                    if (peerConnection.signalingState === "have-remote-offer" || peerConnection.signalingState === "have-local-pranswer") {
-
-                        console.log('#################################################')
-                        console.log('yesh adding ice candidates in a valid state - ', peerConnection.signalingState)
-                        console.log('#################################################')
-
-                    } else {
-
-                        console.log('#################################################')
-                        console.log('The hell, adding ice candidates in an invalid state - ', peerConnection.signalingState)
-                        console.log('but somehow still this fucker is working')
-                        console.log('#################################################')
-
-                        // console.error('Not in the right signaling state for adding ICE candidate. Current state:', peerConnection.signalingState)
-                         }
-
-
-
-                    {% comment %} if (peerConnection.signalingState === "have-remote-offer" || peerConnection.signalingState === "have-local-pranswer") { {% endcomment %}
-                        const iceCandidate = new RTCIceCandidate(candidate);
-                        peerConnection.addIceCandidate(iceCandidate).catch((error) => {
-                            console.error('Error adding received ICE candidate:', error);
-                        }); 
-                        console.log('boom added ice candis - ', peerConnection.signalingState)
-
-                    {% comment %} } else {
-                        console.error('Not in the right signaling state for adding ICE candidate. Current state:', peerConnection.signalingState)
-                         } {% endcomment %}
-
-
-                });
-            }
-
-            // now gets all the ice candidates and when they are all gathered then send the offer
-
-            peerConnection.onicecandidate = async (event) => {
-                if(event.candidate){
-                    
-                    console.log('ice candidate generated by - ', window.user)
-                     // Collect ICE candidates
-                    iceCandidates.push(event.candidate);
-                    // return;
-                } else {
-
-                    chatSocket.send(
-                            JSON.stringify({
-                                command: "answer",
-                                answer: peerConnection.localDescription,
-                                icecandidates: iceCandidates,
-                                group: groupName,
-                            })
-                        );
-
-                    console.log(answer)
-                    console.log('ice candidates - ',iceCandidates)
-                }
-
-            }
-            
-        } catch (error) {
-                console.error('Error during answer creation:', error);
-            }
-
-    }
-
-    
-let addAnswer = async (answer,icecandidates) => {
-
-    try{
-    
-        if (peerConnection && !peerConnection.currentRemoteDescription) {
-            console.log('Before setRemoteDescription:', peerConnection.signalingState);
-            await peerConnection.setRemoteDescription(answer)
-            console.log('###### remote discription set for user1 (answer added) now can add ice on user1 -no ice adding above this for user1.',peerConnection.signalingState)
-
-
-            // Add received ICE candidates to the peerConnection
-            if (icecandidates && icecandidates.length > 0) {
-                icecandidates.forEach((candidate) => {
-
-                    if (peerConnection.signalingState === "have-remote-offer" || peerConnection.signalingState === "have-local-pranswer") {
-
-                        console.log('#################################################')
-                        console.log('yesh adding ice candidates in a valid state - ', peerConnection.signalingState)
-                        console.log('#################################################')
-
-                    } else {
-
-                        console.log('#################################################')
-                        console.log('The hell, adding ice candidates in an invalid state - ', peerConnection.signalingState)
-                        console.log('but somehow still this fucker is working')
-                        console.log('#################################################')
-
-                        // console.error('Not in the right signaling state for adding ICE candidate. Current state:', peerConnection.signalingState)
-                         }
-
-
-
-                     {% comment %} if (peerConnection.signalingState === "have-remote-offer" || peerConnection.signalingState === "have-local-pranswer") { {% endcomment %}
-                        const iceCandidate = new RTCIceCandidate(candidate);
-                        peerConnection.addIceCandidate(iceCandidate).catch((error) => {
-                            console.error('Error adding received ICE candidate:', error);
-                        }); 
-                        console.log('boom added ice candis - ', peerConnection.signalingState)
-                     {% comment %} } else {
-                        console.error('Not in the right signaling state for adding ICE candidate. Current state:', peerConnection.signalingState)
-                         } {% endcomment %}
-
-
-                });
-            }
-
-            
-        }
-        // peerConnection.setRemoteDescription(answer)
-    
-    } catch (error) {
-        console.error('Error during adding answer:', error);
-    }
-}
-
-
-
-
-
+    // })
 
     
 
@@ -350,8 +45,8 @@ let addAnswer = async (answer,icecandidates) => {
 
     // Correctly decide between ws:// and wss://
     var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    // var ws_path = ws_scheme + '://' + window.location.host + "/chat/"; // development
-    var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat/"; // development 
+    var ws_path = ws_scheme + '://' + window.location.host + "/chat_text/"; // development
+    {% comment %} var ws_path = ws_scheme + '://' + window.location.host + ":8001/chat_text/"; // development {% endcomment %}
 
     // console.log("Connecting to " + ws_path);
     chatSocket = new WebSocket(ws_path);
@@ -365,7 +60,7 @@ let addAnswer = async (answer,icecandidates) => {
         // Decode the JSON
         console.log("Got websocket message.");
         var data = JSON.parse(message.data);
-        {% comment %} console.log(data) {% endcomment %}
+        console.log(data)
 
         
         if (data.my_id) {
@@ -378,11 +73,11 @@ let addAnswer = async (answer,icecandidates) => {
 
         if (data.status_user2) {
             window.user = 'user2'
-            console.log("I am gonna receive the offer and create the answer",window.user)
+            console.log(window.user)
         }
         if (data.status_user1) {
             window.user = 'user1'
-            console.log('I am gonna create the offer',window.user)
+            console.log(window.user)
         }
 
         if (data.grouped) {
@@ -422,24 +117,45 @@ let addAnswer = async (answer,icecandidates) => {
                     window.stranger = data.random_user_name
                     window.stranger_id = data.random_user_id
                     window.stranger_email = data.random_user_email
+                    window.stranger_gender = data.random_user_gender
                     // createOffer()
-
-                    console.log('creating offer by - ', window.user)
-                    createOffer(data.grouped);
-                    console.log('offer created')
+                    // console.log('offer created')
                 }
                 else {
                     window.self_name = data.random_user_name
                     window.stranger = data.user1_self_name
                     window.stranger_id = data.user1_self_id
                     window.stranger_email = data.user1_self_email
+                    window.stranger_gender = data.user1_self_gender
                 }
 
-                const loadingSpinner = document.querySelector('.loading-spinner');
-                loadingSpinner.style.display = 'none';
+                {% comment %} {% if not request.user_agent.is_mobile %}
+                    document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>'
+                    document.getElementById('strangerName').innerHTML = window.stranger 
+                {% else %}
+                    document.getElementById('strangerName').innerHTML = window.stranger
+                    {% endif %} {% endcomment %}
+                    
+                    console.log('stranger gender is - ', window.stranger_gender)
+                    if(window.stranger_gender == 'M'){
+                        document.getElementById('strangerName').innerHTML = "Stranger " + '<span style="font-size:11px" class="text-secondary">(Him)</span>'
+                    } else if(window.stranger_gender == 'F'){
+                        document.getElementById('strangerName').innerHTML = "Stranger " + '<span style="font-size:11px" class="text-secondary">(Her)</span>'
+                    } else{
+                        document.getElementById('strangerName').innerHTML = "Stranger"
+                    }
+                    
 
-                {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + window.stranger_email {% endcomment %}
-                document.getElementById('strangerName').innerHTML = window.stranger
+                // Setting up the icebreaker if it exists
+                console.log('Ice breaker - ', data.icebreaker)
+                document.getElementById('ice-cont').style.display = 'block';
+                document.getElementById('icebreaker').innerHTML = data.icebreaker
+                    
+
+                
+
+                {% comment %} document.getElementById('strangerName').innerHTML = window.stranger + ' | ' + '<span id="stranger_email">' + window.stranger_email + '</span>' {% endcomment %}
+                {% comment %} document.getElementById('strangerName').innerHTML = window.stranger {% endcomment %}
                 document.getElementById('report_btn').disabled = false;
                 document.getElementById('flag_user_id').value = window.stranger_id;
                 document.getElementById('flag_user_name').value = window.stranger;
@@ -464,46 +180,22 @@ let addAnswer = async (answer,icecandidates) => {
         }
         } 
 
-        if (data["command"] == "offer") {
-            console.log('offer recieved by User2')
-            if (window.user == 'user2') {
-                console.log('user2 ----------')
-                console.log('Got the offer baby')
-                // createanswer(data["offer"]);
-                createAnswer(data["offer"],data['groupName'],data['icecandidates']);
-                console.log('answer created')
-            }
-        } else if (data["command"] == "answer") {
-            console.log('answer received by user1')
-            if (window.user == 'user1') {
-                console.log('Got the answer baby and added it - ', window.user)
-                // rtcpeerconnection.setRemoteDescription(data["answer"]);
-                console.log("the real estate - ", peerConnection.signalingState)
-                addAnswer(data['answer'],data['icecandidates']);
-                console.log("answer set as remote");
-                console.log("the real estate - ", peerConnection.signalingState)
-            }
-        }
-        //  else if (data["command"] == "candidate") {
-        //     // {% comment %} console.log('ice received in the group -', window.user) {% endcomment %}
-        //     if (data["iscreated"] != window.user && peerConnection) {
-        //         console.log('ice recieved by user - ', window.user, 'state - ', peerConnection.signalingState)
-        //         if (peerConnection.signalingState === "have-remote-offer" || peerConnection.signalingState === "have-local-pranswer") {
-        //             // Add ICE candidate
-        //             try{
-        //             console.log('adding ice to user - ', window.user)
-        //             console.log(data.candidate, 'created by - ', data.iscreated)
-        //             const IceCandidate = new RTCIceCandidate(data["candidate"]); 
-        //             peerConnection.addIceCandidate(IceCandidate);
-        //             // peerConnection.addIceCandidate(data["candidate"]);
-        //         } catch (error) {
-        //             console.error('Error during adding ice candidate:', error);
-        //         }
-        //         }else {
-        //             console.log(data.candidate)
-        //             console.log(data)
-        //             console.error('Not in the right signaling state for adding ICE candidate. Current state:', peerConnection.signalingState);
-        //         }
+        // if (data["command"] == "offer") {
+        //     console.log('offer recieved by ', window.user)
+        //     if (window.user == 'user2') {
+        //         console.log('user2 ----------')
+        //         createanswer(data["offer"]);
+        //         console.log('answer created')
+        //     }
+        // } else if (data["command"] == "answer") {
+        //     if (window.user == 'user1') {
+        //         rtcpeerconnection.setRemoteDescription(data["answer"]);
+        //         console.log("answer set as remote");
+        //     }
+        // } else if (data["command"] == "candidate") {
+        //     if (data["iscreated"] != window.user) {
+        //         const IceCandidate = new RTCIceCandidate(data["candidate"]);
+        //         rtcpeerconnection.addIceCandidate(IceCandidate);
         //     }
         // }
 
@@ -515,9 +207,9 @@ let addAnswer = async (answer,icecandidates) => {
             console.log('The value of leave count is - ', leaveCount)
             
             if (leaveCount === 1){
-                remote_video.srcObject = undefined;
+                // remote_video.srcObject = undefined;
                
-                {% comment %} remote_video.style.backgroundColor = 'rgba(64, 64, 64, 0.5)'; {% endcomment %}
+                // remote_video.style.backgroundColor = 'rgba(64, 64, 64, 0.5)';
 
                 if (window.self_id == data.disconnector) {
                     response = 'You have disconnected.'
@@ -544,8 +236,6 @@ let addAnswer = async (answer,icecandidates) => {
                 console.log(data.leave)
                 statusUpdate(response)
 
-                const loadingSpinner = document.querySelector('.loading-spinner');
-                loadingSpinner.style.display = 'none';
 
 
                 // again disabling the textarea and the send_btn
@@ -627,7 +317,6 @@ let addAnswer = async (answer,icecandidates) => {
         }
     };
 
-
     document.getElementById('id_chat_message_submit').onclick = function (e) {
         const messageInputDom = document.getElementById('id_chat_message_input');
         const message = messageInputDom.value;
@@ -645,6 +334,19 @@ let addAnswer = async (answer,icecandidates) => {
         messageInputDom.value = '';
     }
     };
+
+    {% comment %} document.getElementById('id_chat_message_submit').onclick = function (e) {
+        const messageInputDom = document.getElementById('id_chat_message_input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+            "command": "send",
+            "message": message,
+            "user_id": window.self_id,
+            "group_name": window.group_name,
+        }));
+
+        messageInputDom.value = '';
+    }; {% endcomment %}
 
     // Here we are writing the code for skip button so that we can skip the chat using the skip button.
     // ------------------------------------------------------------------------------------------------
@@ -827,27 +529,27 @@ let addAnswer = async (answer,icecandidates) => {
     //     });
     //     rtcpeerconnection.createOffer().then((offer) => {
     //         rtcpeerconnection.setLocalDescription(offer);
-            // chatSocket.send(
-            //     JSON.stringify({
-            //         command: "offer",
-            //         offer: offer,
-            //         group: window.group_name,
-            //     })
-            // );
+    //         chatSocket.send(
+    //             JSON.stringify({
+    //                 command: "offer",
+    //                 offer: offer,
+    //                 group: window.group_name,
+    //             })
+    //         );
     //     });
 
     // }
 
     // function OnIceCandidateFunc(e) {
     //     if (e.candidate) {
-            // chatSocket.send(
-            //     JSON.stringify({
-            //         command: "candidate",
-            //         candidate: e.candidate,
-            //         iscreated: window.user,
-            //         group: window.group_name,
-            //     })
-            // );
+    //         chatSocket.send(
+    //             JSON.stringify({
+    //                 command: "candidate",
+    //                 candidate: e.candidate,
+    //                 iscreated: window.user,
+    //                 group: window.group_name,
+    //             })
+    //         );
     //     }
     // }
 
@@ -869,13 +571,13 @@ let addAnswer = async (answer,icecandidates) => {
     //     rtcpeerconnection.setRemoteDescription(offer);
     //     rtcpeerconnection.createAnswer().then((answer) => {
     //         rtcpeerconnection.setLocalDescription(answer);
-            // chatSocket.send(
-            //     JSON.stringify({
-            //         command: "answer",
-            //         answer: answer,
-            //         group: window.group_name,
-            //     })
-            // );
+    //         chatSocket.send(
+    //             JSON.stringify({
+    //                 command: "answer",
+    //                 answer: answer,
+    //                 group: window.group_name,
+    //             })
+    //         );
     //     });
     // }
 

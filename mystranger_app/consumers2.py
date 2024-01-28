@@ -48,7 +48,7 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
             elif command == 'send':
                 await self.send_room(content["group_name"], content['user_id'], content["message"])
             elif command == 'typing':
-                await self.send_typing(content['group_name'], content['userId'], content['userName'])
+                await self.send_typing(content['group_name'], content['userId'], content['userName'],content['eventi'])
             elif command == 'skip':
                 await self.leaving_room()
                 # group_name = content['group_name']
@@ -525,12 +525,12 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
             },
         )
     
-    async def send_typing(self, group_name,userId,userName):
+    async def send_typing(self, group_name,userId,userName,even):
         """
         Called by receive_json when someone starts typing a message to a room.
         """
         print("-----------  typing  ---------------\n")
-        print(userName," is typing a message.\n")
+        print(userName," is typing a message.\n",even)
         await self.channel_layer.group_send(
             str(group_name),
             {
@@ -538,6 +538,7 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
                 'isTyping' : True,
                 'username': userName,
                 'id' : userId,
+                'eventi':even,
             }
         )
 
@@ -548,6 +549,7 @@ class ChatConsumerText(AsyncJsonWebsocketConsumer):
             'isTyping': event['isTyping'],
             'username': event['username'],
             'id' : event['id'],
+            'eventi':event['eventi']
         }
         )
 

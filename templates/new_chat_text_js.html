@@ -169,16 +169,26 @@
 
         if (data.isTyping) {
             // Display "user is typing" message
+            console.error("typing - ", data.eventi);
             if (data.id != window.self_id){
-            const typingIndicator = document.getElementById('typing');
-            typingIndicator.classList.remove("d-none");
-    
-            // Add a timeout to remove the message after a few seconds
-            setTimeout(() => {
-                typingIndicator.classList.add("d-none");
-            }, 3000); // Remove the message after 1 seconds (adjust as needed)
+
+                const typingIndicator = document.getElementById('typing');
+
+                if (typingIndicator.classList.contains("d-none")) {
+                    console.error("removed d-none");
+                        typingIndicator.classList.remove("d-none");
+
+                       
+                    }else{
+                        setTimeout(() => {
+                            typingIndicator.classList.add("d-none");
+                        }, 3000); // Remove the message after 1 seconds (adjust as needed)
+                    }
+        
+                // Add a timeout to remove the message after a few seconds
+                
         }
-        } 
+        }
 
         // if (data["command"] == "offer") {
         //     console.log('offer recieved by ', window.user)
@@ -381,7 +391,37 @@
     // typing setup -----
 
     const inputField = document.getElementById('id_chat_message_input');
-    inputField.addEventListener('input', () => {
+    {% comment %} inputField.addEventListener('input', (event) => {
+
+        console.error('hjhjf',event)
+        if(event.data == null || event.data == 'null'){
+			console.error('no typing')
+           
+			return;
+		} {% endcomment %}
+
+        
+inputField.addEventListener('input', (event) => {
+    console.error('hjhjf', event);
+
+    // Check if the input type is 'deleteContentBackward' (backspace) or 'insertParagraph' (enter)
+    if (event.inputType == 'deleteContentBackward' || event.inputType == 'insertLineBreak' || event.data == null || event.data == 'null') {
+        console.error('no typing');
+        return;
+    } 
+
+    document.getElementById('id_chat_message_input').onkeyup = function (e) {
+        if (e.keyCode === 13 && e.shiftKey) {  // enter + return
+            // Handled automatically by textarea
+        }
+        else if (e.keyCode === 13 && !e.shiftKey) { // enter + !return
+            console.error('enter key is presseesd')
+            
+        }
+    };
+
+
+        console.error('not gettin printed',event)
 
         // Send a "typing" event to the server using WebSocket
         chatSocket.send(JSON.stringify(
@@ -391,6 +431,7 @@
                 "isTyping": true,
                 "userName": window.self_name, // Add the username
                 "userId": window.self_id, // Add the user's ID 
+                'eventi': event.inputType,
             }
         ));
     });

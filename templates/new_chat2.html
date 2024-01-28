@@ -3,21 +3,34 @@
 {% block body %}
 
 <style>
-    body {
-        height: 100vh;
-        /* border: 2px solid red; */
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        /* overflow: hidden; */
-    }
+    
+body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
 
-    .main-container {
-        /* border: 2px solid blue; */
-        flex: 1;
+.main-container {
+    flex: 1;
+}
 
-    }
+
+.box2{
+    align-items: center;
+}
+
+.text_count{
+    /* float: inline-end;  */
+    /* position: absolute; */
+    right: 2px;
+    font-size: 14px; 
+    color: #007bff; 
+    padding: 1px; 
+    /* margin-right: 2px; */
+
+}
 
 
     .right-column {
@@ -26,71 +39,81 @@
     }
 
     .right-column p {
-        margin-bottom: 0px;
-        font-size: 18px;
+        margin-bottom: 3px;
+        font-size: 15px;
     }
 
     .cont-row {
-        height: 100%;
-        /* border: 2px solid green; */
-        margin: 0px;
-        width: 99%;
-        align-items: center;
-        margin: auto;
-        /* justify-content: center; */
-    }
+    height: 100%;
+    width: 99%;
+    display: flex;
+    align-items: center;
+    margin: auto;
+}
 
     .left-column {
-        display: flex;
-        flex-direction: column;
-        padding: 0px;
-        /* padding-left: 5px !important; */
-        width: auto;
-        height: 98%;
-        justify-content: space-between;
-        
-    }
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    {% comment %} height: 98%; {% endcomment %}
+    height: 89vh;
+    width: auto;
+    justify-content: space-between;
+}
 
-    .right-column {
-        height: 98%;
-        width: auto;
-        flex: 1;
-        position: relative;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        margin-left: 4px;
-    }
-
+.right-column {
+    height: 98%;
+    width: auto;
+    flex: 1;
+    position: relative;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 4px;
+}
 
     .upper-left {
-        border: 2px solid #707070;
-        height: 49%;
-        /* margin-top: 10px; */
-        width: auto;
-    }
+    {% comment %} border: 2px solid #707070; {% endcomment %}
+    min-width : 392px;
+    
+    width: auto;
+    height: 49.5%;
+    {% comment %} width: min-content; {% endcomment %}
+    {% comment %} width:67%; {% endcomment %}
+}
 
     .lower-left {
-        border: 2px solid black;
-        height: 49%;
+        {% comment %} border: 2px solid black; {% endcomment %}
+        height: 49.5%;
+        min-width : 392px;
         width: auto;
-        margin-top: 18px;
+
+        {% comment %} width: fit-content; {% endcomment %}
+
+        {% comment %} margin-top: 18px; {% endcomment %}
+
+        width: fit-content;
     }
 
     #remote {
-        border-radius: 8px;
-        height: 100px;
-        width: 100%;
-        {% comment %} object-fit: cover; {% endcomment %}
+    border-radius: 8px;
+    object-fit: cover; /* Maintain aspect ratio and cover the container */
+    {% comment %} object-fit: fill; {% endcomment %}
+    height: 100%;
+    {% comment %} height: -webkit-fill-available; {% endcomment %}
+    {% comment %} height: inherit; {% endcomment %}
+    width: 100%;
+    background-color: gainsboro;
+}
 
-    }
+#ours {
+    border-radius: 8px;
+    {% comment %} object-fit: cover; /* Maintain aspect ratio and cover the container */ {% endcomment %}
+    object-fit: fill;
+    height: 100%;
+    width: 100%;
+}
 
-    #ours {
-        border-radius: 8px;
-        height: 100%;
-        width: 100%;
-
-    }
 
     .right-header {
         display: flex;
@@ -105,9 +128,9 @@
         margin-right: 10px;
     }
 
-    .img1 {
+    /* .img1 {
         margin-right: 1em;
-    }
+    } */
 
     .bottom-header {
         margin: auto;
@@ -167,7 +190,7 @@
 
     .chat-log {
         {% comment %} height: 450px; {% endcomment %}
-        max-height:69vh;
+        max-height:61vh;
         overflow-x: hidden;
         overflow-y: auto;
         padding: 10px;
@@ -186,8 +209,9 @@
         margin-left: 5px;
         margin-right: 5px;
         white-space: normal;
-        -ms-word-break: break-all;
-        word-break: break-all;
+        {% comment %} -ms-word-break: break-all;
+        word-break: break-all; {% endcomment %}
+        word-break: break-word;
     }
 
     .message-container {
@@ -203,7 +227,7 @@
         /* color: white; */
         min-height: 43px;
         min-width: 90px;
-        max-width: 70%;
+        max-width: 40%;
         /* background: #343a40; */
         /* background: #f9f8f8; */
         background: #f0f2f2;
@@ -218,16 +242,17 @@
         /* padding: 3px; */
         padding-left: 4px;
         /* color: wheat; */
-        /* color: white; */
+        color: white;
         min-height: 43px;
         min-width: 90px;
-        max-width: 70%;
+        max-width: 40%;
         /* background: #343a40; */
         /* background: #daf5ff;  */
         /* background: #fafafa;  The best up until now */
         /* background: #f9f8f8; */
 
-        background: #f0f2f2;
+        {% comment %} background: #f0f2f2; {% endcomment %}
+        background: #ff943b;
         /* background: #ebf0f0; */
 
         position: relative;
@@ -255,7 +280,8 @@
         height: 9px;
         width: 15px;
         /* background-color: red; */
-        background: linear-gradient(226deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent);
+        {% comment %} background: linear-gradient(226deg, #f0f2f2 0%, #f0f2f2 50%, transparent 50%, transparent); {% endcomment %}
+        background: linear-gradient(226deg, #ff943b 0%, #ff943b 50%, transparent 50%, transparent);
         /* background: linear-gradient(226deg, #ebf0f0 0%, #ebf0f0 50%, transparent 50%, transparent); */
     }
 
@@ -294,6 +320,11 @@
         background: none;
     }
 
+    #report_btn{
+        border: none;
+        background: none;
+    }
+
     #cancel_req_btn{
         border: none;
         margin-right: 1.79em;
@@ -307,6 +338,323 @@
         align-items: center;
     }
 
+    .dropdown-menu{
+        width: 300px;
+        /* transform: translate3d(-211.5px, 47.5px, 0px); */
+        transform: translate3d(14px, 49.5px, 0px) !important;
+
+    }
+
+    .flag-p{
+        font-size: 1rem;
+    }
+
+    .btn.dropdown-toggle::after {
+    display: none;
+}
+
+.btn.dropdown-toggle:focus,
+.btn.dropdown-toggle:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.upper-left {
+    position: relative;
+}
+
+.loading-spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background: rgba(255, 255, 255, 0.8); Background color for the overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1; /* Place the spinner above the video */
+}
+
+.loading-spinner::before {
+    content: "";
+    border: 3px solid #009cda; /* Spinner border color */
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.bottom-header{
+    margin-bottom: 8px!important;
+}
+
+
+/* Media query for tablet width 320px */
+@media only screen and (min-width: 300px) and (max-width: 600px) { 
+
+
+    #stranger_email{
+        display:none;
+    }
+
+    body{
+        height:100svh;
+    }
+
+    .text_count{
+        font-size: 10px!important;
+        margin-top: 2px !important;
+    }
+
+    .msg-style{
+        max-width: 70%;
+    }
+
+    .msg-style2{
+        max-width: 70%;
+    }
+   
+
+   
+.chat-log{
+    max-height: 58svh;
+}
+
+.status-txt span {
+    font-size: 12px;
+}
+
+.typo{
+    margin-left: 4px;
+    /* color: green; */
+    font-size: 11px;
+}
+
+    
+.bottom-header {
+    margin-bottom: 4em!important;
+}
+
+.send-btn{
+    font-size: 18px;
+    top: 14px;
+}
+
+.txtarea-cont{
+    align-items: unset;
+    height: 46px;
+}
+
+.skip-btn{
+    width: 63px;
+    /* border-radius: 8px; */
+    height: 46px;
+    font-size: 15px;
+}
+
+
+}
+
+
+.section_our_solution .row {
+    align-items: center;
+  }
+  
+  .our_solution_category {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .our_solution_category .solution_cards_box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+  }
+  .solution_cards_box .solution_card {
+    flex: 0 50%;
+    background: #fff;
+    box-shadow: 0 2px 4px 0 rgba(136, 144, 195, 0.2),
+      0 5px 15px 0 rgba(37, 44, 97, 0.15);
+    border-radius: 15px;
+    margin: 8px;
+    padding: 10px 15px;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    {% comment %} min-height: 90px; {% endcomment %}
+    transition: 0.7s;
+    margin: 4px;
+    padding: 8px;
+  }
+  {% if not request.user_agent.is_mobile %}
+  .solution_cards_box .solution_card:hover {
+    {% comment %} background: #309df0; {% endcomment %}
+    background: #009cda;
+    color: #fff;
+    transform: scale(1.1);
+    z-index: 9;
+  }
+  
+  
+  .solution_cards_box .solution_card:hover::before {
+    background: rgb(85 108 214 / 10%);
+    
+  }
+
+
+  
+  .solution_cards_box .solution_card:hover .solu_title h3,
+  .solution_cards_box .solution_card:hover .solu_description p {
+    color: #fff;
+  }
+
+  {% endif %}
+  
+  .solution_cards_box .solution_card:before {
+    content: "";
+    position: absolute;
+    background: rgb(85 108 214 / 5%);
+    width: 170px;
+    height: 400px;
+    z-index: -1;
+    transform: rotate(42deg);
+    right: -56px;
+    top: -23px;
+    border-radius: 35px;
+  }
+  
+  {% if not request.user_agent.is_mobile %}
+  .solution_cards_box .solution_card:hover .solu_description button {
+    background: #fff !important;
+    color: #309df0;
+  }
+  {% endif %}
+  
+  .solution_card .so_top_icon {
+  }
+  
+  .solution_card .solu_title h3 {
+    color: #212121;
+    font-size: 1.3rem;
+    margin-top: 13px;
+    margin-bottom: 13px;
+  }
+  
+  .solution_card .solu_description p {
+    font-size: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .solution_card .solu_description button {
+    border: 0;
+    border-radius: 15px;
+    background: linear-gradient(
+      140deg,
+      #42c3ca 0%,
+      #42c3ca 50%,
+      #42c3cac7 75%
+    ) !important;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 5px 16px;
+  }
+  
+  .our_solution_content h1 {
+    text-transform: capitalize;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+  }
+  .our_solution_content p {
+  }
+  
+  .hover_color_bubble {
+    position: absolute;
+    background: rgb(54 81 207 / 15%);
+    width: 100rem;
+    height: 100rem;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    top: 16rem;
+    border-radius: 50%;
+    transform: rotate(-36deg);
+    left: -18rem;
+    transition: 0.7s;
+  }
+  
+  .solution_cards_box .solution_card:hover .hover_color_bubble {
+    top: 0rem;
+  }
+  
+  .solution_cards_box .solution_card .so_top_icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .solution_cards_box .solution_card .so_top_icon img {
+    width: 40px;
+    height: 50px;
+    object-fit: contain;
+  }
+  
+  /*start media query*/
+  @media screen and (min-width: 320px) {
+    .sol_card_top_3 {
+      position: relative;
+      top: 0;
+    }
+  
+    .our_solution_category {
+      width: 100%;
+      margin: 0 auto;
+    }
+  
+    .our_solution_category .solution_cards_box {
+      flex: auto;
+    }
+  }
+  @media only screen and (min-width: 768px) {
+    .our_solution_category .solution_cards_box {
+      flex: 1;
+    }
+  }
+  @media only screen and (min-width: 1024px) {
+    .sol_card_top_3 {
+      position: relative;
+      top: -3rem;
+    }
+    .our_solution_category {
+      width: 85%;
+      margin: 0 auto;
+    }
+
+    #icebreaker{
+        font-size:18px;
+    }
+
+  }
+  
+    
+  .main-container{
+    overflow-x:hidden;
+  }
+
+
 </style>
 
 <div class="main-container">
@@ -318,14 +666,15 @@
 
 
     <div class="row cont-row">
-        <div class="left-column">
-            <div class="upper-left">
-                <video id="remote"></video>
+        {% comment %} <div class="left-column">
+            <div class="upper-left" id="upr-lft">
+                <div class="loading-spinner"></div>
+                <video  id="remote" style="width : 392px"></video>
             </div>
             <div class="lower-left">
-                <video  id="ours"></video>
+                <video id="ours" style="width:392px"></video>
             </div>
-        </div>
+        </div> {% endcomment %}
         <div class="right-column">
             <!-- Right column content goes here -->
             <div class="right-header">
@@ -334,17 +683,87 @@
                     <span id="typing" class="typo d-none">typing...</span>
                 </div>
                 <div class="d-flex box2">
+                </span> <span  id="text-count" class="text_count" style=""></span>
                     <button disabled id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}"
                                 width="32px" alt="" srcset=""></span></button>
                     <button class="d-none" id="cancel_req_btn"><i class="fa-solid fa-xmark "
                             style="color:red;"></i></button>
-                    <!-- <button id="send_req_btn"><span class="img1"><img src="{% static 'images/add.svg' %}" width="32px"
-                                alt="" srcset=""></span></button> -->
-                    <img src="{% static 'images/report.svg' %}" width="22px" alt="" srcset="">
+                   
+                      <div class="dropdown">
+                        <button disabled type="button" class="btn btn-primary dropdown-toggle"  id="report_btn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                            <span class="img2"><img src="{% static 'images/report.svg' %}" width="22px" alt="" srcset=""></span>
+                        </button>
+
+                        <form class="dropdown-menu p-4" id="flag-form" action="{% url "chat:flag" %}" method='post'>
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="flag-reason" class="form-label">Reason To Flag - </label>
+                                <input type="textarea" name="flag-reason" class="form-control" id="flag-reason" required placeholder="Reason ...">
+                            </div>
+                            
+                            <input type="text" name="flag_user_id" id="flag_user_id" hidden>
+                            <input type="text" name="flag_user_name" id="flag_user_name" hidden>
+                            <input type="text" name="flagged_by_id" id="flagged_by_id" hidden>
+                            {% comment %} <div class="mb-3">
+                                <label for="exampleDropdownFormPassword2" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="exampleDropdownFormPassword2" placeholder="Password">
+                            </div> {% endcomment %}
+                            <div class="mb-3">
+                                <p class="flag-p">Flagged person is going to be monitored and than banned if necessary</p>
+                                {% comment %} <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="dropdownCheck2">
+                                <label class="form-check-label" for="dropdownCheck2">
+                                    Remember me
+                                </label>
+                                </div> {% endcomment %}
+                            </div> 
+                            <button type="submit" class="btn btn-dark">Flag</button>
+                        </form>
+
+                      </div>
+                    
                 </div>
             </div>
             <div class="status-txt" id="id_chatroom_loading_spinner" role="status" style="display: block; ">
-                <span id='bar'>looking for someone you can chat with....</span>
+                {% comment %} <div class="alert alert-info" role="alert" id="ice-cont" style="position: relative; display:none; border-radius: 0px 0px 12px 12px; margin-bottom:0px;"> <span id="icebreaker" style=""></span></div> {% endcomment %}
+
+
+
+                
+<div class="section_our_solution" id="ice-cont" style="display:none;">
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="our_solution_category">
+          <div class="solution_cards_box">
+            <div class="solution_card" id="prompt-car">
+              <div class="hover_color_bubble"></div>
+              
+              <div class="solu_title" style="display: flex;
+              align-items: center;
+              justify-content: center;">
+                <h6 id="icebreaker" style="font-size: 14px; margin-bottom: 0px;"></h6>
+                
+  
+              </div>
+              {% comment %} <div class="solu_description">
+                <p style="margin-bottom: 4px;">
+                  {{prompt.answer}}
+                </p>
+                
+              </div> {% endcomment %}
+            </div>
+            
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+
+
+                <div style=""> <span id="bar" style="">looking for someone nearby you can chat with....</div>
                 
             </div>
             <div class="d-flex flex-column" id="id_chat_log_container">
@@ -357,7 +776,7 @@
                         <button class="btn btn-dark skip-btn" id="skip_button">
                             <span id="skip">Skip</span>
                         </button>
-                        <a href="{% url 'new-chat' %}"><button class="btn btn-dark skip-btn d-none" id="new_button">
+                        <a href="{% url 'new-chat-text' %}"><button class="btn btn-dark skip-btn d-none" id="new_button">
                                 <span id="new">New</span>
                             </button></a>
                         <!-- <textarea disabled class="flex-grow-1 chat-message-input"
@@ -377,273 +796,61 @@
     </div>
 </div>
 
-<!-- 
-<script>
-    var userChoice = null;
-
-    document.getElementById("returnButton").addEventListener("click", function () {
-        userChoice = "return";
-        closeDialog();
-    });
-
-    document.getElementById("leaveButton").addEventListener("click", function () {
-        userChoice = "leave";
-        closeDialog();
-    });
-
-    function closeDialog() {
-        document.getElementById("confirmationDialog").style.display = "none";
-    }
-
-    window.onbeforeunload = function () {
-        if (userChoice === null) {
-            // If the user hasn't made a choice yet, display the custom dialog
-            document.getElementById("confirmationDialog").style.display = "block";
-            return "You have unsaved changes. Are you sure you want to leave this page?";
-        } else if (userChoice === "leave") {
-            // If the user chose to leave, allow the browser to proceed
-            return;
-        }
-    };
-
-</script> -->
-
-{% include 'new_chat_js.html' %}
-
-
-{% comment %}
+{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
 <script>
 
-    const our_video = document.getElementById("ours");
-    const remote_video = document.getElementById("remote");
-    let stream;
-    let rtcpeerconnection;
-    const constraints = {
-        'video': true,
-        'audio': false
-    }
+$(document).ready(function() {
+    $("#flag-form").on("submit", function(event) {
+        event.preventDefault();  // Prevent the default form submission behavior
 
-    // Contains the stun server URL we will be using.
-    let iceServers = {
-        iceServers: [
-            { urls: "stun:stun.services.mozilla.com" },
-            { urls: "stun:stun.l.google.com:19302" },
-        ],
-    };
+         // Get the form element using $(this)
+         var form = $(this);
 
-    navigator.mediaDevices.getUserMedia(constraints).then(s => {
-        stream = s;
-        our_video.srcObject = s;
-        our_video.onloadedmetadata = () => {
-            our_video.play()
-        }
-    })
+         // Create a new FormData object with the form
+         var formData = new FormData(form[0]);
 
+        
+		$.ajax({
+			type: 'POST',
+			dataType: "json",
+			url: "{% url "chat:flag" %}",
+			timeout: 5000,
+			data: formData,
+            processData: false, // Set processData and contentType to false
+            contentType: false,
+			success: function(data) {
+				console.log("SUCCESS", data);
+				if(data['status'] == "Already Flagged"){
+					alert(data.message)
+                    var cont = document.getElementById('flag-reason')
+                    cont.value = ""
+                    document.getElementById("report_btn").click();
+				}
+                else if(data['status'] == 'Flagged'){
+                    alert(data.message)
+                    var cont = document.getElementById('flag-reason')
+                    cont.value = ""
+                    document.getElementById("report_btn").click();
+				}
+			},
+			error: function(data) {
+				console.error("ERROR...", data)
+				alert('Unable to flag - ', data.message)
+			},
+			complete: function(data){
+				// Req is made
+			}
+		});
 
-    console.log("Setting up the WebSocket - ")
+    });
 
-    // Correctly decide between ws:// and wss://
-    var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-    var ws_path = ws_scheme + '://' + window.location.host + "/chat/"; // development
-
-    // console.log("Connecting to " + ws_path);
-    chatSocket = new WebSocket(ws_path);
-
-    // Handle incoming messages
-    chatSocket.onmessage = function (message) {
-
-        // Decode the JSON
-        console.log("Got websocket message.");
-        var data = JSON.parse(message.data);
-
-        if (data.my_id) {
-            // Settting up the self_id so that it can be used further on.
-            window.self_id = data.my_id
-            console.log('My_Id : ' + window.self_id)
-        }
-
-        if (data.status_user2) {
-            window.user = 'user2'
-            console.log(window.user)
-        }
-        if (data.status_user1) {
-            window.user = 'user1'
-            console.log(window.user)
-        }
+});
 
 
-        if (data.grouped) {
-
-            console.log(data.response)
-            statusUpdate(data.response)
-            console.log('group_name : ' + data.grouped)
-            window.group_name = data.grouped
-
-            // chatSocket.send(JSON.stringify({
-            //     "command": 'grouped',
-            //     "group_name": data.grouped,
-            // }));
+</script>
 
 
-            // here user1 is creating the offer
+{% include 'new_chat_text_js.html' %}
 
-            if (window.user == 'user1') {
-                // window.self_name = data.user1_self_name
-                // window.stranger = data.random_user_name
-                createOffer()
-                console.log('offer created')
-            }
-            else {
-                // window.self_name = data.random_user_name
-                // window.stranger = data.user1_self_name
-            }
-        }
-
-        if (data.group_leave) {
-            console.log("Got the data.group_leave msg....")
-            remote_video.srcObject = undefined;
-            remote_video.style.backgroundColor = 'rgba(64, 64, 64, 0.5)';
-
-            if (window.self_id == data.disconnector) {
-                response = 'You have disconnected.'
-            }
-            else {
-                response = 'Stranger have disconnected.'
-            }
-
-            console.log(data.group_leave)
-            statusUpdate(response)
-        }
-
-        if (data["command"] == "offer") {
-            console.log('offer recieved by ', window.user)
-            if (window.user == 'user2') {
-                console.log('user2 ----------')
-                createanswer(data["offer"]);
-                console.log('answer created')
-            }
-        } else if (data["command"] == "answer") {
-            if (window.user == 'user1') {
-                rtcpeerconnection.setRemoteDescription(data["answer"]);
-                console.log("answer set as remote");
-            }
-        } else if (data["command"] == "candidate") {
-            if (data["iscreated"] != window.user) {
-                const IceCandidate = new RTCIceCandidate(data["candidate"]);
-                rtcpeerconnection.addIceCandidate(IceCandidate);
-            }
-        }
-
-
-    }
-
-    // basic event listeners for our websocket
-    // ------------------------------------------------------------------------
-
-    chatSocket.addEventListener("open", function (e) {
-        console.log("ChatSocket OPEN")
-        // join chat room
-        if ("{{request.user.is_authenticated}}") {
-            chatSocket.send(JSON.stringify({
-                "command": "join",
-            }));
-        }
-
-    })
-
-
-    chatSocket.onclose = function (e) {
-        console.log('Chat socket closed.');
-
-    };
-
-    chatSocket.onOpen = function (e) {
-        console.log("ChatSocket onOpen", e)
-    }
-
-    chatSocket.onerror = function (e) {
-        console.log('ChatSocket error', e)
-    }
-
-    if (chatSocket.readyState == WebSocket.OPEN) {
-        console.log("ChatSocket OPENN")
-
-    } else if (chatSocket.readyState == WebSocket.CONNECTING) {
-        console.log("ChatSocket connecting..")
-    }
-
-
-    // status bar to inform the user about it's status 
-
-    function statusUpdate(message) {
-        var spinner = document.getElementById("bar")
-        spinner.innerHTML = message
-    }
-
-    // RTCPR Functions
-
-    function createOffer() {
-        rtcpeerconnection = new RTCPeerConnection(iceServers)
-        rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
-        rtcpeerconnection.ontrack = OnTrackFunc;
-        stream.getTracks().forEach((track) => {
-            rtcpeerconnection.addTrack(track, stream);
-        });
-        rtcpeerconnection.createOffer().then((offer) => {
-            rtcpeerconnection.setLocalDescription(offer);
-            chatSocket.send(
-                JSON.stringify({
-                    command: "offer",
-                    offer: offer,
-                    group: window.group_name,
-                })
-            );
-        });
-
-    }
-
-    function OnIceCandidateFunc(e) {
-        if (e.candidate) {
-            chatSocket.send(
-                JSON.stringify({
-                    command: "candidate",
-                    candidate: e.candidate,
-                    iscreated: window.user,
-                    group: window.group_name,
-                })
-            );
-        }
-    }
-
-    function OnTrackFunc(e) {
-        remote_video.srcObject = e.streams[0];
-        remote_video.onloadedmetadata = () => {
-            remote_video.play();
-        };
-    }
-
-    function createanswer(offer) {
-        console.log("answer started");
-        rtcpeerconnection = new RTCPeerConnection(iceServers);
-        rtcpeerconnection.onicecandidate = OnIceCandidateFunc;
-        rtcpeerconnection.ontrack = OnTrackFunc;
-        stream.getTracks().forEach((track) => {
-            rtcpeerconnection.addTrack(track, stream);
-        });
-        rtcpeerconnection.setRemoteDescription(offer);
-        rtcpeerconnection.createAnswer().then((answer) => {
-            rtcpeerconnection.setLocalDescription(answer);
-            chatSocket.send(
-                JSON.stringify({
-                    command: "answer",
-                    answer: answer,
-                    group: window.group_name,
-                })
-            );
-        });
-    }
-
-
-</script> {% endcomment %}
 
 {% endblock body %}
