@@ -39,6 +39,9 @@ class NrtRoomChatMessage(models.Model):
     room                = models.ForeignKey(NrtPrivateChatRoom, on_delete=models.CASCADE)
     timestamp           = models.DateTimeField(auto_now_add=True)
     content             = models.TextField(unique=False, blank=False,)
+    parent             = models.TextField(unique=False,null=True, blank=True)
+    parent_name             = models.TextField(unique=False,null=True, blank=True)
+    parent_id             = models.TextField(unique=False,null=True, blank=True)
     read 						= models.BooleanField(default=False)
 
     objects = NrtRoomChatMessageManager()

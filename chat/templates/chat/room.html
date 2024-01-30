@@ -1485,7 +1485,7 @@ window.snapKitInit = () => {
 				}
 
 			}
-
+{% comment %} 
 			if (data.isTyping) {
 				// Display "user is typing" message
 				console.error("typing");
@@ -1504,7 +1504,55 @@ window.snapKitInit = () => {
 					// Add a timeout to remove the message after a few seconds
 					
 			}
-        }
+        } {% endcomment %}
+
+
+if (data.isTyping) {
+    // Display "user is typing" message
+    console.error("typing - ");
+    if (data.id != auth_user_id) {
+
+        const typingIndicator = document.getElementById('typing');
+
+        if (typingIndicator.classList.contains("d-none")) {
+            console.error("removed d-none");
+            typingIndicator.classList.remove("d-none");
+
+            // Add a timeout to remove the message after 2 seconds (adjust as needed)
+            setTimeout(() => {
+                typingIndicator.classList.add("d-none");
+            }, 2000);
+        } else {
+            // Reset the timeout if the user is still typing
+            clearTimeout(typingIndicator.timeoutId);
+            typingIndicator.timeoutId = setTimeout(() => {
+                typingIndicator.classList.add("d-none");
+            }, 2000); // Remove the message after 2 seconds (adjust as needed)
+        }
+    }
+}
+
+
+{% comment %} if (data.isTyping) {
+	// Display "user is typing" message
+	console.error("typing");
+	if (data.id != auth_user_id){
+		const typingIndicator = document.getElementById('typing');
+
+		if (typingIndicator.classList.contains("d-none")) {
+			console.error("removed d-none");
+				typingIndicator.classList.remove("d-none");
+
+				setTimeout(() => {
+			typingIndicator.classList.add("d-none");
+		}, 3000); // Remove the message after 1 seconds (adjust as needed)
+			}
+
+		// Add a timeout to remove the message after a few seconds
+		
+}
+        } {% endcomment %}
+
 
 
 
@@ -1626,10 +1674,19 @@ window.snapKitInit = () => {
     const inputField = document.getElementById('id_chat_message_input');
     inputField.addEventListener('input', (event) => {
 
-		if(event.data == null){
-			console.log('no typing')
-			return;
-		}
+		
+// Check if the Enter key is pressed
+if (event.inputType === 'insertParagraph' && event.data === '\n') {
+    console.error('Enter key pressed');
+    return;
+}
+
+    // Check if the input type is 'deleteContentBackward' (backspace) or 'insertParagraph' (enter)
+    if (event.inputType == 'deleteContentBackward' || event.inputType == 'insertLineBreak' || event.data == null || event.data == 'null') {
+        console.error('no typing');
+        return;
+    } 
+    
 
 		// console.log('The onchange function is getting called')
         // Send a "typing" event to the server using WebSocket

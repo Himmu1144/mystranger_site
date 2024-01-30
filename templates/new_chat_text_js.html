@@ -167,7 +167,7 @@
 
         }
 
-        if (data.isTyping) {
+        {% comment %} if (data.isTyping) {
             // Display "user is typing" message
             console.error("typing - ", data.eventi);
             if (data.id != window.self_id){
@@ -188,7 +188,32 @@
                 // Add a timeout to remove the message after a few seconds
                 
         }
-        }
+        } {% endcomment %}
+
+if (data.isTyping) {
+    // Display "user is typing" message
+    console.error("typing - ", data.eventi);
+    if (data.id != window.self_id) {
+
+        const typingIndicator = document.getElementById('typing');
+
+        if (typingIndicator.classList.contains("d-none")) {
+            console.error("removed d-none");
+            typingIndicator.classList.remove("d-none");
+
+            // Add a timeout to remove the message after 2 seconds (adjust as needed)
+            setTimeout(() => {
+                typingIndicator.classList.add("d-none");
+            }, 2000);
+        } else {
+            // Reset the timeout if the user is still typing
+            clearTimeout(typingIndicator.timeoutId);
+            typingIndicator.timeoutId = setTimeout(() => {
+                typingIndicator.classList.add("d-none");
+            }, 2000); // Remove the message after 2 seconds (adjust as needed)
+        }
+    }
+}
 
         // if (data["command"] == "offer") {
         //     console.log('offer recieved by ', window.user)
@@ -404,13 +429,24 @@
 inputField.addEventListener('input', (event) => {
     console.error('hjhjf', event);
 
+
+    // Check if the Enter key is pressed
+    if (event.inputType === 'insertParagraph' && event.data === '\n') {
+    console.error('Enter key pressed');
+    return;
+}
+
     // Check if the input type is 'deleteContentBackward' (backspace) or 'insertParagraph' (enter)
     if (event.inputType == 'deleteContentBackward' || event.inputType == 'insertLineBreak' || event.data == null || event.data == 'null') {
         console.error('no typing');
         return;
     } 
+    
+    
 
-    document.getElementById('id_chat_message_input').onkeyup = function (e) {
+
+
+    {% comment %} document.getElementById('id_chat_message_input').onkeyup = function (e) {
         if (e.keyCode === 13 && e.shiftKey) {  // enter + return
             // Handled automatically by textarea
         }
@@ -418,7 +454,7 @@ inputField.addEventListener('input', (event) => {
             console.error('enter key is presseesd')
             
         }
-    };
+    }; {% endcomment %}
 
 
         console.error('not gettin printed',event)
