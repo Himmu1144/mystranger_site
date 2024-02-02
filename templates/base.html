@@ -980,7 +980,7 @@ input:focus, textarea:focus, select:focus {
         </div>
       </span>
       {% endif %}
-      <a class="navbar-brand" href="/">MyStranger</a>
+      <a class="navbar-brand" href="{% url "home" %}">MyStranger</a>
       
       <span class='ml-4' id="active-count" style="color:white; font-size:12px; margin-top:2px"></span>
       {% if request.user.is_authenticated %}
@@ -1467,11 +1467,28 @@ $.ajax({
 
       if (data.video_count){
         console.log('updating video count')
-        document.getElementById('video-count').innerHTML = data.video_count + '+' + ' online (on video)'
+        var video_page = document.getElementById('video-count')
+        if(video_page){
+          video_page.innerHTML = data.video_count + '+' + ' online (on video)'
+        }
+        var home_page = document.getElementById('video-count-home')
+        if(home_page){
+
+          home_page.innerHTML = data.video_count + '+' 
+        }
+
       } 
+
       if (data.text_count){
         console.log('updating text count')
-        document.getElementById('text-count').innerHTML = data.text_count + '+' + ' online (on text)'
+        var text_page = document.getElementById('text-count')
+        if(text_page){
+          text_page.innerHTML = data.text_count + '+' + ' online (on text)'
+        }
+        var home_page = document.getElementById('text-count-home')
+        if(home_page){
+          home_page.innerHTML = data.text_count + '+' 
+        }
       } 
 
     }
@@ -1560,7 +1577,7 @@ $.ajax({
       }
 
         current_url = window.location.href;
-        if (current_url == 'http://127.0.0.1:8000/new_chat/'){
+        if (current_url == 'http://127.0.0.1:8000/new_chat/' ){
         //if (current_url == 'https://mystranger.in/new_chat/' || current_url == 'https://mystranger.in/new_chat/'){
           // this one for video active users
           if("{{request.user.is_authenticated}}"){
@@ -1572,7 +1589,7 @@ $.ajax({
         }
 
         
-        if (current_url == 'http://127.0.0.1:8000/new_chat_text/'){
+        if (current_url == 'http://127.0.0.1:8000/new_chat_text/'  ){
         //if (current_url == 'https://www.mystranger.in/new_chat_text/' || current_url == 'https://mystranger.in/new_chat_text/'){
           // this one for video active users
           if("{{request.user.is_authenticated}}"){
@@ -1589,7 +1606,7 @@ $.ajax({
       // Check whether we are on video page or not 
       current_url = window.location.href;
       console.log(current_url)
-      if (current_url == 'http://127.0.0.1:8000/new_chat/'){
+      if (current_url == 'http://127.0.0.1:8000/new_chat/' || current_url == 'http://127.0.0.1:8000/home/' || current_url == 'https://2959-2409-40d0-1009-6ac3-e95d-cefb-cb9a-9712.ngrok-free.app/'){
       //if (current_url == 'https://mystranger.in/new_chat/' || current_url == 'https://mystranger.in/new_chat/'){
         console.log('yes baby start fetching count for video')
         // Now we can make a req to fetch the video count
@@ -1611,7 +1628,7 @@ $.ajax({
     function startTextCount(){
       // Check whether we are on video page or not 
       current_url = window.location.href;
-      if (current_url == 'http://127.0.0.1:8000/new_chat_text/'){
+      if (current_url == 'http://127.0.0.1:8000/new_chat_text/' || current_url == 'http://127.0.0.1:8000/home/' || current_url == 'https://2959-2409-40d0-1009-6ac3-e95d-cefb-cb9a-9712.ngrok-free.app/'){
       //if (current_url == 'https://mystranger.in/new_chat_text/' || current_url == 'https://mystranger.in/new_chat_text/'){
         //console.log('yes baby start fetching count for video')
         // Now we can make a req to fetch the video count

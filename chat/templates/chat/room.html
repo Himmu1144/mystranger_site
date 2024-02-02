@@ -538,7 +538,7 @@
 
 	.friends-list-container{
 		/* border: 2px solid; */
-		max-height: 70vh;
+		max-height: 70svh;
 		overflow: scroll;
 	}
 
@@ -1485,31 +1485,11 @@ window.snapKitInit = () => {
 				}
 
 			}
-{% comment %} 
-			if (data.isTyping) {
-				// Display "user is typing" message
-				console.error("typing");
-				if (data.id != auth_user_id){
-					const typingIndicator = document.getElementById('typing');
 
-					if (typingIndicator.classList.contains("d-none")) {
-						console.error("removed d-none");
-							typingIndicator.classList.remove("d-none");
-
-							setTimeout(() => {
-						typingIndicator.classList.add("d-none");
-					}, 3000); // Remove the message after 1 seconds (adjust as needed)
-						}
-			
-					// Add a timeout to remove the message after a few seconds
-					
-			}
-        } {% endcomment %}
 
 
 if (data.isTyping) {
-    // Display "user is typing" message
-    console.error("typing - ");
+
     if (data.id != auth_user_id) {
 
         const typingIndicator = document.getElementById('typing');
@@ -1531,29 +1511,6 @@ if (data.isTyping) {
         }
     }
 }
-
-
-{% comment %} if (data.isTyping) {
-	// Display "user is typing" message
-	console.error("typing");
-	if (data.id != auth_user_id){
-		const typingIndicator = document.getElementById('typing');
-
-		if (typingIndicator.classList.contains("d-none")) {
-			console.error("removed d-none");
-				typingIndicator.classList.remove("d-none");
-
-				setTimeout(() => {
-			typingIndicator.classList.add("d-none");
-		}, 3000); // Remove the message after 1 seconds (adjust as needed)
-			}
-
-		// Add a timeout to remove the message after a few seconds
-		
-}
-        } {% endcomment %}
-
-
 
 
 
@@ -1674,8 +1631,7 @@ if (data.isTyping) {
     const inputField = document.getElementById('id_chat_message_input');
     inputField.addEventListener('input', (event) => {
 
-		
-// Check if the Enter key is pressed
+		// Check if the Enter key is pressed
 if (event.inputType === 'insertParagraph' && event.data === '\n') {
     console.error('Enter key pressed');
     return;
@@ -1686,7 +1642,8 @@ if (event.inputType === 'insertParagraph' && event.data === '\n') {
         console.error('no typing');
         return;
     } 
-    
+	
+		
 
 		// console.log('The onchange function is getting called')
         // Send a "typing" event to the server using WebSocket

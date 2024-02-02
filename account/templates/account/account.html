@@ -256,8 +256,8 @@
 	}
 
 	.image-container{
-		max-width: 250px;
-		height: auto;
+		{% comment %} max-width: 250px; {% endcomment %}
+		{% comment %} height: auto; {% endcomment %}
 	}
 	.field-heading{
 		color: var(--secondary-text-color);
@@ -1068,6 +1068,87 @@
 
   }
 
+  /* Lightbox styles */
+  .image-lightbox {
+	  
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  width: 100%;
+	  height: 100%;
+	  background: rgba(0, 0, 0, 0.9);
+	  overflow: auto;
+	  z-index: 20000;
+	  
+	  display: none;
+	  align-items: center;
+	  justify-content: center;
+  }
+  
+  .image-lightbox .lightbox-content {
+	  position: relative;
+  }
+  
+  .image-lightbox .lightbox-image {
+	  max-width: 100%;
+	  max-height: 100vh;
+	  margin: auto;
+	  display: block;
+  }
+  
+  .image-lightbox .close-button {
+	  position: absolute;
+	  top: 15px;
+	  right: 15px;
+	  font-size: 30px;
+	  color: #fff;
+	  cursor: pointer;
+  }
+  
+  /* Add more specific styling for your image container if needed */
+  .image-container {
+	  width: 100%;
+	  margin: auto;
+	  {% comment %} height: 150px; {% endcomment %}
+	  overflow: hidden;
+	  border: 1px solid #ccc;
+  }
+  
+  .image-container img {
+	  width: 100%;
+	  height: 100%;
+	  object-fit: contain;
+  }
+
+  .custom-alert {
+    {% comment %} display: none; {% endcomment %}
+    position: fixed;
+	bottom: -170px;
+    left: 0;
+	height: 25%;
+    width: 100%;
+    background-color: #ff943b;
+    color: white;
+	font-weight:500px;
+	z-index:1000;
+    padding: 15px;
+    box-sizing: border-box;
+    transition: bottom 0.5s ease-in-out!important;
+	border-radius: 21px 21px 0px 0px
+}
+
+.alert-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.close-alert {
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 
 </style>
 
@@ -1109,7 +1190,7 @@
 
 	<div class="vibe-layer">
 		<div class="uplayer d-flex">
-			<div class="up-right">
+			{% comment %} <div class="up-right">
 
 				<span class="vibe-span">
 					<span class="d-vscore" style="font-size:15px">{{vibe_score}}</span>
@@ -1117,7 +1198,30 @@
 				</span>
 
 
+			</div> {% endcomment %}
+
+			<div class="up-right" id="vibescore" style="cursor: pointer;">
+				<span class="vibe-span">
+					<span class="d-vscore" style="font-size: 15px">{{vibe_score}}</span>
+					<strong class="d-vscore" style="font-size: 15px">Vibe Score</strong>
+				</span>
 			</div>
+
+			{% if request.user_agent.is_mobile %}
+			
+			<!-- Custom alert container -->
+			<div class="custom-alert" id="customAlert">
+				<div style="position:relative">
+				<h6 style="text-align:center;">Vibe Score</h6>
+				<span style="position:absolute; right: 2px;
+				top: -8px;" class="close-alert" onclick="showCustomAlert()">&times;</span>
+			</div>
+				<div class="alert-content">
+					<p stle="margin-bottom:0px;">Vibe score refers to the total no. of vibes & answers {{account.name}} has received on {% if account.gender == 'M' %}his{% elif account.gender == 'F' %}her{% else %}their{% endif %} posts</p>
+				</div>
+			</div>
+
+			{% endif %}
 
 			<div class="up-left" style="">
 
@@ -1272,17 +1376,18 @@
 	</div>
 
 	<div class="card card-conti">
+		<div class="questions">
+			<a class="{% if posts_active %}active{% endif %}" href="{% url "account:view" user_id=account.id %}?show=Posts">Posts</a>
+		</div>
+		
 		{% if prompts or is_self or show_btn %}
 		<div class="prompt active">
 			
-			<a class="{% if realme %}active{% endif %}" href="{% url "account:view" user_id=account.id %}">Real Me</a>
+			<a class="{% if realme %}active{% endif %}" href="{% url "account:view" user_id=account.id %}?show=realme">Real Me</a>
 		</div>
 		{% endif %}
 		<div class="answers">
 			<a class="{% if answers_active %}active{% endif %}" href="{% url "account:view" user_id=account.id %}?show=vibes">Vibes</a>
-		</div>
-		<div class="questions">
-			<a class="{% if posts_active %}active{% endif %}" href="{% url "account:view" user_id=account.id %}?show=Posts">Posts</a>
 		</div>
 		
 	</div>
@@ -1383,6 +1488,26 @@
 					<p>Users</p>  
 				
 				</div> -->
+
+				{% if question.0.image %}
+				{% comment %} <div class="image-container" style="width: 100%; margin:auto; height: 150px; overflow: hidden; border: 1px solid #ccc;">
+					<img src="{{ question.0.image.url }}" alt="Image Preview" style="width: 100%; height: 100%; object-fit: contain;">
+				</div> {% endcomment %}
+	
+				<a href="{{ question.0.image.url }}" class="image-lightbox-link" onclick="openLightboxnamo(this)">
+					<div class="image-container" style="width: 100%; margin:auto; height: 190px; overflow: hidden; border:none;">
+						<img src="{{ question.0.image.url }}" alt="Image Preview" style="width: 100%; height: 100%; object-fit: contain;" onload="adjustHeight(this)">
+					</div>
+				</a>
+				
+				<!-- Lightbox container -->
+				<div class="image-lightbox">
+					<span class="close-button" onclick="closeLightbox(this)">&times;</span>
+					<div class="lightbox-content">
+						<img class="lightbox-image" src="" alt="Full Image">
+					</div>
+				</div>
+			{% endif %}
 	
 				{% if not question.0.polls.all %}
 							{% comment %} <p class="p-4" >No polls</p> {% endcomment %}
@@ -1514,7 +1639,7 @@
 					{% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
 						
 						{% if not question.0.answers.all %}
-							{% if not question.0.polls.all %}
+							{% if not question.0.polls.all and not question.0.image %}
 							<p class="p-4" >Be the first to answer {{question.0.owner.name}}'s question</p>
 							{% endif %}
 						{% else %}
@@ -1961,7 +2086,7 @@
 						{% if request.user.is_authenticated %}
 						
 						{% comment %} {% if not question.0.polls.all %} {% endcomment %}
-						<form class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
+						<form class="answer-form" style="{% if question.0.image %}margin-top:1em; width: 80%;{% endif %}" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
 							<input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
 							<textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
 	
@@ -2164,6 +2289,82 @@
 
 
 <script type="text/javascript">
+
+	{% if request.user_agent.is_mobile %}
+
+	// Function to show the custom alert
+function showCustomAlert() {
+    
+
+	var bottomPosition = getBottomPosition("customAlert");
+
+if (bottomPosition === 0) {
+    console.log("The bottom position is 0.");
+	var customAlert = document.getElementById("customAlert");
+    customAlert.style.transition = "bottom 0.5s ease-out";
+	customAlert.style.bottom = "-170px";
+} else {
+    console.log("The bottom position is not 0.");
+	var customAlert = document.getElementById("customAlert");
+    customAlert.style.display = "block";
+    customAlert.style.bottom = "0px";
+}
+}
+
+function getBottomPosition(elementId) {
+	var element = document.getElementById(elementId);
+	if (element) {
+		var computedStyle = getComputedStyle(element);
+		var bottomPosition = parseInt(computedStyle.bottom);
+		return bottomPosition;
+	} else {
+		return null; // Element with the specified ID not found
+	}
+}
+
+// Function to close the custom alert
+{% comment %} function closeCustomAlert() {
+    
+    
+} {% endcomment %}
+
+// Attach click event to the vibescore container
+document.getElementById("vibescore").addEventListener("click", function() {
+    showCustomAlert();
+});
+
+{% endif %}
+	
+    function adjustHeight(img) {
+        // Get image dimensions
+        var width = img.naturalWidth;
+        var height = img.naturalHeight;
+    
+        // Set height conditionally based on the image's orientation
+        var imageContainer = img.parentElement;
+        imageContainer.style.height = width > height ? 'unset' : '225px';
+    }
+
+	// Open the lightbox
+	function openLightbox(link) {
+        console.error('bc got clicked')
+        var imageUrl = link.getAttribute('href');
+        var lightbox = link.nextElementSibling; // Assuming the lightbox is the next sibling
+        lightbox.querySelector('.lightbox-image').src = imageUrl;
+        lightbox.style.display = 'flex'; // Change from 'block' to 'flex'
+    }
+
+    // Close the lightbox
+    function closeLightbox(closeButton) {
+        var lightbox = closeButton.parentNode; // Get the parent lightbox container
+        lightbox.style.display = 'none';
+    }
+
+
+    function openLightboxnamo(element) {
+        event.preventDefault();
+        openLightbox(element);
+    }
 
 	// called from base_js.html
 	//preloadImage("{{profile_image|safe}}", 'id_profile_image')

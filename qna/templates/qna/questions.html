@@ -540,14 +540,68 @@
 }
 
 .new-textarea {
+
     resize: none; /* Disable textarea resizing by user */
     height: 36px; /* Initial height */
     overflow-y: hidden; /* Hide vertical scrollbar */
     transition: height 0.3s; /* Add smooth transition for height changes */
   }
+  
+  /* Lightbox styles */
+.image-lightbox {
+    
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    overflow: auto;
+    z-index: 20000;
+    
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-lightbox .lightbox-content {
+    position: relative;
+}
+
+.image-lightbox .lightbox-image {
+    max-width: 100%;
+    max-height: 80svh;
+    margin: auto;
+    display: block;
+}
+
+.image-lightbox .close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Add more specific styling for your image container if needed */
+.image-container {
+    width: 100%;
+    margin: auto;
+    height: 150px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
 
 </style>
-<p style="text-align:center;" class="mb-0" ><a class="mt-4" href="{% url 'qna:create-post' %}">Create question</a></p>
+<p style="text-align:center;" class="mb-0" ><a class="mt-4" href="{% url 'qna:create-post' %}">Create Vibes</a></p>
 <div class="nearby-container" id="scroll-conti">
 
     <div class="container">
@@ -633,6 +687,63 @@
 
 
 <script>
+
+    {% if request.user_agent.is_mobile %}
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var previewImage = document.getElementById("previewImage");
+        if (previewImage.complete) {
+            adjustHeight(previewImage);
+        } else {
+            previewImage.onload = function() {
+                adjustHeight(this);
+            };
+        }
+    });
+
+    function adjustHeight(img) {
+        // Get image dimensions
+        var width = img.naturalWidth;
+        var height = img.naturalHeight;
+    
+        // Set height conditionally based on the image's orientation
+        var imageContainer = img.parentElement;
+        imageContainer.style.height = width > height ? 'unset' : '225px';
+    }
+
+    {% endif %}
+
+
+     // Open the lightbox
+     function openLightbox(link) {
+        console.error('bc got clicked')
+        var imageUrl = link.getAttribute('href');
+        var lightbox = link.nextElementSibling; // Assuming the lightbox is the next sibling
+        lightbox.querySelector('.lightbox-image').src = imageUrl;
+        lightbox.style.display = 'flex'; // Change from 'block' to 'flex'
+    }
+
+    // Close the lightbox
+    function closeLightbox(closeButton) {
+        var lightbox = closeButton.parentNode; // Get the parent lightbox container
+        lightbox.style.display = 'none';
+    }
+
+
+    function openLightboxnamo(element) {
+        event.preventDefault();
+        openLightbox(element);
+    }
+    
+    {% comment %} // Attach click events to all lightbox links
+    var lightboxLinks = document.querySelectorAll('.image-lightbox-link');
+    lightboxLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            openLightbox(this);
+        });
+    });
+ {% endcomment %}
 
     function resizeTextarea(textarea) {
         textarea.style.height = 'auto'; // Reset height to auto to calculate scrollHeight

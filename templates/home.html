@@ -368,6 +368,19 @@
         <p class="st">Start Chatting :</p>
         <div class="head-buttons">
             {% if request.user.is_authenticated %}
+                
+                <div style="border-radius: 100px 0px;
+                width: 159px;
+                height: 15px;
+                border: 1px solid #343a40; display:flex;  margin-bottom:8px;">
+                    <div class="tileft" style="height: 100%;
+                    width: 50%;
+                    border-radius: 100px 0px 0px 0px; display:flex; justify-content:center; align-items:center;"><span  id="text-count-home" class="text_count" style="font-size:9px">{{texti_counti}}+</span></div>
+                    <div class="tiright" style="height: 100%;
+                    width: 50%;
+                    background: #343a40;
+                    border-radius: 0px 0px 100px 0px;  display:flex; justify-content:center; align-items:center;"><span  id="video-count-home" class="text_count" style="font-size:9px; color:white;">{{videoi_counti}}+</span></div>
+                </div>
                 <a href="{% url 'new-chat-text' %}"><button type="button" class="btn btn-dark home-btn1">Text</button></a>
                 <a href="{% url 'new-chat' %}"><button type="button" class="btn btn-outline-dark home-btn2 ">Video</button></a>
                 <p class="mt-1 text-secondary anon-p" style="font-size:12px;">~connect anonymously </p>

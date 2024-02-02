@@ -16,6 +16,8 @@ class PublicChatRoom(models.Model):
 	# Room title
 	title 				= models.CharField(max_length=255, unique=False, blank=False,)
 	question			= models.CharField(max_length=2005, unique=False, blank=False,)
+	# New field for image
+	image = models.ImageField(upload_to='posts/', blank=True, null=True)
 	owner               = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='PublicChatRoom')
 	timestamp           = models.DateTimeField(auto_now_add=True)
 	
@@ -104,6 +106,7 @@ class PublicRoomChatMessage(models.Model):
 
 class Answer(MPTTModel):
 	question            = models.ForeignKey(PublicChatRoom, on_delete=models.CASCADE, related_name='answers')
+
 	user                = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 	content             = models.TextField(unique=False, blank=False,)
 	# parent  			= models.ForeignKey('self',on_delete=models.CASCADE, null=True)

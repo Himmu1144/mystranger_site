@@ -177,7 +177,10 @@ STATICFILES_DIRS = [
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Set the maximum size of request data (10 MB in this example)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

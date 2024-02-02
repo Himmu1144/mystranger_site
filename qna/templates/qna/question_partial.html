@@ -93,6 +93,26 @@
             
             </div> -->
 
+            {% if question.0.image %}
+            {% comment %} <div class="image-container" style="width: 100%; margin:auto; height: 150px; overflow: hidden; border: 1px solid #ccc;">
+                <img src="{{ question.0.image.url }}" alt="Image Preview" style="width: 100%; height: 100%; object-fit: contain;">
+            </div> {% endcomment %}
+
+            <a href="{{ question.0.image.url }}" class="image-lightbox-link" onclick="openLightboxnamo(this)">
+                <div class="image-container" style="width: 100%; margin:auto; height: 225px; overflow: hidden; border:none;">
+                    <img src="{{ question.0.image.url }}" alt="Image Preview" id="previewImage" style="width: 100%; height: 100%; object-fit: contain;" {% if request.user_agent.is_mobile %} onload="adjustHeight(this)"{% endif %}>
+                </div>
+            </a>
+            
+            <!-- Lightbox container -->
+            <div class="image-lightbox">
+                <span class="close-button" onclick="closeLightbox(this)">&times;</span>
+                <div class="lightbox-content">
+                    <img class="lightbox-image" src="" alt="Full Image">
+                </div>
+            </div>
+        {% endif %}
+
             {% if not question.0.polls.all %}
                         {% comment %} <p class="p-4" >No polls</p> {% endcomment %}
                 {% else %}
@@ -109,6 +129,63 @@
                             <span style="font-size:14px;" id="poll-count-{{question.0.id}}">{{question.0.poll_count}} vibes</span>
                         </div>
                     
+
+                        {% if question.3 %}
+							{% comment %} {{request.user.name}} has already polled this poll {% endcomment %}
+
+							{% for poll in question.0.polls.all %}
+						
+	
+								{% comment %} <div class="row">
+								  <div class="column">
+									<span class="circle"></span>
+									<span class="text">{{poll.option}}</span>
+								  </div>
+								  <span class="percent"></span>
+								</div>
+								<div class="progress" style=''></div>
+							  {% endcomment %}
+	
+							  <div class="poll-{{question.0.id}} thepoll-cont" id="poll-{{poll.id}}" style="padding: 6px 12px;
+							  border: 1px solid #8d8d8d;
+							  border-radius: 8px;
+							  margin-bottom: 8px;
+							  position: relative;
+							  height: 30px;" 
+							  
+							  {% if request.user.is_authenticated %}    {% endif %} >
+							  <div style="z-index:1; width:{{poll.percentage}}%!important"  class="innerbar" id="innerbar-{{poll.id}}">
+							</div>
+							  <span class="poll-optieon" style="position: absolute;
+							  z-index: 2;
+							  top: 2px;
+							  font-size: 14px;">{{poll.option}}
+								</span>
+								<span style="font-size: 12px;"><span class="percetion" style="position:absolute; right:20px; z-index:2;" class="percentage" id="persia-{{poll.id}}">{{poll.percentage}}%</span><span style="font-size: 10px;
+								{% if request.user in poll.polled.all %} display:flex; {% else %} display: none; {% endif %}
+								
+								position: absolute;
+								right: 6px;
+								top: 10px;
+								z-index: 2;" class='tick-percetion' id="tick-{{poll.id}}"><i class="fa-solid fa-check" style="color: #009cda;"></i></span></span>
+								<span style="
+								display: none; 
+								position: absolute;
+								left: -14px;
+								top: 17px;							
+								z-index: 2;
+								" id='ac-poll-{{poll.id}}'><i class="fa-solid fa-circle" style="color: #009cda; font-size:8px;"></i></span>
+							</div>
+
+							
+							  
+						{% endfor %}
+
+						<span style="font-size:11px; display: none;" class="text-secondary;">{{account.name}} vibed at <i class="fa-solid fa-circle" style="color: #009cda; font-size:8px;"></i> </span>
+
+							{% else %}
+
+
                     {% for poll in question.0.polls.all %}
                     
 
@@ -146,15 +223,17 @@
                         </div>
                           
                     {% endfor %}
+                    {% endif %}
                 </div>
                     </div>
             {% endif %}
            
             <div class="card">
                 {% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
-                    
+                   
+
                     {% if not question.0.answers.all %}
-                        {% if not question.0.polls.all %}
+                        {% if not question.0.polls.all and not question.0.image %}
                         <p class="p-4" >Be the first to answer {{question.0.owner.name}}'s question</p>
                         {% endif %}
                     {% else %}
@@ -603,7 +682,7 @@
                     {% if request.user.is_authenticated %}
                     
                     {% comment %} {% if not question.0.polls.all %} {% endcomment %}
-                    <form class="answer-form" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
+                    <form class="answer-form" style="{% if question.0.image %}margin-top:1em; width: 80%;{% endif %}" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
                         <input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
                         <textarea oninput="resizeTextarea(this)" class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
 

@@ -15,6 +15,12 @@ from django.template import RequestContext
 
 
 
+from PIL import Image, ImageOps
+from io import BytesIO
+from django.core.files.base import ContentFile
+
+
+
 # Create your views here.
 def pika_view(request):
 
@@ -43,15 +49,15 @@ def pika_view(request):
         '''
         check if the question is already polled than don't show it to the user
         '''
-        skip_outer_loop = False
-        for poll in question.polls.all():
-            if request.user in poll.polled.all():
-                # print('The user has already polled this quest &&&&&&&&&&&&&&&')
-                skip_outer_loop = True
-                break  # exit the inner loop
+        # skip_outer_loop = False
+        # for poll in question.polls.all():
+        #     if request.user in poll.polled.all():
+        #         # print('The user has already polled this quest &&&&&&&&&&&&&&&')
+        #         skip_outer_loop = True
+        #         break  # exit the inner loop
 
-        if skip_outer_loop:
-            continue  # skip the remaining iterations of the outer loop
+        # if skip_outer_loop:
+        #     continue  # skip the remaining iterations of the outer loop
 
         unpolled_questions.append(question)
     
@@ -214,6 +220,19 @@ def create_post_view(request):
             roomv = PublicChatRoom(question = question, owner = user)
             roomv.save()
             
+        # Check if an image was uploaded
+        if 'image' in request.FILES:
+            image = request.FILES['image']
+
+            # Check if the image size is less than 10 MB
+            if image.size > 10 * 1024 * 1024:
+                return HttpResponse("File should be less than 10 MB", status=400)
+
+            # Compress the image before saving
+            compressed_image = compress_image(image)
+
+            roomv.image = compressed_image
+            roomv.save()
 
         
         return redirect('qna:pika')
@@ -660,7 +679,7 @@ def qna_payload(request, questions):
 
             # if skip_outer_loop:
             #     continue  # skip the remaining iterations of the outer loop
-
+            poll_status = question.is_already_polled(request.user)
             answers_with_descendants = []
 
             answers = question.answers.filter(parent=None).annotate(report_count=Count('ans_reports')).exclude(report_count__gt=10)
@@ -692,9 +711,30 @@ def qna_payload(request, questions):
                     other_answers_with_descendants.extend(other_answers_and_replies) 
             
             
-            question_answers.append([question,answers_with_descendants, other_answers_with_descendants])
+            question_answers.append([question,answers_with_descendants, other_answers_with_descendants, poll_status])
     except Exception as e:
         print('The fuckin exci -', str(e))
     
     return question_answers
     
+def compress_image(image):
+    # Open the image using Pillow
+    img = Image.open(image)
+
+    # Convert RGBA image to RGB
+    if img.mode == 'RGBA':
+        img = img.convert('RGB')
+
+    # Create a BytesIO buffer to store the compressed image
+    compressed_buffer = BytesIO()
+
+    # Compress the image and save it to the buffer
+    img.save(compressed_buffer, format='JPEG', quality=70)
+
+    # Rewind the buffer to the beginning
+    compressed_buffer.seek(0)
+
+    # Create a new Django File object from the buffer
+    compressed_image = ContentFile(compressed_buffer.read(), name=image.name)
+
+    return compressed_image

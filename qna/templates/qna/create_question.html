@@ -29,12 +29,52 @@
  
 {% endif %}
 <div class="p-5 mb-4 bg-body-tertiary rounded-3">
-    <div class="container-fluid py-5">
+    <div class="container-fluid py-5" style="padding-top: 0px!important;">
       
       <h1 class="display-8 fw-bold phone-font">Ask Stranger's a Question -</h1>
-      <form action="" method="post"> {% csrf_token %}
-      <input type="text" name="question" id="question" class="radius form-control" placeholder="ask without being judged ..." required
+      <form action="" method="post" enctype="multipart/form-data"  onsubmit="return validateForm();"> {% csrf_token %}
+      <input type="text" name="question" id="question" class="radius form-control" placeholder="ask without being judged ..."
       autofocus>
+      {% comment %} <p style="margin-bottom:0px; font-size:10px;" class="text-secondary mt-2">If you are adding an image than adding a question is not compulsory</p> {% endcomment %}
+
+
+      {% comment %} <!-- Image input and preview -->
+    <div class="mt-3">
+      <label for="imageInput" class="form-label">Add an image:</label>
+      <input type="file" class="form-control" id="imageInput" name="image" accept="image/*" onchange="previewImage(event)">
+      <div id="imagePreviewContainer" class="mt-2" style="display: none;">
+          <img id="imagePreview" alt="Image Preview" class="img-thumbnail">
+          <button type="button" class="btn btn-outline-danger btn-sm mt-2" onclick="removeImagePreview()">Remove Image</button>
+      </div>
+  </div> {% endcomment %}
+
+  {% comment %} {% if request.user.email == 'himanshu.20scse1010431@galgotiasuniversity.edu.in' %} {% endcomment %}
+
+  <!-- Image input and preview -->
+<div class="mt-3">
+  <label for="imageInput" class="form-label">Add an image (optional)</label>
+  <input type="file" class="form-control" id="imageInput" name="image" accept="image/*" onchange="previewImage(event)">
+  <div id="imagePreviewContainer" class="mt-2" style="display: none; position:relative; width: fit-content;">
+      <div style="width: 300px;
+      height: 150px;
+      justify-content: center;
+      display: flex;
+      border: 1px solid #c5c5c5;
+      padding: 1px;">
+          <img id="imagePreview" alt="Image Preview" class="img-thumbnail" style="object-fit: contain; max-width: 100%; max-height: 100%;">
+      </div>
+      <button type="button" style="background: none;
+      border: none;
+      top: -13px;
+      position: absolute;
+      right: -13px;" onclick="removeImagePreview()"><i class="fa-solid fa-circle-xmark" style="color: #fb2323;"></i></button>
+  </div>
+</div>
+
+{% comment %} {% endif %} {% endcomment %}
+
+
+
       {% comment %} polls optional {% endcomment %}
       <h6 class="text-secondary mt-4">Wanna add polls? (optional)</h6>
       <div style="position:relative">
@@ -71,7 +111,7 @@
 
 
       <p class="text-secondary mt-2" style="font-size:14px;">if adding polls minimum of 2 options are required!</p>
-      <button class="btn btn-sm btn-outline-dark mt-4" type="Submit">Submit Question</button>
+      <button class="btn btn-sm btn-outline-dark mt-2" type="Submit">Submit Question</button>
     </form>
     </div>
   </div>
@@ -79,6 +119,112 @@
 
   
 <script>
+
+  function validateForm() {
+    var question = document.getElementById('question').value.trim();
+    var imageInput = document.getElementById('imageInput');
+    var imagePreviewContainer = document.getElementById('imagePreviewContainer');
+    
+    // Check if either question or image is present
+    if (question === '' && (!imageInput.files || imageInput.files.length === 0)) {
+        alert('Please add either a question or an image before submitting.');
+        return false;
+    }
+
+    // Check if the image size is less than 10 MB
+    if (imageInput.files && imageInput.files[0] && imageInput.files[0].size > 10 * 1024 * 1024) {
+        alert('Image size should be less than 10 MB.');
+        return false;
+    }
+
+    // Additional validation or actions can be added here
+
+    // If everything is valid, allow form submission
+    return true;
+}
+
+  function previewImage(event) {
+    const input = event.target;
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+    const maxSize = 10 * 1024 * 1024; // 10 MB in bytes
+
+    if (input.files && input.files[0]) {
+        const file = input.files[0];
+
+        if (file.size > maxSize) {
+            // Display an alert for oversized image
+            alert("Image size exceeds the maximum allowed (10 MB). Please choose a smaller image.");
+            input.value = ''; // Clear the file input
+            previewContainer.style.display = 'none'; // Hide the preview container
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+            // You can add any additional logic or styling for displaying the preview here
+        };
+        reader.readAsDataURL(file);
+    }
+}
+  
+  function removeImagePreview() {
+    const input = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+  
+    input.value = ''; // Clear the input field
+    preview.src = ''; // Clear the preview image
+    previewContainer.style.display = 'none'; // Hide the preview container
+  }
+  
+
+  {% comment %} function previewImage(event) {
+
+    const input = event.target;
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removeImagePreview() {
+    const input = document.getElementById('imageInput');
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const preview = document.getElementById('imagePreview');
+
+    input.value = ''; // Clear the input field
+    preview.src = ''; // Clear the preview image
+    previewContainer.style.display = 'none'; // Hide the preview container
+} {% endcomment %}
+
+// JavaScript
+var modal = document.getElementById("myModal");
+var img = document.getElementById("myImg");
+var modalImg = document.getElementById("img01");
+
+img.onclick = function(){
+  modal.style.display = "block";
+  modalImg.src = this.src;
+}
+
+var span = document.getElementsByClassName("close")[0];
+
+span.onclick = function() { 
+  modal.style.display = "none";
+}
+
+
+
   function limitInput(id) {
       var input = document.getElementById(id);
       var charCount = document.getElementById("charCount-"+id);

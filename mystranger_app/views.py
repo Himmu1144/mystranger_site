@@ -23,6 +23,7 @@ from django.http import HttpResponse
 import os
 from fcm_django.models import FCMDevice
 from django_user_agents.utils import get_user_agent
+from notification.models import ActiveVideoUsers
 
 
 
@@ -192,6 +193,12 @@ def save_token(request):
 
     # return HttpResponse(data,content_type="text/javascript")
 
+# Create your views here.
+def new_home_view(request):
+    if request.user.is_authenticated:
+        return redirect('qna:pika')
+    else:
+        return redirect('home')
 
 # Create your views here.
 def home_view(request):
@@ -203,6 +210,17 @@ def home_view(request):
         user.update_last_activity()
         # checking if user's uni exist or the user is using uni prof instead
         uni_name = user.university_name
+
+        text_count = create_text_count(request.user)
+        if text_count == 1 or text_count==None:
+            text_count = 1
+
+        video_count = create_video_count(request.user)
+        if video_count == 1 or video_count==None:
+            video_count = 1
+
+        context['texti_counti'] = text_count
+        context['videoi_counti'] = video_count
 
         try:
             universi = University.objects.get(name=uni_name)
@@ -316,3 +334,55 @@ def send_email_view(request, email):
         
     except Exception as e:
         print(e)
+
+
+def create_video_count(user):
+    uni_name = user.university_name
+    try:
+        count = 0
+        universi = University.objects.get(name=uni_name)
+        active_video_obj = ActiveVideoUsers.objects.get(pk=1)
+        active_users = active_video_obj.users.all()
+        for user in active_users:
+            if user in universi.allNearbyUsers.all():
+                count += 1
+        return count
+    except University.DoesNotExist:
+        try:
+            count = 0
+            universi_prof = UniversityProfile.objects.get(name=uni_name)
+            active_video_obj = ActiveVideoUsers.objects.get(pk=1)
+            active_users = active_video_obj.users.all()
+            for user in active_users:
+                if user in universi_prof.allNearbyUsers.all():
+                    count += 1
+            return count
+           
+        except UniversityProfile.DoesNotExist:
+            print('something went wrong....')
+
+
+def create_text_count(user):
+    uni_name = user.university_name
+    try:
+        count = 0
+        universi = University.objects.get(name=uni_name)
+        active_video_obj = ActiveVideoUsers.objects.get(pk=2)
+        active_users = active_video_obj.users.all()
+        for user in active_users:
+            if user in universi.allNearbyUsers.all():
+                count += 1
+        return count
+    except University.DoesNotExist:
+        try:
+            count = 0
+            universi_prof = UniversityProfile.objects.get(name=uni_name)
+            active_video_obj = ActiveVideoUsers.objects.get(pk=2)
+            active_users = active_video_obj.users.all()
+            for user in active_users:
+                if user in universi_prof.allNearbyUsers.all():
+                    count += 1
+            return count
+           
+        except UniversityProfile.DoesNotExist:
+            print('something went wrong....')
