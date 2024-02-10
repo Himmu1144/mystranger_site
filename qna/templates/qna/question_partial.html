@@ -111,6 +111,11 @@
                     <img class="lightbox-image" src="" alt="Full Image">
                 </div>
             </div>
+
+            {% elif question.0.video %}
+                <video width="50%" height="auto" id="video-{{question.0.id}}" style="margin:auto;" controls muted loop onloadeddata="addVideoEventListeners(this)" {% if question.0.thumbnail %} poster="{{question.0.thumbnail.url}}"{% endif %}>
+                    <source src="{{ question.0.video.url }}" type="video/mp4">
+                </video>
         {% endif %}
 
             {% if not question.0.polls.all %}
@@ -233,7 +238,7 @@
                    
 
                     {% if not question.0.answers.all %}
-                        {% if not question.0.polls.all and not question.0.image %}
+                        {% if not question.0.polls.all and not question.0.image  and not question.0.video%}
                         <p class="p-4" >Be the first to answer {{question.0.owner.name}}'s question</p>
                         {% endif %}
                     {% else %}

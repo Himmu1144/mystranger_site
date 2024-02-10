@@ -242,7 +242,16 @@ def new_chat_view(request):
 def new_chat_text_view(request):
     if not request.user.is_authenticated:
         return redirect("login")
-    return render(request,'new_chat_text.html')
+    context={}
+    token = request.user.ntoken
+    if token == 'None':
+        print('the token is none bro - ', token)
+    elif token == ' ':
+        pass
+    elif len(str(token)) > 10:
+        print('the token does exist - ', token)
+        context['token_exist'] = 'yes'
+    return render(request,'new_chat_text.html',context)
 
 def error_404_view(request, exception):
     return render(request, 'error_404.html')

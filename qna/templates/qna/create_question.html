@@ -13,6 +13,94 @@
 
   }
 
+  
+.custom-alert label{
+	margin-top:0.5rem;
+}
+
+.custom-alert {
+    display: none;
+    position: fixed;
+	z-index:1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.alert-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    animation: slideIn 0.3s ease-in-out;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+}
+
+
+
+.loading-spinner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background: rgba(255, 255, 255, 0.8); Background color for the overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1; /* Place the spinner above the video */
+}
+
+.loading-spinner::before {
+  content: "";
+  border: 3px solid #009cda; /* Spinner border color */
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 0.5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
 </style>
 
 {% if messages %}
@@ -52,9 +140,9 @@
 
   <!-- Image input and preview -->
 <div class="mt-3">
-  <label for="imageInput" class="form-label">Add an image (optional)</label>
-  <input type="file" class="form-control" id="imageInput" name="image" accept="image/*" onchange="previewImage(event)">
-  <div id="imagePreviewContainer" class="mt-2" style="display: none; position:relative; width: fit-content;">
+  <label for="imageInput" class="form-label">Add image/video (optional)</label>
+  <input type="file" class="form-control" id="imageInput" name="image" accept="image/*,video/*" onchange="previewImage(event)">
+  <!-- <div id="imagePreviewContainer" class="mt-2" style="display: none; position:relative; width: fit-content;">
       <div style="width: 300px;
       height: 150px;
       justify-content: center;
@@ -68,7 +156,17 @@
       top: -13px;
       position: absolute;
       right: -13px;" onclick="removeImagePreview()"><i class="fa-solid fa-circle-xmark" style="color: #fb2323;"></i></button>
-  </div>
+  </div> -->
+  <div id="imagePreviewContainer" class="mt-2" style="display: none; position:relative; width: fit-content;">
+    <div style="width: 300px; height: 150px; justify-content: center; display: flex; border: 1px solid #c5c5c5; padding: 1px;">
+        <img id="imagePreview" alt="Image Preview" class="img-thumbnail" style="object-fit: contain; max-width: 100%; max-height: 100%; display: none;">
+        <video id="videoPreview" style="object-fit: contain; max-width: 100%; max-height: 100%; display: none;" controls></video>
+    </div>
+    <button type="button" style="background: none; border: none; top: -13px; position: absolute; right: -13px;" onclick="removeImagePreview()">
+        <i class="fa-solid fa-circle-xmark" style="color: #fb2323;"></i>
+    </button>
+</div>
+
 </div>
 
 {% comment %} {% endif %} {% endcomment %}
@@ -116,6 +214,19 @@
     </div>
   </div>
 
+  <div id="customAlert" class="custom-alert">
+    <div class="alert-content" style="display:flex; flex-direction:column; justify-content:center; align-items:center !important; width: 90%;">
+        {% comment %} <span class="close-btn" onclick="closeCustomAlert()">&times;</span> {% endcomment %}
+        <h6>Uploading Your Video</h6>
+        <p>please wait while your video is getting uploaded it can take upto 30 seconds...</p>
+        <div class="d-flex flex-row justify-content-center" id="id_chatroom_loading_spinner_container">
+          <div class="spinner-border" style="font-size: 9px; color:#009cda!important; height:1rem; width:1rem;" id="id_chatroom_loading_spinner" role="status" style="">
+              
+          </div>
+      </div>
+       
+    </div>
+  </div>
 
   
 <script>
@@ -125,17 +236,29 @@
     var imageInput = document.getElementById('imageInput');
     var imagePreviewContainer = document.getElementById('imagePreviewContainer');
     
-    // Check if either question or image is present
+    {% comment %} // Check if either question or image is present
     if (question === '' && (!imageInput.files || imageInput.files.length === 0)) {
         alert('Please add either a question or an image before submitting.');
         return false;
-    }
+    } {% endcomment %}
 
-    // Check if the image size is less than 10 MB
-    if (imageInput.files && imageInput.files[0] && imageInput.files[0].size > 10 * 1024 * 1024) {
+    if(imageInput.files[0].type.startsWith('image/')){
+      if (imageInput.files && imageInput.files[0] && imageInput.files[0].size > 10 * 1024 * 1024) {
         alert('Image size should be less than 10 MB.');
         return false;
+    } 
+    } else if(imageInput.files[0].type.startsWith('video/')){
+      if (imageInput.files && imageInput.files[0] && imageInput.files[0].size > 100 * 1024 * 1024) {
+        alert('Image size should be less than 100 MB.');
+        return false;
+    } else if(imageInput.files && imageInput.files[0] && imageInput.files[0].size > 5 * 1024 * 1024){
+      // here i gotta add the what u call alert shoing the loding screen
+      document.getElementById('customAlert').style.display = 'flex';
+      return true;
     }
+    }
+
+   
 
     // Additional validation or actions can be added here
 
@@ -143,32 +266,61 @@
     return true;
 }
 
-  function previewImage(event) {
+function previewImage(event) {
     const input = event.target;
     const previewContainer = document.getElementById('imagePreviewContainer');
-    const preview = document.getElementById('imagePreview');
-    const maxSize = 10 * 1024 * 1024; // 10 MB in bytes
+    const previewImage = document.getElementById('imagePreview');
+    const previewVideo = document.getElementById('videoPreview'); // Assuming you have a video element for previewing videos
 
     if (input.files && input.files[0]) {
         const file = input.files[0];
 
-        if (file.size > maxSize) {
-            // Display an alert for oversized image
-            alert("Image size exceeds the maximum allowed (10 MB). Please choose a smaller image.");
-            input.value = ''; // Clear the file input
-            previewContainer.style.display = 'none'; // Hide the preview container
-            return;
-        }
-
         const reader = new FileReader();
         reader.onload = function (e) {
-            preview.src = e.target.result;
+            if (file.type.startsWith('image/')) {
+                // The file is an image
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+                previewVideo.style.display = 'none';
+            } else if (file.type.startsWith('video/')) {
+                // The file is a video
+                previewVideo.src = e.target.result;
+                previewVideo.style.display = 'block';
+                previewImage.style.display = 'none';
+            }
             previewContainer.style.display = 'block';
-            // You can add any additional logic or styling for displaying the preview here
         };
         reader.readAsDataURL(file);
     }
 }
+
+
+//   function previewImage(event) {
+//     const input = event.target;
+//     const previewContainer = document.getElementById('imagePreviewContainer');
+//     const preview = document.getElementById('imagePreview');
+//     {% comment %} const maxSize = 10 * 1024 * 1024; // 10 MB in bytes {% endcomment %}
+
+//     if (input.files && input.files[0]) {
+//         const file = input.files[0];
+
+//         {% comment %} if (file.size > maxSize) {
+//             // Display an alert for oversized image
+//             alert("Image size exceeds the maximum allowed (10 MB). Please choose a smaller image.");
+//             input.value = ''; // Clear the file input
+//             previewContainer.style.display = 'none'; // Hide the preview container
+//             return;
+//         } {% endcomment %}
+
+//         const reader = new FileReader();
+//         reader.onload = function (e) {
+//             preview.src = e.target.result;
+//             previewContainer.style.display = 'block';
+//             // You can add any additional logic or styling for displaying the preview here
+//         };
+//         reader.readAsDataURL(file);
+//     }
+// }
   
   function removeImagePreview() {
     const input = document.getElementById('imageInput');

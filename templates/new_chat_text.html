@@ -703,8 +703,107 @@ body {
     background-color: #ff943b;
     }
 
+}
+
+.custom-alert label{
+	margin-top:0.5rem;
+}
+
+.custom-alert {
+    display: none;
+    position: fixed;
+	z-index:1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.alert-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    position: relative;
+    animation: slideIn 0.3s ease-in-out;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+
+	
+
+}
+
 </style>
 
+<div class="alert alert-info alert-dismissible fade show reg-notice-top" id="notif-btn"  style="margin-bottom:0px;" role="alert">
+    <span style="font-size: 14px;"> When more users are active - <button onclick="showCustomAlert()" style="border: none;
+
+        padding: 2px 10px;
+        font-size: 11px;
+        border-radius: 100px;
+        background: #009cda;
+        color: white;
+        font-weight: 500;
+        font-size: 11px; text-decoration:underline;">Notify Me</button></span>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    
+  </div>
+
+  <div id="customAlert" class="custom-alert">
+    <div class="alert-content" style="display:flex; flex-direction:column; justify-content:center; align-items:center !important; width: 90%;">
+        <span class="close-btn" onclick="closeCustomAlert()">&times;</span>
+        <h6>Notifications</h6>
+        <p>We are going to send a notification to you whenever more people are active on text</p>
+       
+        <div style="display:flex;">
+        <button class="btn b-activate" style="background:#009cda; height: 25px;
+        width: 74px; font-size:10px; color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;" onclick="closeCustomAlert()">Not Now</button>
+
+        <button class="btn b-activate" style="background:#009cda; height: 25px;
+        width: 74px; font-size:10px; color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;" onclick="SubscribeUser()">Allow</button>
+    </div>
+    </div>
+</div>
 <div class="main-container">
     <!-- <div id="confirmationDialog" style="display: none;">
         <p>Are you sure you want to leave this page?</p>
@@ -853,6 +952,40 @@ body {
 
 {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
 <script>
+
+    if (Notification.permission === "granted") {
+		{% if token_exist == 'yes' %}
+			// Notifications are enabled
+			console.log('the notifications are enabled!')
+			var nbtn = document.getElementById('notif-btn')
+			nbtn.style.display = 'none'
+		{% endif %}
+		
+	  } else if (Notification.permission === "denied") {
+		// Notifications are disabled
+		console.log('notif arre not enable permission denied!')
+	  } else {
+		// Notifications permission is not set, you can ask for permission
+		console.log('notif are not enabled at all')
+	  }
+
+    
+	function showCustomAlert() {
+		document.getElementById('customAlert').style.display = 'flex';
+	}
+	
+	function closeCustomAlert() {
+		document.getElementById('customAlert').style.display = 'none';
+	}
+	
+	// Close the alert when clicking outside
+	window.onclick = function(event) {
+		var alert = document.getElementById('customAlert');
+		if (event.target === alert) {
+			alert.style.display = 'none';
+		}
+	};
+
 
 $(document).ready(function() {
     $("#flag-form").on("submit", function(event) {

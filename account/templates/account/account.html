@@ -1507,6 +1507,10 @@
 						<img class="lightbox-image" src="" alt="Full Image">
 					</div>
 				</div>
+				{% elif question.0.video %}
+                <video width="50%" height="auto" id="video-{{question.0.id}}" style="margin:auto;" controls muted loop onloadeddata="addVideoEventListeners(this)" {% if question.0.thumbnail %} poster="{{question.0.thumbnail.url}}"{% endif %}>
+                    <source src="{{ question.0.video.url }}" type="video/mp4">
+                </video>
 			{% endif %}
 	
 				{% if not question.0.polls.all %}
@@ -1639,7 +1643,7 @@
 					{% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
 						
 						{% if not question.0.answers.all %}
-							{% if not question.0.polls.all and not question.0.image %}
+							{% if not question.0.polls.all and not question.0.image and not question.0.video %}
 							<p class="p-4" >Be the first to answer {{question.0.owner.name}}'s question</p>
 							{% endif %}
 						{% else %}
@@ -2080,13 +2084,13 @@
 	
 					
 	
-					<div id="elemental-{{question.0.pk}}">
+					<div id="elemental-{{question.0.pk}}" style="margin-top:0.5em;">
 	
 						
 						{% if request.user.is_authenticated %}
 						
 						{% comment %} {% if not question.0.polls.all %} {% endcomment %}
-						<form class="answer-form" style="{% if question.0.image %}margin-top:1em; width: 80%;{% endif %}" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
+						<form class="answer-form" style="{% if question.0.image or question.0.video %}width: 80%;{% endif %}" id="ansform-{{question.0.pk}}" onsubmit="submitForm(event, 'ansform-{{question.0.pk}}', 'elemental-{{question.0.pk}}', 'null', 'id_chat_message_input-{{question.0.pk}}')" action="" method='post'> {% csrf_token %}
 							<input hidden type="text" name='question-id' id="question-{{question.0.pk}}" value="{{question.0.pk}}">
 							<textarea class="flex-grow-1 quora-textarea" placeholder="Answer stranger's question" name="id_chat_message_input" id="id_chat_message_input-{{question.0.pk}}"></textarea>
 	
@@ -2334,6 +2338,167 @@ document.getElementById("vibescore").addEventListener("click", function() {
 });
 
 {% endif %}
+
+ 
+window.flrscreen == null;
+var userHasUnmuted = false;
+
+function addVideoEventListeners(video) {
+
+	adjustVideoWidth(video);
+	// Listen for the play event
+	video.addEventListener('play', function() {
+		// Pause all other videos
+		var videos = document.getElementsByTagName('video');
+		
+		for (let i = 0; i < videos.length; i++) {
+			if (videos[i] !== video && videos[i] !== window.flrscreen) {
+				videos[i].pause();
+			}
+		} 
+
+		// Unmute the video if the user has unmuted a video before
+		if (userHasUnmuted) {
+			video.muted = false;
+		}
+	});
+
+	// Listen for the pause event
+	video.addEventListener('pause', function() {
+		// Mute the video when it's paused
+		video.muted = true;
+	});
+
+	// Listen for the volumechange event
+	video.addEventListener('volumechange', function() {
+		// Remember if the user has unmuted the video
+		if (!video.muted) {
+			userHasUnmuted = true;
+		}
+	});
+}
+
+
+// Create an Intersection Observer to watch the videos
+var observer = new IntersectionObserver(function(entries, observer) {
+entries.forEach(entry => {
+	if (entry.isIntersecting) {
+		// The video is visible, play it
+		if(window.flrscreen == null){
+
+			entry.target.play();
+		}
+		console.error('playing the video -',entry.target)
+	} else {
+		// The video is not visible, pause it
+		entry.target.pause();
+	}
+});
+}, { threshold: 0.5 });  // Adjust the threshold value as needed
+
+// Get all video elements and add the event listeners
+var videos = document.getElementsByTagName('video');
+for (let i = 0; i < videos.length; i++) {
+addVideoEventListeners(videos[i]);
+observer.observe(videos[i]);
+}
+
+{% comment %} 
+
+window.addEventListener('DOMContentLoaded', (event) => {
+	// Get all video elements
+	var videos = document.getElementsByTagName('video');
+
+	for (let i = 0; i < videos.length; i++) {
+		addVideoEventListeners(videos[i]);
+	}
+}); {% endcomment %}
+
+
+// Event listener for the fullscreenchange event on window
+window.addEventListener('fullscreenchange', function() {
+
+	console.log('At least one video is in fullscreen - ',document.fullscreenElement);
+	// The video has entered fullscreen mode
+	var fullscreenElement = document.fullscreenElement;
+	if(fullscreenElement != 'null' || fullscreenElement != null){
+		window.flrscreen = fullscreenElement
+			fullscreenElement.play().catch(error => console.error('Error trying to play the video:', error));
+		
+			var videos = document.getElementsByTagName('video');
+		
+			for (let i = 0; i < videos.length; i++) {
+				if (videos[i] !== window.flrscreen) {
+					videos[i].muted = true;
+					videos[i].pause();
+					console.error(videos[i])
+				}
+			} 
+	
+	} else{
+		window.flrscreen = null
+	}
+		 
+  
+});
+
+{% if request.user_agent.is_mobile %}
+
+document.addEventListener("DOMContentLoaded", function() {
+	var previewImage = document.getElementById("previewImage");
+	if (previewImage.complete) {
+		adjustHeight(previewImage);
+	} else {
+		previewImage.onload = function() {
+			adjustHeight(this);
+		};
+	}
+});
+
+function adjustHeight(img) {
+	// Get image dimensions
+	var width = img.naturalWidth;
+	var height = img.naturalHeight;
+
+	// Set height conditionally based on the image's orientation
+	var imageContainer = img.parentElement;
+	imageContainer.style.height = width > height ? 'unset' : '225px';
+}
+
+
+function adjustVideoWidth(video) {
+	// Check if the video is loaded
+	if (video.readyState >= 1) {
+		// Check if the video is in vertical mode (height > width)
+		if (video.videoHeight > video.videoWidth) {
+			// The video is a reel, set the width to 46%
+			video.style.width = "46%";
+		} else {
+			// The video is in horizontal rectangle mode, set the width to 100%
+			video.style.width = "100%";
+		}
+	}
+}
+
+{% else %}
+
+function adjustVideoWidth(video) {
+	// Check if the video is loaded
+	if (video.readyState >= 1) {
+		// Check if the video is in vertical mode (height > width)
+		if (video.videoHeight > video.videoWidth) {
+			// The video is a reel, set the width to 46%
+			video.style.width = "250px";
+			video.style.height = "300px";
+		} else {
+			// The video is in horizontal rectangle mode, set the width to 100%
+			video.style.width = "80%";
+		}
+	}
+}
+
+{% endif %}
+
 	
     function adjustHeight(img) {
         // Get image dimensions

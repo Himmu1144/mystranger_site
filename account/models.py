@@ -74,6 +74,7 @@ class Account(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     terms = models.BooleanField(default=True,blank=False,null=False)
+    notif = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     last_activity = models.DateTimeField(verbose_name='last activity', default=timezone.now)
 

@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
+
 
 
 
@@ -84,3 +86,7 @@ class ActiveVideoUsers(models.Model):
 	def __str__(self):
 		return 'Active Video/Text Users - ' + str(self.pk)
 
+class Notif(models.Model):
+	last_send = models.DateTimeField(verbose_name='last activity', default=timezone.now)
+	def __str__(self):
+		return f'last set at pk - {self.pk} - ' + str(self.last_send)

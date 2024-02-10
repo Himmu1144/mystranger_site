@@ -688,6 +688,109 @@
 
 <script>
 
+    
+    window.flrscreen == null;
+    var userHasUnmuted = false;
+
+    function addVideoEventListeners(video) {
+
+        adjustVideoWidth(video);
+        // Listen for the play event
+        video.addEventListener('play', function() {
+            // Pause all other videos
+            var videos = document.getElementsByTagName('video');
+            
+            for (let i = 0; i < videos.length; i++) {
+                if (videos[i] !== video && videos[i] !== window.flrscreen) {
+                    videos[i].pause();
+                }
+            } 
+    
+            // Unmute the video if the user has unmuted a video before
+            if (userHasUnmuted) {
+                video.muted = false;
+            }
+        });
+    
+        // Listen for the pause event
+        video.addEventListener('pause', function() {
+            // Mute the video when it's paused
+            video.muted = true;
+        });
+    
+        // Listen for the volumechange event
+        video.addEventListener('volumechange', function() {
+            // Remember if the user has unmuted the video
+            if (!video.muted) {
+                userHasUnmuted = true;
+            }
+        });
+    }
+
+    
+// Create an Intersection Observer to watch the videos
+var observer = new IntersectionObserver(function(entries, observer) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            // The video is visible, play it
+            if(window.flrscreen == null){
+
+                entry.target.play();
+            }
+            console.error('playing the video -',entry.target)
+        } else {
+            // The video is not visible, pause it
+            entry.target.pause();
+        }
+    });
+}, { threshold: 0.5 });  // Adjust the threshold value as needed
+
+// Get all video elements and add the event listeners
+var videos = document.getElementsByTagName('video');
+for (let i = 0; i < videos.length; i++) {
+    addVideoEventListeners(videos[i]);
+    observer.observe(videos[i]);
+}
+
+{% comment %} 
+    
+    window.addEventListener('DOMContentLoaded', (event) => {
+        // Get all video elements
+        var videos = document.getElementsByTagName('video');
+    
+        for (let i = 0; i < videos.length; i++) {
+            addVideoEventListeners(videos[i]);
+        }
+    }); {% endcomment %}
+
+
+    // Event listener for the fullscreenchange event on window
+window.addEventListener('fullscreenchange', function() {
+    
+        console.log('At least one video is in fullscreen - ',document.fullscreenElement);
+        // The video has entered fullscreen mode
+        var fullscreenElement = document.fullscreenElement;
+        if(fullscreenElement != 'null' || fullscreenElement != null){
+            window.flrscreen = fullscreenElement
+                fullscreenElement.play().catch(error => console.error('Error trying to play the video:', error));
+            
+                var videos = document.getElementsByTagName('video');
+            
+                for (let i = 0; i < videos.length; i++) {
+                    if (videos[i] !== window.flrscreen) {
+                        videos[i].muted = true;
+                        videos[i].pause();
+                        console.error(videos[i])
+                    }
+                } 
+        
+        } else{
+            window.flrscreen = null
+        }
+             
+      
+});
+
     {% if request.user_agent.is_mobile %}
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -711,8 +814,44 @@
         imageContainer.style.height = width > height ? 'unset' : '225px';
     }
 
+
+    function adjustVideoWidth(video) {
+        // Check if the video is loaded
+        if (video.readyState >= 1) {
+            // Check if the video is in vertical mode (height > width)
+            if (video.videoHeight > video.videoWidth) {
+                // The video is a reel, set the width to 46%
+                video.style.width = "46%";
+                {% comment %} video.style.height = "425px"; {% endcomment %}
+            } else {
+                // The video is in horizontal rectangle mode, set the width to 100%
+                video.style.width = "100%";
+            }
+        }
+    }
+
+    {% else %}
+
+    function adjustVideoWidth(video) {
+        // Check if the video is loaded
+        if (video.readyState >= 1) {
+            // Check if the video is in vertical mode (height > width)
+            if (video.videoHeight > video.videoWidth) {
+                // The video is a reel, set the width to 46%
+                video.style.width = "250px";
+                video.style.height = "300px";
+            } else {
+                // The video is in horizontal rectangle mode, set the width to 100%
+                video.style.width = "80%";
+            }
+        }
+    }
+
     {% endif %}
 
+
+    
+   
 
      // Open the lightbox
      function openLightbox(link) {
@@ -753,63 +892,84 @@
 
     var nextPage = 2;  // Initialize next page
 
-function loadMoreComments() {
-    // Fetch the next page using AJAX
-    $.ajax({
-        url: '?page=' + nextPage,
-        method: 'GET',
-        data : {'action':'new_ques'},
-        success: function (data) {
-            var spinner = document.getElementById('id_chatroom_loading_spinner')
-            spinner.style.display = 'none';
-            console.log('got back the data - ',nextPage)
-            // Append new comments to the container
-            $('#comments-container').append(data.html);
+    var isLoading = false;  // Initialize isLoading
 
-            // Update the next page number
-            nextPage += 1;
+    function loadMoreComments() {
+        isLoading = true;  // Set isLoading to true before AJAX call
+        // Fetch the next page using AJAX
+        $.ajax({
+            url: '?page=' + nextPage,
+            method: 'GET',
+            data : {'action':'new_ques'},
+            success: function (data) {
+                var spinner = document.getElementById('id_chatroom_loading_spinner')
+                spinner.style.display = 'none';
+                console.log('got back the data - ',nextPage)
+                // Append new comments to the container
+                $('#comments-container').append(data.html);
+    
+                // Update the next page number
+                nextPage += 1;
+    
+                // Check if there are more pages
+                console.log('is it last one - ', data.has_next,nextPage)
+                if (!data.has_next) {
+                    // Disable infinite scroll if no more pages
+                    var container = document.getElementById("scroll-conti");
+                    container.removeEventListener('scroll', checkScroll); // Remove scroll listener
+                }
+                isLoading = false;  // Set isLoading to false after AJAX call is completed
 
-            // Check if there are more pages
-            console.log('is it last one - ', data.has_next,nextPage)
-            if (!data.has_next) {
-                // Disable infinite scroll if no more pages
-                var container = document.getElementById("scroll-conti");
-                container.removeEventListener('scroll', checkScroll); // Remove scroll listener
+                // Add event listeners to the new videos after a delay
+            setTimeout(function() {
+                var videos = document.getElementsByTagName('video');
+                for (let i = 0; i < videos.length; i++) {
+                    // Check if the video is already being observed
+                    if (!videos[i].isObserved) {
+                        addVideoEventListeners(videos[i]);
+                        observer.observe(videos[i]);
+                        // Mark the video as observed
+                        videos[i].isObserved = true;
+                    }
+                }
+            }, 0);
+
+            },
+            error : function(data){
+                console.log('something went wrong!')
+                isLoading = false;  // Set isLoading to false if AJAX call fails
             }
-        },
-        error : function(data){
-            console.log('something went wrong!')
+        });
+    }
+    
+    function checkScroll() {
+        console.log('Scroll event triggered');
+    
+        let totalScrollHeight = this.scrollHeight;
+        let currentScrollPosition = this.scrollTop;
+        let containerHeight = this.clientHeight;
+    
+        var threshold = totalScrollHeight * 0.6;
+        // Add a small threshold
+        if (!isLoading && totalScrollHeight <= currentScrollPosition + containerHeight + 2) {
+            // Call your function here
+            console.log('this is gettin called!')
+            var spinner = document.getElementById('id_chatroom_loading_spinner')
+            spinner.style.display = 'inline';
+            loadMoreComments();
         }
-    });
-}
-
-function checkScroll() {
-    console.log('Scroll event triggered');
-
-    let totalScrollHeight = this.scrollHeight;
-    let currentScrollPosition = this.scrollTop;
-    let containerHeight = this.clientHeight;
-
-    // Add a small threshold
-    if (totalScrollHeight <= currentScrollPosition + containerHeight + 2) {
-        // Call your function here
-        console.log('this is gettin called!')
-        var spinner = document.getElementById('id_chatroom_loading_spinner')
-        spinner.style.display = 'inline';
-        loadMoreComments();
     }
-}
-
-function setOnScrollListener() {
-    console.log('activating the scroll listener')
-    var container = document.getElementById("scroll-conti");
-
-    if (container != null) {
-        container.addEventListener('scroll', checkScroll);
+    
+    function setOnScrollListener() {
+        console.log('activating the scroll listener')
+        var container = document.getElementById("scroll-conti");
+    
+        if (container != null) {
+            container.addEventListener('scroll', checkScroll);
+        }
     }
-}
-
-setOnScrollListener(); // Initial scroll listener attachment
+    
+    setOnScrollListener(); // Initial scroll listener attachment
 
 
 

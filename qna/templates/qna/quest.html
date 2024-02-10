@@ -678,6 +678,12 @@
                     <img class="lightbox-image" src="" alt="Full Image">
                 </div>
             </div>
+       
+
+        {% elif question.0.0.video %}
+                <video width="50%" height="auto" id="video-{{question.0.0.id}}" style="margin:auto;" controls autoplay muted loop onloadeddata="adjustVideoWidth(this)" {% if question.0.thumbnail %} poster="{{question.0.0.thumbnail.url}}"{% endif %}>
+                    <source src="{{ question.0.0.video.url }}" type="video/mp4">
+                </video>
         {% endif %}
 
             {% if not question.0.0.polls.all %}
@@ -741,7 +747,7 @@
                 {% comment %} <div class="card-body" style="flex-direction: column;"> {% endcomment %}
                     
                     {% if not question.0.0.answers.all %}
-                    {% if not question.0.0.polls.all and not question.0.0.image %}
+                    {% if not question.0.0.polls.all and not question.0.0.image and not question.0.0.video %}
                     <p class="p-4" >Be the first to answer {{question.0.owner.name}}'s question</p>
                     {% endif %}
                     {% else %}
@@ -1217,6 +1223,64 @@
 {% include 'friend/snippets/cancel_friend_request.html' %}
 
 <script>
+
+    {% if request.user_agent.is_mobile %}
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var previewImage = document.getElementById("previewImage");
+        if (previewImage.complete) {
+            adjustHeight(previewImage);
+        } else {
+            previewImage.onload = function() {
+                adjustHeight(this);
+            };
+        }
+    });
+
+    function adjustHeight(img) {
+        // Get image dimensions
+        var width = img.naturalWidth;
+        var height = img.naturalHeight;
+    
+        // Set height conditionally based on the image's orientation
+        var imageContainer = img.parentElement;
+        imageContainer.style.height = width > height ? 'unset' : '225px';
+    }
+
+
+    function adjustVideoWidth(video) {
+        // Check if the video is loaded
+        if (video.readyState >= 1) {
+            // Check if the video is in vertical mode (height > width)
+            if (video.videoHeight > video.videoWidth) {
+                // The video is a reel, set the width to 46%
+                video.style.width = "46%";
+            } else {
+                // The video is in horizontal rectangle mode, set the width to 100%
+                video.style.width = "100%";
+            }
+        }
+    }
+
+    {% else %}
+
+    function adjustVideoWidth(video) {
+        // Check if the video is loaded
+        if (video.readyState >= 1) {
+            // Check if the video is in vertical mode (height > width)
+            if (video.videoHeight > video.videoWidth) {
+                // The video is a reel, set the width to 46%
+                video.style.width = "250px";
+                video.style.height = "300px";
+            } else {
+                // The video is in horizontal rectangle mode, set the width to 100%
+                video.style.width = "80%";
+            }
+        }
+    }
+
+    {% endif %}
+
 
     // Open the lightbox
 	function openLightbox(link) {

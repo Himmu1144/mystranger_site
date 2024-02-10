@@ -18,6 +18,8 @@ class PublicChatRoom(models.Model):
 	question			= models.CharField(max_length=2005, unique=False, blank=False,)
 	# New field for image
 	image = models.ImageField(upload_to='posts/', blank=True, null=True)
+	thumbnail = models.ImageField(upload_to='videos/', blank=True, null=True)
+	video = models.FileField(upload_to='videos/', blank=True, null=True)  # New field for video
 	owner               = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='PublicChatRoom')
 	timestamp           = models.DateTimeField(auto_now_add=True)
 	

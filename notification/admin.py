@@ -4,6 +4,7 @@ from django.contrib import admin
 from notification.models import Notification
 from notification.models import ActiveUsers
 from notification.models import ActiveVideoUsers
+from notification.models import Notif
 
 class NotificationAdmin(admin.ModelAdmin):
     list_filter = ['content_type',]
@@ -18,3 +19,4 @@ class NotificationAdmin(admin.ModelAdmin):
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(ActiveUsers)
 admin.site.register(ActiveVideoUsers)
+admin.site.register(Notif)

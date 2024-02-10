@@ -14,10 +14,24 @@ from django.template.loader import render_to_string
 from django.template import RequestContext
 
 
-
+import io
 from PIL import Image, ImageOps
 from io import BytesIO
 from django.core.files.base import ContentFile
+
+from moviepy.editor import VideoFileClip
+from moviepy.video import fx  # Import the fx module
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.core.files import File
+from io import BytesIO
+
+import os
+import tempfile
+import json
+import subprocess
+
+
+
 
 
 
@@ -222,19 +236,88 @@ def create_post_view(request):
             
         # Check if an image was uploaded
         if 'image' in request.FILES:
-            image = request.FILES['image']
+            # image = request.FILES['image']
 
-            # Check if the image size is less than 10 MB
-            if image.size > 10 * 1024 * 1024:
-                return HttpResponse("File should be less than 10 MB", status=400)
+            file = request.FILES['image']
+            # Check the file type
+            if file.content_type.startswith('image/'):
+                # It's an image
+                # Save it to the image field
+                # model_instance = PublicChatRoom(image=file, ...)
+                 # Check if the image size is less than 10 MB
+                image = file
+                if image.size > 10 * 1024 * 1024:
+                    return HttpResponse("File should be less than 10 MB", status=400)
 
-            # Compress the image before saving
-            compressed_image = compress_image(image)
+                # Compress the image before saving
+                compressed_image = compress_image(image)
 
-            roomv.image = compressed_image
-            roomv.save()
+                roomv.image = compressed_image
+                roomv.save()
+            elif file.content_type.startswith('video/'):
+                # It's a video
+                # Check if the video size is greater than 50MB
+                video_file = file
+                max_size_mb = 100
+                max_size_bytes = max_size_mb * 1024 * 1024
 
-        
+                # # Save the TemporaryFile to disk
+                # temp_dir = tempfile.gettempdir()
+                # temp_file_path = os.path.join(temp_dir, video_file.name)
+                # with open(temp_file_path, 'wb+') as out:
+                #     out.write(video_file.file.read())
+
+                # # Load the video clip from the file path
+                # video_clip = VideoFileClip(temp_file_path)
+
+                # # # check the length of the video in seconds
+
+                # duration = video_clip.duration
+                # print('The video is this long - ', duration)
+                # if int(duration) > 300:
+                #     return HttpResponse("The video can not be longer than 5 Minutes.", status=400)
+
+                # # Delete the temporary file
+                # os.remove(temp_file_path)
+
+
+                if file.size > max_size_bytes:
+                    # the file is big so return the msg
+                    return HttpResponse("File should be less than 100 MB", status=400)
+                elif file.size > 50*1024*1024 and file.size < 100*1024*1024:
+                    # Video size is greater than 50MB, compress it
+                    compressed_video = compress_video(file)
+                    roomv.video = compressed_video
+                    roomv.save()
+
+                    # # Generate the thumbnail
+                    # thumbnail_path = generate_thumbnail(roomv.video.path)
+
+                    # # Save the thumbnail to your Django model
+                    # roomv.thumbnail = thumbnail_path
+                    # roomv.save()
+                else:
+                    # # Video size is greater than 50MB, compress it
+                    # compressed_video = compress_video(file)
+                    # roomv.video = compressed_video
+                    roomv.video = file
+                    roomv.save()
+                    
+                    # print('generating thumbnail')
+                    # # Generate the thumbnail
+                    # thumbnail_path = generate_thumbnail(file)
+
+                    # # Save the thumbnail to your Django model
+                    # roomv.thumbnail = thumbnail_path
+                    # roomv.save()
+
+            else:
+                # Invalid file type
+                # Handle the error
+                print('what the fuck is in the input')
+                pass
+
+
         return redirect('qna:pika')
 
     return render(request, "qna/create_question.html")
@@ -738,3 +821,75 @@ def compress_image(image):
     compressed_image = ContentFile(compressed_buffer.read(), name=image.name)
 
     return compressed_image
+
+def compress_video(video_file):
+    # Save the TemporaryFile to disk
+    temp_dir = tempfile.gettempdir()
+    temp_file_path = os.path.join(temp_dir, video_file.name)
+    with open(temp_file_path, 'wb+') as out:
+        out.write(video_file.file.read())
+
+    # Load the video clip from the file path
+    video_clip = VideoFileClip(temp_file_path)
+
+    # # check the length of the video in seconds
+
+    # duration = video_clip.duration
+    # print('The video is this long - ', duration)
+    # if int(duration) > 300:
+    #     compressed_video = None
+
+    # Reduce the quality of the video
+    reduced_quality_clip = video_clip.fx(fx.resize.resize, height=720)
+
+    # Create a temporary file path for the compressed video
+    compressed_file_path = os.path.join(temp_dir, 'compressed_' + video_file.name)
+
+    # Write the compressed video to the file
+    reduced_quality_clip.write_videofile(compressed_file_path, codec="libx264")
+
+    # Read the compressed video into a BytesIO buffer
+    with open(compressed_file_path, 'rb') as f:
+        compressed_buffer = BytesIO(f.read())
+
+    # Create an InMemoryUploadedFile from the buffer
+    compressed_video = InMemoryUploadedFile(
+        compressed_buffer,
+        None,
+        os.path.basename(video_file.name),
+        video_file.content_type,
+        compressed_buffer.tell(),
+        None
+    )
+
+    # Set the file size of the compressed video
+    compressed_video.size = compressed_buffer.tell()
+    
+    # Delete the original temporary file
+    os.remove(temp_file_path)
+
+    # Delete the compressed temporary file
+    os.remove(compressed_file_path)
+
+    return compressed_video
+
+
+# def generate_thumbnail(video_file):
+#     # Get the path of the video file
+#     video_path = video_file.temporary_file_path()
+    
+#     # Create a path for the thumbnail
+#     thumbnail_path = os.path.splitext(video_file.name)[0] + "_thumbnail.jpg"
+    
+#     # Use ffmpeg to extract a frame at the middle of the video
+#     command = f"ffmpeg -i {video_path} -vf \"select=eq(n\\,{int(video_file.size / 2)})\" -vframes 1 {thumbnail_path}"
+#     subprocess.run(command, shell=True, check=True)
+    
+#     # Read the thumbnail into a BytesIO object
+#     with open(thumbnail_path, "rb") as thumbnail_file:
+#         thumbnail_io = io.BytesIO(thumbnail_file.read())
+    
+#     # Create a Django ContentFile
+#     thumbnail_content_file = ContentFile(thumbnail_io.getvalue(), thumbnail_path)
+    
+#     return thumbnail_content_file

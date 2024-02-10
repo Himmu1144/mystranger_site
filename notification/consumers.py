@@ -15,7 +15,7 @@ from chat.models import RoomChatMessage, PrivateChatRoom
 from nrt.models import  NrtRoomChatMessage , NrtPrivateChatRoom
 from notification.utils import LazyNotificationEncoder
 from notification.constants import *
-from notification.models import Notification
+from notification.models import Notification, Notif
 from notification.models import  ActiveUsers, ActiveVideoUsers
 from mystranger_app.models import University, UniversityProfile
 from chat.exceptions import ClientError
@@ -23,6 +23,11 @@ from account.models import Account
 from qna.models import Answer
 from confessions.models import CAnswer
 
+from datetime import datetime, timedelta
+from django.utils import timezone
+from firebase_admin import messaging
+from mystranger.settings import domain_name
+# from CodingWithMitchChat.settings import domain_name
 
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
     """
@@ -646,6 +651,66 @@ def create_video_count(user):
         for user in active_users:
             if user in universi.allNearbyUsers.all():
                 count += 1
+        
+
+        if count > 1:
+            print('more than 10+ people are online')
+            """
+            so here we gotta send a notif to all the nearby users of this user that more than 10 are online plus also gotta check that the last notif was sent before one hr to avoid spamming
+            """
+            try:
+                text_notif = Notif.objects.get(pk=1)
+                # Get the current time
+                current_time = timezone.now()
+
+                # Calculate the time difference
+                time_difference = current_time - text_notif.last_send
+
+                # Compare if the time difference is greater than 1 hour
+                if time_difference > timedelta(hours=1):
+                    print('yyass -', time_difference)
+                    # text_notif.last_send = current_time
+                    # text_notif.save()
+
+                    # gotta send the notif to the list of all users that are nearby and has turned on notifications. later we are also gonna use email as notifications but for now gotta use the existing one.
+                    all_nearby_usrs = universi.allNearbyUsers.all()
+                    for user in all_nearby_usrs:
+                       
+                        print('the fukin usr - ',user)
+                        if user.notif:
+                            # here send the notification to this user
+                            try:
+                                
+                                redirect_url=f"{domain_name}/account/{user.pk}/"
+                                message=f"Heyy {user.name}, more than {count}+ nearby students are online on text right now wanna join them..."
+                                print(message)
+                                registration_token = user.ntoken
+                                message = messaging.Message(
+                                    notification=messaging.Notification(
+                                        title='MyStranger.in',
+                                        body=message,
+                                        # click_action=redirect_url,
+                                    ),
+                                    data={
+                                        'url': redirect_url,
+                                        # 'logo': logo_url,
+                                    },
+                                    token=registration_token,
+                                )
+                                print('thi is the rediri url -', redirect_url)
+                                response = messaging.send(message)
+
+                                print('Successfully sent the friend req msg message:', response)
+                            except Exception as e:
+                                print('Sendif notif is erroring - ', str(e))
+
+                else:
+                    print('nope - ', time_difference)
+
+            except Exception as e:
+                print('some excption occured dude while sending 10+ notif- ', str(e))
+
+
         return count
     except University.DoesNotExist:
         try:
@@ -653,9 +718,12 @@ def create_video_count(user):
             universi_prof = UniversityProfile.objects.get(name=uni_name)
             active_video_obj = ActiveVideoUsers.objects.get(pk=1)
             active_users = active_video_obj.users.all()
+            nearby_active_users = set()
             for user in active_users:
                 if user in universi_prof.allNearbyUsers.all():
+                    nearby_active_users.add(user)
                     count += 1
+
             return count
            
         except UniversityProfile.DoesNotExist:
@@ -669,9 +737,69 @@ def create_text_count(user):
         universi = University.objects.get(name=uni_name)
         active_video_obj = ActiveVideoUsers.objects.get(pk=2)
         active_users = active_video_obj.users.all()
+        # nearby_active_users = set()
         for user in active_users:
             if user in universi.allNearbyUsers.all():
+                # nearby_active_users.add(user)
                 count += 1
+        
+        if count > 1:
+            print('more than 10+ people are online')
+            """
+            so here we gotta send a notif to all the nearby users of this user that more than 10 are online plus also gotta check that the last notif was sent before one hr to avoid spamming
+            """
+            try:
+                text_notif = Notif.objects.get(pk=2)
+                # Get the current time
+                current_time = timezone.now()
+
+                # Calculate the time difference
+                time_difference = current_time - text_notif.last_send
+
+                # Compare if the time difference is greater than 1 hour
+                if time_difference > timedelta(hours=1):
+                    print('yyass -', time_difference)
+                    # text_notif.last_send = current_time
+                    # text_notif.save()
+
+                    # gotta send the notif to the list of all users that are nearby and has turned on notifications. later we are also gonna use email as notifications but for now gotta use the existing one.
+                    all_nearby_usrs = universi.allNearbyUsers.all()
+                    for user in all_nearby_usrs:
+                       
+                        print('the fukin usr - ',user)
+                        if user.notif:
+                            # here send the notification to this user
+                            try:
+                                
+                                redirect_url=f"{domain_name}/account/{user.pk}/"
+                                message=f"Heyy {user.name}, more than {count}+ nearby students are online on text right now wanna join them..."
+                                print(message)
+                                registration_token = user.ntoken
+                                message = messaging.Message(
+                                    notification=messaging.Notification(
+                                        title='MyStranger.in',
+                                        body=message,
+                                        # click_action=redirect_url,
+                                    ),
+                                    data={
+                                        'url': redirect_url,
+                                        # 'logo': logo_url,
+                                    },
+                                    token=registration_token,
+                                )
+                                print('thi is the rediri url -', redirect_url)
+                                response = messaging.send(message)
+
+                                print('Successfully sent the friend req msg message:', response)
+                            except Exception as e:
+                                print('Sendif notif is erroring - ', str(e))
+
+                else:
+                    print('nope - ', time_difference)
+
+            except Exception as e:
+                print('some exception occured dude while sending 10+ notif- ', str(e))
+
         return count
     except University.DoesNotExist:
         try:
