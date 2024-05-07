@@ -81,7 +81,7 @@ FCM_DJANGO_SETTINGS = {
 
 WEBPUSH_SETTINGS = {
     "VAPID_PUBLIC_KEY": "BEYVWr6VZf-HIpz8gRUVsoKdJAD2RFXUKx-Oi2LQlLrzS5mau2A9lDNvzJkC3WZaF-UcT2_GN-t1xCR3CbW72As",
-    "VAPID_PRIVATE_KEY":"AqQtlD20krqFftC1U_WPtqZhzRFKTCGZ1Vux_OTqgZI",
+    "VAPID_PRIVATE_KEY":"",
     "VAPID_ADMIN_EMAIL": "info@mystranger.in"
 }
 
@@ -123,7 +123,7 @@ ASGI_APPLICATION = 'mystranger.routing.application'
 
 DB_NAME = "mystranger_db"
 DB_USER = "django"
-DB_PASSWORD = "password"
+DB_PASSWORD = "XXXXXXX"
 
 DATABASES = {
     'default': {
@@ -212,7 +212,7 @@ EMAIL_HOST = 'outlook.office365.com'  # GoDaddy SMTP server
 EMAIL_PORT = 587  # This is the SMTP port for GoDaddy
 EMAIL_USE_TLS = True  # Use TLS (Transport Layer Security)
 EMAIL_HOST_USER = 'info@mystranger.in'  # Your GoDaddy email
-EMAIL_HOST_PASSWORD = '@shikigami666'  # Your GoDaddy email password
+EMAIL_HOST_PASSWORD = '@XXXXXXXXX'  # Your GoDaddy email password
 DEFAULT_FROM_EMAIL = 'info@mystranger.in'  # Set the default "from" address
 
 
