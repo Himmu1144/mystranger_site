@@ -13,6 +13,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 
+import firebase_admin
+from firebase_admin import credentials
+
+cred = credentials.Certificate("mystranger_app/notification-bcea2-firebase-adminsdk-yizuw-0089572436.json")
+firebase_admin.initialize_app(cred)
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -24,27 +30,60 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^ispo8=(mo-fh97st*89fxn+$y^rfi%+s_vukcet^9eb=p#l##'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# DEBUG = True
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+AUTH_USER_MODEL = 'account.Account' 
+AUTHENTICATION_BACKENDS = ( 
+    'django.contrib.auth.backends.AllowAllUsersModelBackend', 
+    'account.backends.CaseInsensitiveModelBackend',
+    )
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'daphne',
+
     # my apps
     'mystranger_app',
-    # Third party apps 
+    'account',
+    'friend',
+    'chat',
+    'notification',
+    'qna',
+    'confessions',
+    'nrt',
 
+    # Third party apps 
+    # 'django.contrib.sites',
+    'webpush',
+    "fcm_django",
+    'mptt',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     
 ]
+
+# SITE_ID = 1
+
+
+FCM_DJANGO_SETTINGS = {
+    "FCM_SERVER_KEY": "AAAARr2Qk2k:APA91bFeV95ErXJu1jwBLHjEp4wMUkIf2ANbHpbIUWdZZJCCG_FCEu_KbkmNLv6pREXNM1a1mfU8iF0HtR6NagSlVWY1a_g-H8TNjIBjX6XWhWwrZgsatJtJlzLOBX-GQvkf5av2PIz1"
+}
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "BEYVWr6VZf-HIpz8gRUVsoKdJAD2RFXUKx-Oi2LQlLrzS5mau2A9lDNvzJkC3WZaF-UcT2_GN-t1xCR3CbW72As",
+    "VAPID_PRIVATE_KEY":"",
+    "VAPID_ADMIN_EMAIL": "info@mystranger.in"
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,6 +93,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_user_agents.middleware.UserAgentMiddleware',
 ]
 
 ROOT_URLCONF = 'mystranger.urls'
@@ -83,7 +123,7 @@ ASGI_APPLICATION = 'mystranger.routing.application'
 
 DB_NAME = "mystranger_db"
 DB_USER = "django"
-DB_PASSWORD = "password"
+DB_PASSWORD = "XXXXXXX"
 
 DATABASES = {
     'default': {
@@ -131,7 +171,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Set the maximum size of request data (10 MB in this example)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -149,5 +198,31 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'email'
+# EMAIL_HOST_PASSWORD = 'password'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' #//this is prod ig
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'outlook.office365.com'  # GoDaddy SMTP server
+EMAIL_PORT = 587  # This is the SMTP port for GoDaddy
+EMAIL_USE_TLS = True  # Use TLS (Transport Layer Security)
+EMAIL_HOST_USER = 'info@mystranger.in'  # Your GoDaddy email
+EMAIL_HOST_PASSWORD = '@XXXXXXXXX'  # Your GoDaddy email password
+DEFAULT_FROM_EMAIL = 'info@mystranger.in'  # Set the default "from" address
+
+
+BASE_URL = "http://127.0.0.1:8000"
+domain_name = "http://127.0.0.1:8000"
+# domain_name = "mystranger.in"
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = False
+accesstoken = 'pk.eyJ1IjoiYW5tb2xqbyIsImEiOiJjbG43bnFnaHowenF3Mm9xbWJmaHJraW9xIn0.kYnR9lTYI_0xU9e2aZespA'
+PASSWORD_RESET_EMAIL_TEMPLATE = 'password_reset\password_reset_email.html'
+PASSWORD_RESET_SUBJECT = 'Mystranger | Password Reset'
 
 
