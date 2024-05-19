@@ -1,10 +1,9 @@
 # MyStranger.in
 
-Welcome to the GitHub repository of **MyStranger.in**, a social networking site that connects college students within a 60 km radius of their college. This platform is built using Django Channels and other technologies, providing an exclusive community for college students.
+Welcome to the GitHub repository of **MyStranger.in**, MyStranger.in is a Djnago based social networking site that helps you to connect with nearby college students anonymously. It provides you an exclusive community of college students within 60 km of your college.
 
-## About MyStranger.in
+!Ten Thousand
 
-MyStranger.in is designed to cater to the specific needs of college students by providing them with an exclusive nearby college community. The platform stands by the idea that every college student deserves a platform that caters to their specific needs.
 
 ### Features
 
