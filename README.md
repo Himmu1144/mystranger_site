@@ -8,7 +8,7 @@ Welcome to the GitHub repository of **MyStranger.in**, MyStranger.in is a Djnago
 ### Features
 
 - **Omegle like Random Connect**: Users can randomly connect with other nearby college students using the text/video feature.
-- **Facebook like Posts**: Users can see & create posts within their exclusive nearby college's community.
+- **Facebook like Features**: Users can see & create posts within their exclusive nearby college's community and can add each other as friend and can chat with each other.
 - **Blind Dates**: Users can go on blind dates with other nearby college students. 
 
 We ensure that only college students can join the site by using the .edu-verification system.
