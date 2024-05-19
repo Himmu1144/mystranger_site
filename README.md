@@ -4,6 +4,8 @@ Welcome to the GitHub repository of **MyStranger.in**, MyStranger.in is a Djnago
 
 https://img.shields.io/badge/10,000+-Unique_Site_Visits-blue
 ![Static Badge](https://img.shields.io/badge/:badgeContent)
+![10000](https://img.shields.io/badge/)
+
 
 ### Features
 
