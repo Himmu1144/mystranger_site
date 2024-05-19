@@ -2,10 +2,8 @@
 
 Welcome to the GitHub repository of **MyStranger.in**, MyStranger.in is a Djnago based social networking site that helps you to connect with nearby college students anonymously. It provides you an exclusive community of college students within 60 km of your college.
 
-![Static Badge](https://img.shields.io/badge/10%2C000%2B-Unique_Site_Visits-green)
-
-
-
+![Static Badge](https://img.shields.io/badge/10%2C000%2B-Unique_Site_Visits-Blue)
+![Static Badge](https://img.shields.io/badge/13%2C00%2B-Registered_Users-blue)
 
 ### Features
 
