@@ -2,15 +2,13 @@
 
 Welcome to the GitHub repository of **MyStranger.in**, MyStranger.in is a Djnago based social networking site that helps you to connect with nearby college students anonymously. It provides you an exclusive community of college students within 60 km of your college.
 
-![10000](https://img.shields.io/badge/)
-
-
+![10000](https://img.shields.io/badge/)  https://img.shields.io/badge/10,000 +-Unique Site Visits
 
 ### Features
 
-- **Random Connection**: Users can randomly connect with other nearby college students using the text/video feature.
-- **Posts**: Users can see & create posts within their exclusive nearby college's community.
-- **Blind Dates**: Users can go on blind dates with other nearby college students. Only females can set the location & time of the date.
+- **Omegle like Random Connect**: Users can randomly connect with other nearby college students using the text/video feature.
+- **Facebook like Posts**: Users can see & create posts within their exclusive nearby college's community.
+- **Blind Dates**: Users can go on blind dates with other nearby college students. 
 
 We ensure that only college students can join the site by using the .edu-verification system.
 
@@ -26,7 +24,6 @@ We ensure that only college students can join the site by using the .edu-verific
 - Redis
 - WebRTC
 - Mapbox API
-- Google Cloud
 
 ### Key Implementations
 
